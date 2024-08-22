@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35219.272
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalendarzPracowniczyUI", "KalendarzPracowniczyUI\KalendarzPracowniczyUI.csproj", "{B4017D78-7887-4D54-AAAB-F9541A95DCE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalendarzPracowniczyAPI", "KalendarzPracowniczyUI\KalendarzPracowniczyAPI\KalendarzPracowniczyAPI.csproj", "{E1D56646-21C3-4606-9C5C-E868BBC9BA50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalendarzPracowniczyInfrastructure", "KalendarzPracowniczyInfrastructure\KalendarzPracowniczyInfrastructure.csproj", "{B6D78A84-AE1E-494C-93FA-B6B1C8B13044}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalendarzPracowniczyDomain", "KalendarzPracowniczyDomain\KalendarzPracowniczyDomain.csproj", "{02578EC5-6E77-461E-A495-53BA36167BE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalendarzPracowniczyApplication", "KalendarzPracowniczyApplication\KalendarzPracowniczyApplication.csproj", "{19D6A951-EA36-48C4-999A-5276EB25CEF7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B4017D78-7887-4D54-AAAB-F9541A95DCE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4017D78-7887-4D54-AAAB-F9541A95DCE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4017D78-7887-4D54-AAAB-F9541A95DCE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4017D78-7887-4D54-AAAB-F9541A95DCE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1D56646-21C3-4606-9C5C-E868BBC9BA50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1D56646-21C3-4606-9C5C-E868BBC9BA50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1D56646-21C3-4606-9C5C-E868BBC9BA50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1D56646-21C3-4606-9C5C-E868BBC9BA50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6D78A84-AE1E-494C-93FA-B6B1C8B13044}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6D78A84-AE1E-494C-93FA-B6B1C8B13044}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6D78A84-AE1E-494C-93FA-B6B1C8B13044}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6D78A84-AE1E-494C-93FA-B6B1C8B13044}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02578EC5-6E77-461E-A495-53BA36167BE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02578EC5-6E77-461E-A495-53BA36167BE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02578EC5-6E77-461E-A495-53BA36167BE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02578EC5-6E77-461E-A495-53BA36167BE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19D6A951-EA36-48C4-999A-5276EB25CEF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19D6A951-EA36-48C4-999A-5276EB25CEF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19D6A951-EA36-48C4-999A-5276EB25CEF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19D6A951-EA36-48C4-999A-5276EB25CEF7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AFA282FB-A0E3-47EB-B8BD-F638AAE30E3F}
+	EndGlobalSection
+EndGlobal

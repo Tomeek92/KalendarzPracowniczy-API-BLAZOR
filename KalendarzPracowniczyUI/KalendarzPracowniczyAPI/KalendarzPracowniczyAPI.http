@@ -1,0 +1,6 @@
+@KalendarzPracowniczyAPI_HostAddress = http://localhost:5207
+
+GET {{KalendarzPracowniczyAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
