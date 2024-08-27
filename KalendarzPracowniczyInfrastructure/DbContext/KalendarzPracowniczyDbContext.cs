@@ -2,16 +2,20 @@
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Entities.Workers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace KalendarzPracowniczyInfrastructureDbContext
 {
-    public class KalendarzPracowniczyDbContext : DbContext
+    public class KalendarzPracowniczyDbContext : IdentityDbContext<User>
     {
         public DbSet<Event>? Events { get; set; }
         public DbSet<User>? Users { get; set; }
         public DbSet<Worker>? Workers { get; set; }
-        public KalendarzPracowniczyDbContext(DbContextOptions<KalendarzPracowniczyDbContext> options) :base(options) { }
-      
+
+        public KalendarzPracowniczyDbContext(DbContextOptions<KalendarzPracowniczyDbContext> options) : base(options)
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
