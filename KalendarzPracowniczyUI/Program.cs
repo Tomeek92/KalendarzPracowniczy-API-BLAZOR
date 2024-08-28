@@ -1,11 +1,14 @@
 using KalendarzPracowniczyUI.Components;
 using KalendarzPracowniczyInfrastructure.Extensions;
 using KalendarzPracowniczyApplication.Extensions;
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+//builder.Services.AddMediatR();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 var app = builder.Build();
