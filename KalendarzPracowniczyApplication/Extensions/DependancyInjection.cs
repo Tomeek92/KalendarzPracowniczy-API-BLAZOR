@@ -11,6 +11,7 @@ namespace KalendarzPracowniczyApplication.Extensions
         {
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IWorkerService, WorkerService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddAutoMapper(typeof(MapperProfile));
         }
     }

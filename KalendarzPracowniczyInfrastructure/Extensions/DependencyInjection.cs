@@ -16,6 +16,7 @@ namespace KalendarzPracowniczyInfrastructure.Extensions
 
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IWorkerRepository, WorkerRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
     }
 }

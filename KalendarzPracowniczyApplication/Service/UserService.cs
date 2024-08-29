@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using KalendarzPracowniczyApplication.Dto;
+using KalendarzPracowniczyApplication.Interfaces;
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Interfaces;
 
 namespace KalendarzPracowniczyApplication.Service
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
