@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KalendarzPracowniczyApplication\KalendarzPracowniczyApplication.csproj" />
+    <ProjectReference Include="..\KalendarzPracowniczyInfrastructure\KalendarzPracowniczyInfrastructure.csproj" />
   </ItemGroup>
 
 </Project>

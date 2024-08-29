@@ -56,6 +56,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                 {
                     throw new KeyNotFoundException($"Nie znaleziono pracownika o podanym numerze Id: {workerUpdate.Id}");
                 }
+                _context.Workers.Update(workerUpdate);
             }
             catch (Exception ex)
             {

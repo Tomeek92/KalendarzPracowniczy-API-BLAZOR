@@ -14,6 +14,7 @@ namespace KalendarzPracowniczyAPI.Controllers
         {
             _workerService = workerService;
         }
+        [HttpPost]
 
         public async Task Create([FromBody] WorkerDto workerDto)
         {

@@ -1,7 +1,7 @@
 using KalendarzPracowniczyUI.Components;
 using KalendarzPracowniczyInfrastructure.Extensions;
 using KalendarzPracowniczyApplication.Extensions;
-using System.Reflection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 //builder.Services.AddMediatR();
-builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
