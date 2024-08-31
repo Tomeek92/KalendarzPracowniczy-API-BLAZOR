@@ -1,5 +1,8 @@
-﻿using KalendarzPracowniczyApplication.Dto;
+﻿using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create;
+using KalendarzPracowniczyApplication.CQRS.Queries.Events;
+using KalendarzPracowniczyApplication.Dto;
 using KalendarzPracowniczyApplication.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KalendarzPracowniczyAPI.Controllers
@@ -8,17 +11,17 @@ namespace KalendarzPracowniczyAPI.Controllers
     [Route("api/[controller]")]
     public class EventController : ControllerBase
     {
-        private readonly IEventService _eventService;
+        private readonly IMediator _mediator;
 
-        public EventController(IEventService eventService)
+        public EventController(IMediator mediator)
         {
-            _eventService = eventService;
+            _mediator = mediator;
         }
 
         [HttpPost]
-        public async Task Create([FromBody] EventDto eventDto)
+        public async Task Create([FromBody] CreateEventCommand command)
         {
-            await _eventService.Create(eventDto);
+            await _mediator.Send(command);
         }
 
         [HttpDelete("{id}")]
@@ -37,7 +40,7 @@ namespace KalendarzPracowniczyAPI.Controllers
         [HttpGet]
         public async Task<IEnumerable<EventDto>> GetAllEventsDto()
         {
-            var getAll = await _eventService.GetAllEventsDto();
+            var getAll = await _mediator.Send(new GetAllEventQuery());
             return getAll;
         }
 
