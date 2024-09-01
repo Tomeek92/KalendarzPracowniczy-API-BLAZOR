@@ -1,7 +1,9 @@
 ﻿using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create;
-using KalendarzPracowniczyApplication.CQRS.Queries.Events;
+using KalendarzPracowniczyApplication.CQRS.Commands.Events.Delete;
+using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update;
+using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetAll;
+using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetElementById;
 using KalendarzPracowniczyApplication.Dto;
-using KalendarzPracowniczyApplication.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,35 +21,92 @@ namespace KalendarzPracowniczyAPI.Controllers
         }
 
         [HttpPost]
-        public async Task Create([FromBody] CreateEventCommand command)
+        public async Task<IActionResult> Create([FromBody] CreateEventCommand command)
         {
-            await _mediator.Send(command);
+            try
+            {
+                await _mediator.Send(command);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpDelete("{id}")]
-        public async Task Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            await _eventService.Delete(id);
+            try
+            {
+                var command = new DeleteEventCommand(id);
+                await _mediator.Send(command);
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpGet("{id}")]
-        public async Task<EventDto> GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            var findId = await _eventService.GetElementById(id);
-            return findId;
+            try
+            {
+                var query = new GetElementByIdEventQuery(id);
+                var result = await _mediator.Send(query);
+                if (result == null)
+                {
+                    return NotFound($"Nie odnaleziono zadania z takim numerem {id}");
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpGet]
-        public async Task<IEnumerable<EventDto>> GetAllEventsDto()
+        public async Task<IActionResult> GetAllEventsDto()
         {
-            var getAll = await _mediator.Send(new GetAllEventQuery());
-            return getAll;
+            try
+            {
+                var getAll = new GetAllEventQuery();
+                var result = await _mediator.Send(getAll);
+                if (result == null)
+                {
+                    return NotFound("Nie odnaleziono zadań!");
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpPut]
-        public async Task Update([FromBody] EventDto eventDto)
+        public async Task<IActionResult> Update([FromBody] UpdateEventCommand eventCommand)
         {
-            await _eventService.Update(eventDto);
+            try
+            {
+                await _mediator.Send(eventCommand);
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound("Nie odnaleziono zadania do zaktualizowania");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }

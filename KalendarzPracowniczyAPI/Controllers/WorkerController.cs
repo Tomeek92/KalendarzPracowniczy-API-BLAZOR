@@ -1,5 +1,9 @@
-﻿using KalendarzPracowniczyApplication.Dto;
-using KalendarzPracowniczyApplication.Interfaces;
+﻿using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Create;
+using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Delete;
+using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Update;
+using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetAllWorkers;
+using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetWorkerById;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KalendarzPracowniczyAPI.Controllers
@@ -8,43 +12,100 @@ namespace KalendarzPracowniczyAPI.Controllers
     [Route("api/[controller]")]
     public class WorkerController : Controller
     {
-        private readonly IWorkerService _workerService;
+        private readonly IMediator _mediator;
 
-        public WorkerController(IWorkerService workerService)
+        public WorkerController(IMediator mediator)
         {
-            _workerService = workerService;
+            _mediator = mediator;
         }
         [HttpPost]
 
-        public async Task Create([FromBody] WorkerDto workerDto)
+        public async Task<IActionResult> Create([FromBody] CreateWorkerCommand workerCommand)
         {
-            await _workerService.Create(workerDto);
+            try
+            {
+                await _mediator.Send(workerCommand);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpDelete("{id}")]
-        public async Task Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            await _workerService.Delete(id);
+            try
+            {
+                var command = new DeleteWorkerCommand(id);
+                await _mediator.Send(command);
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound($"Nie odnaleziono pracownika do usunięcia");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpGet("{id}")]
-        public async Task<WorkerDto> GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            var findId = await _workerService.GetElementById(id);
-            return findId;
+            try
+            {
+                var query = new GetWorkerByIdQuery(id);
+                var result = await _mediator.Send(query);
+                if (result == null)
+                {
+                    return NotFound($"Nie odnaleziono pracownika");
+                }
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpGet]
-        public async Task<IEnumerable<WorkerDto>> GetAllWorkerDto()
+        public async Task<IActionResult> GetAllWorkerDto()
         {
-            var getAll = await _workerService.GetAllWorkersDto();
-            return getAll;
+            try
+            {
+                var query = new GetAllWorkersQuery();
+                var result = await _mediator.Send(query);
+                if (result == null)
+                {
+                    return NotFound($"Nie odnaleziono pracowników");
+                }
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpPut]
-        public async Task Update([FromBody] WorkerDto workerDto)
+        public async Task<IActionResult> Update([FromBody] UpdateWorkerCommand workerCommand)
         {
-            await _workerService.Update(workerDto);
+            try
+            {
+                await _mediator.Send(workerCommand);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Nie odnaleziono pracownika do aktualizacji");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }
