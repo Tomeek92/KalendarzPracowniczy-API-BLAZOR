@@ -3,7 +3,6 @@ using KalendarzPracowniczyApplication.CQRS.Commands.Events.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetAll;
 using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetElementById;
-using KalendarzPracowniczyApplication.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
