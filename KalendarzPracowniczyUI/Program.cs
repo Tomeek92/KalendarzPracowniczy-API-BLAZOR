@@ -13,7 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+    options.User.RequireUniqueEmail = false;
+    options.SignIn.RequireConfirmedPhoneNumber = false;
+    options.SignIn.RequireConfirmedAccount = false;
+})
         .AddEntityFrameworkStores<KalendarzPracowniczyDbContext>()
         .AddDefaultTokenProviders();
 builder.Services.AddApplication();
@@ -22,6 +28,17 @@ builder.Services.AddHttpClient<EventServiceUI>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7164");
 });
+builder.Services.AddHttpClient<UserServiceUI>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7164");
+});
+builder.Services.AddHttpClient<WorkerServiceUI>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7164");
+});
+builder.Services.AddIdentityCore<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<KalendarzPracowniczyDbContext>();
+
 
 var app = builder.Build();
 

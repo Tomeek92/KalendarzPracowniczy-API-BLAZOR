@@ -15,8 +15,8 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task Create(CreateWorkerCommand workerCommand)
         {
-            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Worker", workerCommand)
-                response.EnsureSuccessStatusCode();
+            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Worker", workerCommand);
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task Delete(Guid id)

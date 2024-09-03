@@ -15,8 +15,15 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task Create(CreateUserCommand userCommand)
         {
-            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/User", userCommand)
-                response.EnsureSuccessStatusCode();
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/User", userCommand);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseBody = await response.Content.ReadAsStringAsync();
+                }
+            }
         }
 
         public async Task Delete(string id)

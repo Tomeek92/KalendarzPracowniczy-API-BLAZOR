@@ -19,7 +19,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Nieoczekiwany bląd podczas tworzenia użytkownika");
+                throw new Exception($"Nieoczekiwany bląd podczas tworzenia użytkownika {ex}");
             }
         }
         public async Task<User> GetUserById(string id)
