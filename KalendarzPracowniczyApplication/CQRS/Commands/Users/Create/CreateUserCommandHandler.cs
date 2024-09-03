@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using KalendarzPracowniczyApplication.Dto;
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Interfaces;
 using MediatR;
@@ -10,11 +9,13 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Users.Create
     {
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
+
         public CreateUserCommandHandler(IUserRepository userRepository, IMapper mapper)
         {
             _mapper = mapper;
             _userRepository = userRepository;
         }
+
         public async Task Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             try
