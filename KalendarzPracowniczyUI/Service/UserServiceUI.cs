@@ -24,6 +24,10 @@ namespace KalendarzPracowniczyUI.Service
                     var responseBody = await response.Content.ReadAsStringAsync();
                 }
             }
+            catch
+            {
+                throw new Exception("Nieoczekiwany błąd");
+            }
         }
 
         public async Task Delete(string id)
