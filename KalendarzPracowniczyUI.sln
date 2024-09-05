@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KalendarzPracowniczyDomain"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KalendarzPracowniczyApplication", "KalendarzPracowniczyApplication\KalendarzPracowniczyApplication.csproj", "{19D6A951-EA36-48C4-999A-5276EB25CEF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalendarzPracowniczyAPI", "KalendarzPracowniczyAPI\KalendarzPracowniczyAPI.csproj", "{1E3F7E3B-7CAA-47A4-AC9B-9F7E4A0FAD17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KalendarzPracowniczyAPI", "KalendarzPracowniczyAPI\KalendarzPracowniczyAPI.csproj", "{1E3F7E3B-7CAA-47A4-AC9B-9F7E4A0FAD17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,8 +1,8 @@
 ﻿using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Delete;
+using KalendarzPracowniczyApplication.CQRS.Commands.Users.LogIn;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetUserById;
-using KalendarzPracowniczyApplication.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +13,30 @@ namespace KalendarzPracowniczyAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
+
         public UserController(IMediator mediator)
         {
             _mediator = mediator;
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserCommand loginUserCommand)
+        {
+            try
+            {
+                var result = await _mediator.Send(loginUserCommand);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateUserCommand userCommand)
         {
@@ -30,6 +50,7 @@ namespace KalendarzPracowniczyAPI.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -48,6 +69,7 @@ namespace KalendarzPracowniczyAPI.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateUserCommand userUpdateCommand)
         {
@@ -65,6 +87,7 @@ namespace KalendarzPracowniczyAPI.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(string id)
         {
@@ -82,7 +105,6 @@ namespace KalendarzPracowniczyAPI.Controllers
             {
                 return StatusCode(500, "Internal server error");
             }
-
         }
     }
 }

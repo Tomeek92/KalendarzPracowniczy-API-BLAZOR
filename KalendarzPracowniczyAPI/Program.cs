@@ -1,4 +1,3 @@
-
 using KalendarzPracowniczyInfrastructure.Extensions;
 using KalendarzPracowniczyApplication.Extensions;
 using KalendarzPracowniczyDomain.Entities.Users;
@@ -17,9 +16,13 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.
 builder.Services.AddIdentity<User, IdentityRole>()
         .AddEntityFrameworkStores<KalendarzPracowniczyDbContext>()
         .AddDefaultTokenProviders();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/login";
+    options.LogoutPath = "/logout";
+});
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-
 
 var app = builder.Build();
 

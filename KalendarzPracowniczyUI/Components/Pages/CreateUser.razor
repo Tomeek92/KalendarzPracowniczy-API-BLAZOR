@@ -1,0 +1,40 @@
+﻿@page "/create-user"
+@using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create
+@using KalendarzPracowniczyUI.Service
+@rendermode InteractiveServer
+@inject UserServiceUI UserServiceUI
+@inject NavigationManager NavigationManager
+
+<h3>Stwórz nowego użytkownika</h3>
+
+<EditForm Model="@userCommand" OnValidSubmit="CreateUserAsync" FormName="CreateNewUser">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="name">Nazwa użytkownika</label>
+        <InputText id="name" @bind-Value="userCommand.Username" />
+    </div>
+    <div>
+        <label for="surname">Nazwisko</label>
+        <InputText id="surname" @bind-Value="userCommand.Email" />
+    </div>
+
+    <div>
+        <label for="password">Hasło</label>
+        <InputText id="password" @bind-Value="userCommand.PasswordHash" type="password" />
+    </div>
+    
+
+    <button type="submit">Stwórz użytkownika</button>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    private CreateUserCommand userCommand { get; set; } = new ();
+
+    private async Task CreateUserAsync()
+    {
+        await UserServiceUI.Create(userCommand);
+    }
+}

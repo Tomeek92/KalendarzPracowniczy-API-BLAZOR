@@ -6,7 +6,6 @@ using KalendarzPracowniczyUI.Components;
 using KalendarzPracowniczyUI.Service;
 using Microsoft.AspNetCore.Identity;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,9 +15,22 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.
 builder.Services.AddIdentity<User, IdentityRole>()
         .AddEntityFrameworkStores<KalendarzPracowniczyDbContext>()
         .AddDefaultTokenProviders();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/login";
+    options.LogoutPath = "/logout";
+});
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHttpClient<EventServiceUI>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7164");
+});
+builder.Services.AddHttpClient<UserServiceUI>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7164");
+});
+builder.Services.AddHttpClient<WorkerServiceUI>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7164");
 });

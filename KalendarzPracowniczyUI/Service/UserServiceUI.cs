@@ -1,4 +1,6 @@
-﻿using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
+﻿using Azure;
+using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
+using KalendarzPracowniczyApplication.CQRS.Commands.Users.LogIn;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Update;
 using KalendarzPracowniczyApplication.Dto;
 
@@ -13,10 +15,23 @@ namespace KalendarzPracowniczyUI.Service
             _httpClient = httpClient;
         }
 
+        public async Task Login(LoginUserCommand loginCommand)
+        {
+            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/User/login", loginCommand);
+            response.EnsureSuccessStatusCode();
+        }
+
         public async Task Create(CreateUserCommand userCommand)
         {
-            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/User", userCommand)
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/User", userCommand);
                 response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new HttpRequestException($"{ex.Message}");
+            }
         }
 
         public async Task Delete(string id)

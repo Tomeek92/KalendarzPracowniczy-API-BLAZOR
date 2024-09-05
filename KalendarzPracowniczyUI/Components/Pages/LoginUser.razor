@@ -1,0 +1,36 @@
+﻿@page "/login"
+@using KalendarzPracowniczyApplication.CQRS.Commands.Users.LogIn
+@using KalendarzPracowniczyUI.Service
+@inject UserServiceUI UserService
+@inject NavigationManager NavigationManager
+<h3>Login</h3>
+
+<EditForm Model="@loginUserCommand" OnValidSubmit="HandleLogin" FormName="Test">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Email:</label>
+        <InputText @bind-Value="loginUserCommand.Email" />
+    </div>
+    <div>
+        <label>Password:</label>
+        <InputText @bind-Value="loginUserCommand.Password" type="password" />
+    </div>
+    <div>
+        <label>Remember Me:</label>
+        <InputCheckbox @bind-Value="loginUserCommand.RememberMe" />
+    </div>
+
+    <button type="submit">Login</button>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    public LoginUserCommand loginUserCommand { get; set; } = new LoginUserCommand();
+
+    private async Task HandleLogin()
+    {
+        await UserService.Login(loginUserCommand);
+    }
+}
