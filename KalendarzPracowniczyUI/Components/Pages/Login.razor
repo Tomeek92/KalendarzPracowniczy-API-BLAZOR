@@ -1,0 +1,82 @@
+﻿@page "/login"
+@using KalendarzPracowniczyApplication.CQRS.Commands.Users.Login
+@using KalendarzPracowniczyApplication.Dto
+@using KalendarzPracowniczyUI.Service
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Identity
+@using System.ComponentModel.DataAnnotations
+@rendermode InteractiveServer
+@inject UserServiceUI UserServiceUI
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+
+<EditForm method="post" Model="loginModel" OnValidSubmit="LoginAsync" FormName="LoginAsyncUser">
+    
+
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <InputText id="username" class="form-control" @bind-Value="loginModel.UserName" />
+    </div>
+   
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
+    </div>
+   
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Log in</button>
+  
+
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger mt-3">@errorMessage</div>
+    }
+    @if (isLoginSuccessful)
+    {
+        <div class="alert alert-success mt-3">@successMessage</div>
+    }
+</EditForm>
+
+
+
+@code {
+    private LoginCommand loginModel = new LoginCommand();
+    private string? errorMessage;
+    private bool isLoginSuccessful;
+    private string? successMessage;
+
+    private async Task LoginAsync()
+    {
+        try
+        {
+            var result = await UserServiceUI.Login(loginModel);
+
+            if (result != null) 
+            {
+                isLoginSuccessful = true;
+                successMessage = "Logowanie zakończone sukcesem!";
+                errorMessage = string.Empty;
+                await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                NavigationManager.NavigateTo("/login");
+            }
+            else
+            {
+                isLoginSuccessful = false;
+                errorMessage = "Nieprawidłowe dane logowania";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Błąd podczas logowania: {ex.Message}";
+            isLoginSuccessful = false;
+        }
+    }
+   
+}

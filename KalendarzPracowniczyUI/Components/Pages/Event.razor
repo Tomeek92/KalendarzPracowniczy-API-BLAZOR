@@ -1,66 +1,81 @@
 ﻿@page "/event"
 @using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
 @using KalendarzPracowniczyApplication.Dto
+@using KalendarzPracowniczyDomain.Interfaces
 @using KalendarzPracowniczyUI.Service
 @using Microsoft.AspNetCore.Components.Authorization
 @rendermode InteractiveServer
 @inject EventServiceUI EventServiceUI
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IUserRepository UserRepository
 
+<EditForm Model="eventCommand" OnValidSubmit="CreateEvent">
+    <p>Nazwa zadania</p>
+    <InputText @bind-Value="eventCommand.Title" />
 
-<EditForm method ="post" Model ="eventCommand" OnValidSubmit="CreateEvent" ForName="CreateEventDto">
+    <p>Opis</p>
+    <InputText @bind-Value="eventCommand.Description" />
 
+    <p>Data dodania:</p>
+    <InputDate @bind-Value="eventCommand.StartDate" />
 
-<p>Nazwa zadania</p>
-<InputText @bind-Value ="eventCommand.Title"/>
-<p>Opis</p>
-<InputText @bind-Value ="eventCommand.Description"/>
-<p>Data dodadnia:</p>
-<InputDate @bind-Value="eventCommand.StartDate"/>
-<p>Prawdopodobny czas zakończenia:</p>
-<InputDate @bind-Value="eventCommand.EndDate"/>
-<p>Dodał: @currentUserName</p>
+    <p>Prawdopodobny czas zakończenia:</p>
+    <InputDate @bind-Value="eventCommand.EndDate" />
 
-<p>
-    <button type="submit">Dodaj zadanie!</button>
-</p>
+    <p>Wybierz użytkownika:</p>
+    <InputSelect @bind-Value="eventCommand.UserDtoId">
+        <option value="">-- Wybierz użytkownika --</option>
+        @foreach (var user in users)
 
+        {
+            <option value="@user.Email">@user.Email</option>
+        }
+    </InputSelect>
+
+    <p>
+        <button type="submit">Dodaj zadanie!</button>
+    </p>
 </EditForm>
 
 @code {
-
-    [SupplyParameterFromForm]
     public CreateEventCommand eventCommand { get; set; } = new();
-    private string currentUserName;
-    private string? message;
-    private bool isSuccess;
+
+    private List<UserDto> users = new();
+
+
 
     protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
-        {
-            currentUserName = user.Identity.Name;
-        }
-        else
-        {
-            currentUserName = "Niezalogowany";
-        }
+    {
+
+ 
+
+      // to do Pobieranie zalogowanego użytkownika bądź wyświetlenie wszystkich  users = await UserRepository.GetUserById();
+
     }
+
+
 
     public async Task CreateEvent()
-    {
-        try
-        {
-            await EventServiceUI.Create(eventCommand);
-            isSuccess = true;
-        }
-        catch (Exception ex)
-        {
-            message = $"Wystąpił błąd: {ex.Message}";
-        }
-    }
 
+    {
+
+        try
+
+        {
+
+            await EventServiceUI.Create(eventCommand);
+
+        }
+
+        catch (Exception ex)
+
+        {
+
+            // Obsługa błędów
+
+        }
+
+    }
 }
+
+

@@ -21,7 +21,7 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Users.Create
             try
             {
                 var mapp = _mapper.Map<User>(request);
-                await _userRepository.CreateUser(mapp, request.Password);
+                await _userRepository.CreateUser(mapp, request.PasswordHash);
             }
             catch (AutoMapperMappingException ex)
             {

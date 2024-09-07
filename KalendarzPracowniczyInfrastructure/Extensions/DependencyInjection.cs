@@ -1,6 +1,8 @@
-﻿using KalendarzPracowniczyDomain.Interfaces;
+﻿using KalendarzPracowniczyDomain.Entities.Users;
+using KalendarzPracowniczyDomain.Interfaces;
 using KalendarzPracowniczyInfrastructure.Repositories;
 using KalendarzPracowniczyInfrastructureDbContext;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +19,7 @@ namespace KalendarzPracowniczyInfrastructure.Extensions
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IWorkerRepository, WorkerRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<SignInManager<User>>();
         }
     }
 }

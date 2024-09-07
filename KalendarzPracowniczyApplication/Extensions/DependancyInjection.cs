@@ -3,6 +3,7 @@ using KalendarzPracowniczyApplication.CQRS.Commands.Events.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Delete;
+using KalendarzPracowniczyApplication.CQRS.Commands.Users.Login;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Update;
 using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Delete;
@@ -13,6 +14,8 @@ using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetUserById;
 using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetAllWorkers;
 using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetWorkerById;
 using KalendarzPracowniczyApplication.Mapper;
+using KalendarzPracowniczyDomain.Entities.Users;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace KalendarzPracowniczyApplication.Extensions
@@ -28,6 +31,7 @@ namespace KalendarzPracowniczyApplication.Extensions
         typeof(GetAllEventQuery).Assembly,
         typeof(GetElementByIdEventQuery).Assembly,
         typeof(CreateUserCommand).Assembly,
+        typeof(LoginCommand).Assembly,
         typeof(DeleteUserCommand).Assembly,
         typeof(UpdateUserCommand).Assembly,
         typeof(GetUserByIdQuery).Assembly,
@@ -37,7 +41,7 @@ namespace KalendarzPracowniczyApplication.Extensions
         typeof(UpdateWorkerCommand).Assembly,
         typeof(DeleteWorkerCommand).Assembly
            ));
-
+            services.AddScoped<SignInManager<User>>();
             services.AddAutoMapper(typeof(MapperProfile));
         }
     }

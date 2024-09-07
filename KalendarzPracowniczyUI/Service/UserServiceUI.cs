@@ -1,6 +1,9 @@
 ﻿using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
+using KalendarzPracowniczyApplication.CQRS.Commands.Users.Login;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Update;
 using KalendarzPracowniczyApplication.Dto;
+using KalendarzPracowniczyDomain.Entities.Users;
+using System.Text.Json;
 
 namespace KalendarzPracowniczyUI.Service
 {
@@ -11,6 +14,36 @@ namespace KalendarzPracowniczyUI.Service
         public UserServiceUI(HttpClient httpClient)
         {
             _httpClient = httpClient;
+        }
+
+        public async Task<UserDto> Login(LoginCommand userCommand)
+        {
+            try
+            {
+
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/User/login", userCommand);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var userDto = JsonSerializer.Deserialize<UserDto>(responseContent);
+
+                    if (userDto == null)
+                    {
+                        throw new Exception("Odpowiedź nie zawiera poprawnych danych JSON.");
+                    }
+
+                    return userDto;
+                }
+                else
+                {
+                    throw new Exception($"Błąd przy logowaniu: {response.StatusCode}, Treść odpowiedzi: {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Błąd podczas logowania: {ex.Message}");
+            }
         }
 
         public async Task Create(CreateUserCommand userCommand)
