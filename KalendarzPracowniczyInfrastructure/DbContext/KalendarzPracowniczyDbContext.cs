@@ -1,8 +1,9 @@
 ﻿using KalendarzPracowniczyDomain.Entities.Events;
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Entities.Workers;
-using Microsoft.EntityFrameworkCore;
+using KalendarzPracowniczyDomain.Entities.Works;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace KalendarzPracowniczyInfrastructureDbContext
 {
@@ -11,6 +12,7 @@ namespace KalendarzPracowniczyInfrastructureDbContext
         public DbSet<Event>? Events { get; set; }
         public DbSet<User>? Users { get; set; }
         public DbSet<Worker>? Workers { get; set; }
+        public DbSet<Work> Works { get; }
 
         public KalendarzPracowniczyDbContext(DbContextOptions<KalendarzPracowniczyDbContext> options) : base(options)
         {
@@ -23,7 +25,9 @@ namespace KalendarzPracowniczyInfrastructureDbContext
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Events)
                 .WithOne(e => e.User)
-                .HasForeignKey(e => e.UserId);
+                .HasForeignKey(e => e.UserId)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

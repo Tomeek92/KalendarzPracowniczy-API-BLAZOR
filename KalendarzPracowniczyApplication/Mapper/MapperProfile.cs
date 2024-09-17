@@ -2,6 +2,7 @@
 using KalendarzPracowniczyApplication.Dto;
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Entities.Workers;
+using KalendarzPracowniczyDomain.Entities.Works;
 
 namespace KalendarzPracowniczyApplication.Mapper
 {
@@ -11,7 +12,16 @@ namespace KalendarzPracowniczyApplication.Mapper
         {
             CreateMap<EventDto, KalendarzPracowniczyDomain.Entities.Events.Event>()
                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserDtoId.ToString()));
+
             CreateMap<UserDto, User>();
+
+            CreateMap<WorkDto, Work>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id))
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
+
+            CreateMap<Work, WorkDto>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
 
             CreateMap<WorkerDto, Worker>();
         }
