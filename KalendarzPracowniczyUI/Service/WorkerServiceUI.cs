@@ -27,7 +27,7 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task Update(UpdateWorkerCommand workerCommand)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/Worker", workerCommand);
+            var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Worker/", workerCommand);
             response.EnsureSuccessStatusCode();
         }
 

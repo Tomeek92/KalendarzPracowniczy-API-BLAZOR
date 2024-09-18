@@ -27,7 +27,7 @@ namespace KalendarzPracowniczyAPI.Controllers
                 await _mediator.Send(command);
                 return Ok();
             }
-            catch (Exception)
+            catch
             {
                 return StatusCode(500, "Internal server error");
             }
