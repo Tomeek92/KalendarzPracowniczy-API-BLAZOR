@@ -1,5 +1,6 @@
-﻿@page "/event"
+﻿@page "/update-event"
 @using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
+@using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update
 @using KalendarzPracowniczyApplication.Dto
 @using KalendarzPracowniczyUI.Service
 @using Microsoft.AspNetCore.Components.Authorization
@@ -99,9 +100,9 @@
     <img src="logo.png" />
 </div>
 <div class="event-form-container">
-    <h2>Dodaj nowy wyjazd</h2>
+    <h2>Zmień dane wyjazdu</h2>
 
-    <EditForm Model="eventCommand" OnValidSubmit="CreateEvent">
+    <EditForm Model="eventCommand" OnValidSubmit="UpdateEvents">
         <div>
             <p>Miejsce wyjazdu</p>
             <InputText @bind-Value="eventCommand.Title" />
@@ -122,7 +123,7 @@
             <p>Dodał: @currentUserName</p>
         </div>
         <div>
-            <button type="submit">Dodaj wyjazd!</button>
+            <button type="submit">Zmień wyjazd!</button>
         </div>
     </EditForm>
     </div>
@@ -139,11 +140,10 @@
 
 @code {
     [SupplyParameterFromForm]
-    public CreateEventCommand eventCommand { get; set; } = new();
+    public UpdateEventCommand eventCommand { get; set; } = new();
     private string? currentUserName;
     private string? message;
     private bool isSuccess;
-
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -159,11 +159,11 @@
         }
     }
 
-    public async Task CreateEvent()
+    public async Task UpdateEvents()
     {
         try
         {
-            await EventServiceUI.Create(eventCommand);
+            await EventServiceUI.Update(eventCommand);
             isSuccess = true;
             message = null;
         }

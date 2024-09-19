@@ -1,5 +1,9 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-image: url("unisoft.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
 }
 
 a, .btn-link {
@@ -13,7 +17,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -48,4 +52,301 @@ h1:focus {
 
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
+}
+
+.sidebar {
+    width: 120px;
+    height: 100vh;
+    background-color: #1e2a38;
+    padding: 20px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #ffffff;
+    transition: width 0.3s, background-color 0.3s;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.nav-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: color 0.5s, transform 0.3s;
+}
+
+    .nav-link:hover {
+        color: #3479f1;
+        transform: scale(1.2);
+    }
+
+.nav-text {
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+    text-align: center;
+    transition: opacity 0.3s;
+}
+
+.nav-link:hover .nav-text {
+    display: block;
+    opacity: 1;
+}
+
+.sidebar-toggle {
+    display: none;
+}
+
+/* Stylizacja ikon */
+.fas {
+    font-size: 24px;
+    transition: color 0.3s;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        display: block;
+        padding: 20px;
+    }
+
+    .nav {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    .nav-link {
+        flex-direction: row;
+        font-size: 18px;
+    }
+
+    .nav-text {
+        display: block;
+        margin-left: 10px;
+    }
+}
+/*Kalendarz*/
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.weekly-schedule-container {
+    margin-left: 140px;
+    padding: 25px;
+    background: linear-gradient(135deg, #3f5b9a, #3d4c6e);
+    background-size: 200% 200%;
+    animation: gradientAnimation 100s ease infinite;
+    border-radius: 2px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+    .calendar-controls button {
+        background-color: #424242;
+        color: #ffffff;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        .calendar-controls button:hover {
+            background-color: #212121;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+.logo-page img{
+    margin-left:40%;
+    width:20%;
+    height:20%;
+}
+.schedule-grid {
+    display: grid;
+    grid-template-columns: 1fr repeat(5, 1fr);
+    gap: 15px;
+}
+
+.schedule-header {
+    display: contents;
+}
+
+.schedule-column {
+    background-color: #2a4d77;
+    padding: 12px;
+    text-align: center;
+    font-weight: 600;
+    color: #ffffff;
+    border-bottom: 2px solid #4a5d76;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-content {
+    display: contents;
+}
+
+.schedule-row {
+    display: contents;
+}
+
+.employee-cell {
+    background-color: #2a4d77;
+    color: #ffffff;
+    padding: 14px;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.day-cell {
+    background-color: #3f5b9a;
+    padding: 14px;
+    text-align: center;
+    border: 1px solid #4a5d76;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+    .day-cell:hover {
+        background-color: #4a5d76;
+        color: #ffffff;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .day-cell.today {
+        background-color: #212121;
+        color: #ffffff;
+        border: 2px solid #2a4d77;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    } 
+/*samochody logo*/
+.samochody-flota {
+    display: flex;
+    justify-content: space-around;
+}
+
+.logo-samochody {
+    text-align: center;
+}
+
+    .logo-samochody img {
+        width:50%;
+        height:50%;
+    }
+/*Modal*/
+.my_modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.my_modal_content {
+    background-color: black;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: -22px;
+    right: 0px;
+    cursor: pointer;
+    color: white;
+    border: none;
+}
+/*B��dy wiadomo�ci oraz loader*/
+.loader {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.message, .success-message {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    position: relative;
+    left: 20px;
+    margin: 80px auto;
+    width: 80%;
+    max-width: 600px;
+}
+
+.message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
 }

@@ -36,6 +36,10 @@ builder.Services.AddHttpClient<WorkerServiceUI>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7164");
 });
+builder.Services.AddHttpClient<WorkServiceUI>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7164");
+});
 builder.Services.AddIdentityCore<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<KalendarzPracowniczyDbContext>();
 
