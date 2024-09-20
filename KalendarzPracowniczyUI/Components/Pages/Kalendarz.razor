@@ -1,11 +1,11 @@
-﻿@page "/"
+﻿@page "/kalendarz"
 @using System.Globalization
 @rendermode InteractiveServer
 <NavigationMenu />
 
 <div class="weekly-schedule-container">
     <div class="logo-page">
-    <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa.png" />
+    <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" />
 </div>
     <div class="calendar-controls">
         <button @onclick="PreviousWeek">❮ Poprzedni tydzień</button>
@@ -65,7 +65,7 @@
     <div class="my_modal">
         <div class="my_modal_content">
             <h1 class="close" @onclick="HideModal">&times;</h1>
-            <Event/>
+            <CreateEvent/>
         </div>
     </div>
 }
@@ -78,10 +78,15 @@
         </div>
     </div>
 }
+@if (isLoading)
+{
+    <div class="loader"></div>
+}
 
 @code {
     private DateTime? selectedDay = null;
     private bool isVisible = false;
+    private bool isLoading = false;
     private void CloseModal()
     {
         isVisible = false;

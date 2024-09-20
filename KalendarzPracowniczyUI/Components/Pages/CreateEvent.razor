@@ -101,7 +101,7 @@
 <div class="event-form-container">
     <h2>Dodaj nowy wyjazd</h2>
 
-    <EditForm Model="eventCommand" OnValidSubmit="CreateEvent">
+    <EditForm Model="eventCommand" OnValidSubmit="CreateEventAsync">
         <div>
             <p>Miejsce wyjazdu</p>
             <InputText @bind-Value="eventCommand.Title" />
@@ -135,7 +135,10 @@
     {
         <p class="success-message">Zadanie zostało dodane pomyślnie!</p>
     }
-
+@if (isLoading)
+{
+    <div class="loader"></div>
+}
 
 @code {
     [SupplyParameterFromForm]
@@ -143,6 +146,7 @@
     private string? currentUserName;
     private string? message;
     private bool isSuccess;
+    private bool isLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -159,10 +163,11 @@
         }
     }
 
-    public async Task CreateEvent()
+    public async Task CreateEventAsync()
     {
         try
         {
+            isLoading = true;
             await EventServiceUI.Create(eventCommand);
             isSuccess = true;
             message = null;
@@ -171,6 +176,10 @@
         {
             message = $"Wystąpił błąd: {ex.Message}";
             isSuccess = false;
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 }

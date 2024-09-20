@@ -103,6 +103,10 @@ h1:focus {
     display: none;
     text-align: center;
     transition: opacity 0.3s;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .nav-link:hover .nav-text {
@@ -143,7 +147,15 @@ h1:focus {
         display: block;
         margin-left: 10px;
     }
+
+    .samochody-flota img {
+        display: none;
+    }
+    .day-cell {
+        padding: 25px;
+    }
 }
+
 /*Kalendarz*/
 @keyframes gradientAnimation {
     0% {
@@ -174,6 +186,12 @@ h1:focus {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
+    color: white;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    text-transform: uppercase;
 }
 
     .calendar-controls button {
@@ -186,22 +204,29 @@ h1:focus {
         font-size: 16px;
         transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-family: "Inter", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 400;
+        font-style: normal;
     }
 
         .calendar-controls button:hover {
-            background-color: #212121;
+            background-color: #3479f1;
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
         }
-.logo-page img{
-    margin-left:40%;
-    width:20%;
-    height:20%;
+
+.logo-page img {
+    margin-left: 40%;
+    width: 20%;
+    height: 20%;
 }
+
 .schedule-grid {
     display: grid;
     grid-template-columns: 1fr repeat(5, 1fr);
     gap: 15px;
+    width: 100%;
 }
 
 .schedule-header {
@@ -209,6 +234,9 @@ h1:focus {
 }
 
 .schedule-column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #2a4d77;
     padding: 12px;
     text-align: center;
@@ -217,10 +245,16 @@ h1:focus {
     border-bottom: 2px solid #4a5d76;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
 }
 
 .schedule-content {
-    display: contents;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .schedule-row {
@@ -228,6 +262,7 @@ h1:focus {
 }
 
 .employee-cell {
+    display: flex;
     background-color: #2a4d77;
     color: #ffffff;
     padding: 14px;
@@ -235,11 +270,16 @@ h1:focus {
     font-weight: 600;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    justify-content: center;
+    align-items: center;
 }
 
 .day-cell {
     background-color: #3f5b9a;
-    padding: 14px;
+    padding: 85px;
     text-align: center;
     border: 1px solid #4a5d76;
     border-radius: 10px;
@@ -248,7 +288,7 @@ h1:focus {
 }
 
     .day-cell:hover {
-        background-color: #4a5d76;
+        background-color: #3479f1;
         color: #ffffff;
         transform: translateY(-3px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -260,11 +300,35 @@ h1:focus {
         border: 2px solid #2a4d77;
         transform: translateY(-3px);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-    } 
+    }
+
+        .day-cell.today:hover {
+            background-color: #3479f1;
+            color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+/* Ikona edycji */
+.fa-pen {
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+}
+
+    .fa-pen:hover {
+        color: #3479f1;
+        transform: scale(1.1);
+    }
 /*samochody logo*/
 .samochody-flota {
     display: flex;
     justify-content: space-around;
+    color: white;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .logo-samochody {
@@ -272,8 +336,8 @@ h1:focus {
 }
 
     .logo-samochody img {
-        width:50%;
-        height:50%;
+        width: 50%;
+        height: 60%;
     }
 /*Modal*/
 .my_modal {

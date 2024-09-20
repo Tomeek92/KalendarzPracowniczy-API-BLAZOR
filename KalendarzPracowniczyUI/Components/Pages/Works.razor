@@ -5,75 +5,235 @@
 @inject WorkServiceUI workService
 
 <NavigationMenu/>
-@if (tasks == null)
-{
-    <div class="loader"></div>
-}
-else
-{
-    if (tasks.Count == 0)
+@using System.Collections.Generic
+@using Microsoft.AspNetCore.Components.Forms
+
+<style>
+  .task-manager-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #1a1a1a;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        color: #f1f1f1;
+    }
+
+    h3 {
+        text-align: center;
+        color: #007bff;
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #444;
+        border-radius: 5px;
+        box-sizing: border-box;
+        background-color: #333;
+        color: #f1f1f1;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+        margin-bottom: 10px;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border: 1px solid #444;
+        transition: background-color 0.3s;
+    }
+
+    th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    tr {
+        background-color: black;
+    }
+
+    tr:hover {
+        background-color: #444;
+    }
+
+    tr.completed {
+        background-color: lawngreen; 
+    }
+
+    input[type="checkbox"] {
+        transform: scale(1.5); 
+        cursor: pointer;
+    }
+
+    .loader {
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        border-top: 4px solid #007bff;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 10px auto;
+    }
+
+    .input-group {
+        width: 50%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #444;
+        border-radius: 8px; 
+        background-color: #2c2c2c; 
+        color: #f1f1f1;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .input-group:focus {
+            border-color: #007bff; 
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+            outline: none;
+        }
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="task-manager-container">
+    <h3>Zarządzaj zadaniami</h3>
+
+    <EditForm Model="@newTask" OnValidSubmit="AddTaskAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <label for="title">Tytuł zadania</label>
+        <InputText id="title" @bind-Value="newTask.Title" placeholder="Wprowadź tytuł zadania" class="input-group"/>
+
+        <label for="description">Opis zadania</label>
+        <InputText id="description" @bind-Value="newTask.Description" placeholder="Wprowadź opis zadania" class="input-group" />
+
+        <button type="submit">Dodaj zadanie</button>
+
+        @if (isLoading)
+        {
+            <div class="loader"></div>
+        }
+
+        @if (errorMessage != null)
+        {
+            <div class="message">@errorMessage</div>
+        }
+
+        @if (successMessage != null)
+        {
+            <div class="success-message">@successMessage</div>
+        }
+    </EditForm>
+
+    <h4>Lista zadań:</h4>
+    @if (tasks.Count == 0)
     {
         <p>Brak zadań do wyświetlenia.</p>
     }
     else
     {
-        <table class="table">
+        <table>
             <thead>
                 <tr>
+                    <th>Status</th>
                     <th>Tytuł</th>
                     <th>Opis</th>
-                    <th>Data rozpoczęcia</th>
-                    <th>Data zakończenia</th>
-                    <th>Ukończone</th>
-                    <th>Utworzone</th>
+                    <th>Akcje</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var task in tasks)
                 {
-                    <tr>
+                    <tr class="@(task.IsCompleted ? "completed" : "")">
+                        <td>
+                            <input type="checkbox" @bind="task.IsCompleted" />
+                        </td>
                         <td>@task.Title</td>
                         <td>@task.Description</td>
-                        <td>@task.StartDate.ToString("yyyy-MM-dd")</td>
-                        <td>@task.EndDate.ToString("yyyy-MM-dd") ?? "N/A"</td>
-                        <td>@(task.IsCompleted ? "Tak" : "Nie")</td>
-                        <td>@task.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>
+                            <button @onclick="() => RemoveTask(task)">Usuń</button>
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
     }
-}
-@if (errorMessage != null)
-{
-    <div class="message">@errorMessage</div>
-}
-
-@if (successMessage != null)
-{
-    <div class="success-message">@successMessage</div>
-}
+</div>
 
 @code {
+    private TaskModel newTask = new();
+    private List<TaskModel> tasks = new();
+    private bool isLoading = false;
     private string? errorMessage;
     private string? successMessage;
-    private List<WorkDto>? tasks;
 
-    protected override async Task OnInitializedAsync()
+    private async Task AddTaskAsync()
     {
         try
         {
-            tasks = await workService.GetUserAllTasks();
-            successMessage = "Pomyślnie wyświetlono zadania";
-            errorMessage = null;
+            isLoading = true;
+            tasks.Add(newTask);
+            successMessage = "Zadanie zostało dodane!";
+            newTask = new TaskModel(); 
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             errorMessage = $"Wystąpił błąd: {ex.Message}";
-            successMessage = null;
         }
-
-       
+        finally
+        {
+            isLoading = false; 
+        }
     }
 
+    private void UpdateTaskStatus(TaskModel task)
+    {
+        
+    }
+
+    private void RemoveTask(TaskModel task)
+    {
+        tasks.Remove(task);
+        successMessage = "Zadanie zostało usunięte!";
+    }
+
+    public class TaskModel
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public bool IsCompleted { get; set; } = false; 
+    }
 }

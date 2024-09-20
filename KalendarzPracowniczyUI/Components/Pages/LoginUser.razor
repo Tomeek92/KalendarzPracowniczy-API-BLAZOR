@@ -1,0 +1,161 @@
+﻿@page "/"
+@using KalendarzPracowniczyUI.Service
+@rendermode InteractiveServer
+@inject UserServiceUI UserServiceUI
+<style>
+    .logo-page img {
+        margin-left: 5%;
+        width: 40%;
+        height: 40%;
+    }
+    /* Tło */
+    .login-container {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Pudełko formularza */
+    .login-box {
+        background: rgba(61, 76, 110, 0.85);
+        padding: 40px 30px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        width: 100%;
+        max-width: 400px;
+        color: #fff;
+        text-align: center;
+        animation: fadeIn 0.7s ease-in-out;
+    }
+
+        /* Nagłówek */
+        .login-box h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+    /* Grupy formularza */
+    .input-group {
+        position: relative;
+        margin-bottom: 35px;
+        text-align: left;
+    }
+
+        /* Pola tekstowe */
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            padding-left: 1px;
+            border-radius: 12px;
+            border: 1px solid #2a4d77;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+            .input-group input::placeholder {
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            .input-group input:focus {
+                outline: none;
+                background-color: rgba(255, 255, 255, 0.2);
+                border-color: #1b6ec2;
+            }
+
+    /* Przycisk logowania */
+    button[type="submit"] {
+        width: 100%;
+        padding: 14px;
+        background-color: #3f5b9a;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        button[type="submit"]:hover {
+            background-color: #2a4d77;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+    /* Link zapomnianego hasła */
+    .forgot-password {
+        margin-top: 15px;
+    }
+
+        .forgot-password a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+            .forgot-password a:hover {
+                color: #1b6ec2;
+            }
+            
+
+    /* Animacja pojawiania się */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsywność */
+    @@media (max-width: 768px) {
+        .login-box {
+            width: 90%;
+            padding: 30px;
+        }
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-box">
+        <div class="logo-page">
+            <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa.png" />
+        </div>
+        <h2>Logowanie do BIDON!</h2>
+        <form>
+            <div class="input-group">
+                <input type="text" id="username" required>
+                <label for="username">Nazwa użytkownika</label>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" required>
+                <label for="password">Hasło</label>
+            </div>
+            <button type="submit">Zaloguj się</button>
+            <div class="forgot-password">
+                <a href="#">Zapomniałeś hasła?</a>
+            </div>
+        </form>
+    </div>
+</div>
+@if (isLoading)
+{
+    <div class="loader"></div>
+}
+@code {
+    private bool isLoading = false;
+
+}

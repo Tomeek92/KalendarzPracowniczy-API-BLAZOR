@@ -95,7 +95,7 @@
         border: 1px solid #f5c6cb;
     }
 </style>
-<NavigationMenu/>
+<NavigationMenu />
 <div class="logo">
     <img src="logo.png" />
 </div>
@@ -126,17 +126,20 @@
             <button type="submit">Zmień wyjazd!</button>
         </div>
     </EditForm>
-    </div>
-    @if (!string.IsNullOrEmpty(message))
-    {
-        <p class="message">@message</p> 
-    }
+</div>
+@if (!string.IsNullOrEmpty(message))
+{
+    <p class="message">@message</p>
+}
 
-    @if (isSuccess)
-    {
-        <p class="success-message">Zadanie zostało dodane pomyślnie!</p>
-    }
-
+@if (isSuccess)
+{
+    <p class="success-message">Zadanie zostało dodane pomyślnie!</p>
+}
+@if (isLoading)
+{
+    <div class="loader"></div>
+}
 
 @code {
     [SupplyParameterFromForm]
@@ -144,6 +147,7 @@
     private string? currentUserName;
     private string? message;
     private bool isSuccess;
+    private bool isLoading = false;
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -163,6 +167,7 @@
     {
         try
         {
+            isLoading = true;
             await EventServiceUI.Update(eventCommand);
             isSuccess = true;
             message = null;
@@ -171,6 +176,10 @@
         {
             message = $"Wystąpił błąd: {ex.Message}";
             isSuccess = false;
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 }
