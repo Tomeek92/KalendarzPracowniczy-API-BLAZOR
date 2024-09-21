@@ -151,31 +151,17 @@ h1:focus {
     .samochody-flota img {
         display: none;
     }
+
     .day-cell {
         padding: 25px;
     }
 }
 
 /*Kalendarz*/
-@keyframes gradientAnimation {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-}
 
 .weekly-schedule-container {
     margin-left: 140px;
-    padding: 25px;
-    background: linear-gradient(135deg, #3f5b9a, #3d4c6e);
-    background-size: 200% 200%;
+    padding: 95px;
     animation: gradientAnimation 100s ease infinite;
     border-radius: 2px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -413,4 +399,47 @@ h1:focus {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
+}
+/*menu bar*/
+
+.menu-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-top: 20px;
+    margin-right:95%;
+}
+
+.menu-link {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: color 0.5s, transform 0.3s, left 0.3s ease;
+    position: relative;
+    left: 0; 
+}
+
+.menu-clicked {
+    left: 100px; 
+}
+
+.menu-text {
+    font-size: 12px;
+    position: absolute;
+    top: 50%;
+    left: 50px;
+    transform: translateY(-50%);
+    color: #ffffff;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.menu-link:hover .menu-text {
+    opacity: 1;
 }
