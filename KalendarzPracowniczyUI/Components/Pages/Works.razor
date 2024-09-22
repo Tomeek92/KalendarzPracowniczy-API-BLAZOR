@@ -3,130 +3,133 @@
 @using KalendarzPracowniczyApplication.Dto
 @using KalendarzPracowniczyUI.Service
 @inject WorkServiceUI workService
-
-<NavigationMenu/>
 @using System.Collections.Generic
 @using Microsoft.AspNetCore.Components.Forms
 
 <style>
-  .task-manager-container {
-        max-width: 600px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #1a1a1a;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-        color: #f1f1f1;
-    }
+.task-manager-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #2b2f3a; 
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); 
+    color: #f1f1f1; 
+}
 
-    h3 {
-        text-align: center;
-        color: #007bff;
-        margin-bottom: 20px;
-    }
+h3 {
+    text-align: center;
+    color: #78909c; 
+    margin-bottom: 20px;
+}
 
-    label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #007bff;
-    }
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #78909c;
+}
 
-    input[type="text"] {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid #444;
-        border-radius: 5px;
-        box-sizing: border-box;
-        background-color: #333;
-        color: #f1f1f1;
-    }
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #546e7a;
+    border-radius: 5px;
+    background-color: #37474f; 
+    color: #f1f1f1; 
+}
 
-    button {
-        width: 100%;
-        padding: 10px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s;
-        margin-bottom: 10px;
-    }
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #546e7a; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    margin-bottom: 10px;
+}
 
-    button:hover {
-        background-color: #0056b3;
-    }
+button:hover {
+    background-color: #78909c; 
+}
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
 
-    th, td {
-        padding: 15px;
-        text-align: left;
-        border: 1px solid #444;
-        transition: background-color 0.3s;
-    }
+th, td {
+    padding: 15px;
+    text-align: left;
+    border: 1px solid #546e7a; 
+    transition: background-color 0.3s;
+}
 
-    th {
-        background-color: #007bff;
-        color: white;
-    }
+th {
+    background-color: #455a64; 
+    color: white; 
+}
 
-    tr {
-        background-color: black;
-    }
+tr {
+    background-color: #2b2f3a; 
+}
 
-    tr:hover {
-        background-color: #444;
-    }
+tr:hover {
+    background-color: #37474f;
+}
 
-    tr.completed {
-        background-color: lawngreen; 
-    }
+tr.completed {
+    background-color: #00c853; 
+}
 
-    input[type="checkbox"] {
-        transform: scale(1.5); 
-        cursor: pointer;
-    }
+input[type="checkbox"] {
+    transform: scale(1.5);
+    cursor: pointer;
+}
 
-    .loader {
-        border: 4px solid rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        border-top: 4px solid #007bff;
-        width: 30px;
-        height: 30px;
-        animation: spin 1s linear infinite;
-        margin: 10px auto;
-    }
+.loader {
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    border-top: 4px solid #546e7a; 
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 10px auto;
+}
 
-    .input-group {
-        width: 50%;
-        padding: 12px;
-        margin-bottom: 15px;
-        border: 1px solid #444;
-        border-radius: 8px; 
-        background-color: #2c2c2c; 
-        color: #f1f1f1;
-        transition: border-color 0.3s, box-shadow 0.3s;
-    }
+.input-group {
+    width: 80%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #546e7a;
+    border-radius: 8px;
+    background-color: #37474f; 
+    color: #f1f1f1; 
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
 
-        .input-group:focus {
-            border-color: #007bff; 
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
-            outline: none;
-        }
-    @@keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+.input-group:focus {
+    border-color: #78909c; 
+    box-shadow: 0 0 5px rgba(120, 144, 156, 0.5); 
+    outline: none;
+}
+
+@@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 </style>
-
+<div class="menu-item">
+    <a class="menu-link @menuClickedClass" @onclick="ShowMenu">
+        <i class="fa-sharp fa-solid fa-bars fa-flip-vertical fa-2xl"></i>
+        <span class="menu-text">Główne menu</span>
+    </a>
+</div>
 <div class="task-manager-container">
     <h3>Zarządzaj zadaniami</h3>
 
@@ -155,6 +158,10 @@
         @if (successMessage != null)
         {
             <div class="success-message">@successMessage</div>
+        }
+        @if (isMenuVisible)
+        {
+            <NavigationMenu />
         }
     </EditForm>
 
@@ -199,6 +206,8 @@
     private bool isLoading = false;
     private string? errorMessage;
     private string? successMessage;
+    private bool isMenuVisible = false;
+    private string menuClickedClass = "";
 
     private async Task AddTaskAsync()
     {
@@ -229,7 +238,19 @@
         tasks.Remove(task);
         successMessage = "Zadanie zostało usunięte!";
     }
+    private void ShowMenu()
+    {
+        isMenuVisible = !isMenuVisible;
 
+        if (isMenuVisible)
+        {
+            menuClickedClass = "menu-clicked";
+        }
+        else
+        {
+            menuClickedClass = "";
+        }
+    }
     public class TaskModel
     {
         public string Title { get; set; } = string.Empty;

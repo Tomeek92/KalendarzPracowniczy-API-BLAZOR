@@ -89,11 +89,11 @@ h1:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: color 0.5s, transform 0.3s;
+    transition: color 0.2s, transform 0.2s;
 }
 
     .nav-link:hover {
-        color: #3479f1;
+        color: #ffcc00;
         transform: scale(1.2);
     }
 
@@ -161,57 +161,55 @@ h1:focus {
 
 .weekly-schedule-container {
     margin-left: 140px;
-    padding: 95px;
-    animation: gradientAnimation 100s ease infinite;
-    border-radius: 2px;
+    padding: 50px;
+    background: #2b2f3a;
+    border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    font-family: "Inter", sans-serif;
 }
 
 .calendar-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
-    color: white;
-    font-family: "Inter", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
+    margin-bottom: 20px;
+    color: #ffffff;
+    font-weight: 600;
     text-transform: uppercase;
+    font-size: 18px;
+    letter-spacing: 1px;
 }
 
     .calendar-controls button {
-        background-color: #424242;
+        background-color: #607d8b;
         color: #ffffff;
         border: none;
         padding: 12px 28px;
-        border-radius: 12px;
+        border-radius: 8px;
         cursor: pointer;
         font-size: 16px;
-        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        font-family: "Inter", sans-serif;
-        font-optical-sizing: auto;
-        font-weight: 400;
-        font-style: normal;
+        transition: background-color 0.3s, transform 0.2s;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
         .calendar-controls button:hover {
-            background-color: #3479f1;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            background-color: #78909c;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
 
 .logo-page img {
-    margin-left: 40%;
-    width: 20%;
-    height: 20%;
+    display: block;
+    margin: 0 auto;
+    width: 160px;
+    height: auto;
 }
 
 .schedule-grid {
     display: grid;
-    grid-template-columns: 1fr repeat(5, 1fr);
-    gap: 15px;
+    grid-template-columns: 1.5fr repeat(5, 1fr);
+    gap: 10px;
     width: 100%;
 }
 
@@ -223,24 +221,14 @@ h1:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #2a4d77;
-    padding: 12px;
+    background-color: #455a64;
+    padding: 10px;
     text-align: center;
     font-weight: 600;
     color: #ffffff;
-    border-bottom: 2px solid #4a5d76;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     font-family: "Inter", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 600;
-    font-style: normal;
-}
-
-.schedule-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .schedule-row {
@@ -248,63 +236,71 @@ h1:focus {
 }
 
 .employee-cell {
-    display: flex;
-    background-color: #2a4d77;
+    background-color: #37474f;
     color: #ffffff;
     padding: 14px;
     text-align: center;
     font-weight: 600;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    font-family: "Inter", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.day-cell-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
 .day-cell {
-    background-color: #3f5b9a;
-    padding: 85px;
+    background-color: #546e7a;
+    width: 100%;
+    height: 100px;
     text-align: center;
-    border: 1px solid #4a5d76;
-    border-radius: 10px;
-    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #455a64;
+    border-radius: 6px;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: #ffffff;
 }
 
     .day-cell:hover {
-        background-color: #3479f1;
+        background-color: #78909c;
         color: #ffffff;
         transform: translateY(-3px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
     .day-cell.today {
-        background-color: #212121;
+        background-color: #263238;
         color: #ffffff;
-        border: 2px solid #2a4d77;
+        border: 2px solid #607d8b;
         transform: translateY(-3px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
 
         .day-cell.today:hover {
-            background-color: #3479f1;
+            background-color: #78909c;
             color: #ffffff;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
-/* Ikona edycji */
+
 .fa-pen {
+    position: absolute;
+    top: 10px;
+    right: 10px;
     color: #ffffff;
-    font-size: 14px;
     cursor: pointer;
-    transition: color 0.3s, transform 0.3s;
 }
 
     .fa-pen:hover {
-        color: #3479f1;
-        transform: scale(1.1);
+        color: #ffcc00;
     }
 /*samochody logo*/
 .samochody-flota {
@@ -357,8 +353,8 @@ h1:focus {
 }
 /*B��dy wiadomo�ci oraz loader*/
 .loader {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #3498db;
+    border: 8px solid rgba(255, 255, 255, 0.2);
+    border-top: 8px solid #78909c;
     border-radius: 50%;
     width: 50px;
     height: 50px;
