@@ -1,6 +1,8 @@
 ﻿using KalendarzPracowniczyDomain.Entities.Events;
+using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Interfaces;
 using KalendarzPracowniczyInfrastructureDbContext;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace KalendarzPracowniczyInfrastructure.Repositories
@@ -8,10 +10,12 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
     public class EventRepository : IEventRepository
     {
         private readonly KalendarzPracowniczyDbContext _context;
+        private readonly IUserRepository _userRepository;
 
-        public EventRepository(KalendarzPracowniczyDbContext context)
+        public EventRepository(KalendarzPracowniczyDbContext context, IUserRepository userRepository)
         {
             _context = context;
+            _userRepository = userRepository;
         }
 
         public async Task<Event> GetElementById(Guid id)
@@ -35,6 +39,8 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
+                var userId = await _userRepository.GetUserById(createEvent.UserId);
+
                 bool existingEvent = await _context.Events.AnyAsync(t => t.Name == createEvent.Name);
                 if (existingEvent)
                 {
@@ -45,7 +51,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Błąd podczas dodawania zadania", ex);
+                throw new Exception($"Błąd podczas dodawania zadania {ex.Message}");
             }
         }
 

@@ -1,6 +1,11 @@
 ﻿@page "/kalendarz"
 @using System.Globalization
 @rendermode InteractiveServer
+<style>
+   html, body{
+        background-image: url("unisoft.png");
+    }
+</style>
 <div class="menu-item">
     <a class="menu-link @menuClickedClass" @onclick="ShowMenu">
         <i class="fa-sharp fa-solid fa-bars fa-flip-vertical fa-2xl"></i>

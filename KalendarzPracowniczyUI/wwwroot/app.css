@@ -1,6 +1,6 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-image: url("unisoft.png");
+    background-image: url("2023_UNISOFT_background_1920x1080.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
@@ -404,7 +404,7 @@ h1:focus {
     align-items: center;
     position: relative;
     margin-top: 20px;
-    margin-right:95%;
+    margin-right: 95%;
 }
 
 .menu-link {
@@ -416,11 +416,11 @@ h1:focus {
     align-items: center;
     transition: color 0.5s, transform 0.3s, left 0.3s ease;
     position: relative;
-    left: 0; 
+    left: 0;
 }
 
 .menu-clicked {
-    left: 100px; 
+    left: 100px;
 }
 
 .menu-text {

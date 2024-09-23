@@ -12,7 +12,7 @@ namespace KalendarzPracowniczyInfrastructureDbContext
         public DbSet<Event>? Events { get; set; }
         public DbSet<User>? Users { get; set; }
         public DbSet<Worker>? Workers { get; set; }
-        public DbSet<Work> Works { get; }
+        public DbSet<Work>? Works { get; }
 
         public KalendarzPracowniczyDbContext(DbContextOptions<KalendarzPracowniczyDbContext> options) : base(options)
         {

@@ -148,21 +148,6 @@
     private bool isSuccess;
     private bool isLoading = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity.IsAuthenticated)
-        {
-            currentUserName = user.Identity.Name;
-        }
-        else
-        {
-            currentUserName = "Niezalogowany";
-        }
-    }
-
     public async Task CreateEventAsync()
     {
         try
