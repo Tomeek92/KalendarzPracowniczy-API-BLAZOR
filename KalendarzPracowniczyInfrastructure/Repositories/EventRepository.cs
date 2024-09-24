@@ -10,12 +10,12 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
     public class EventRepository : IEventRepository
     {
         private readonly KalendarzPracowniczyDbContext _context;
-        private readonly IUserRepository _userRepository;
+        private readonly UserManager<User> _userManager;
 
-        public EventRepository(KalendarzPracowniczyDbContext context, IUserRepository userRepository)
+        public EventRepository(KalendarzPracowniczyDbContext context, UserManager<User> userManager)
         {
             _context = context;
-            _userRepository = userRepository;
+            _userManager = userManager;
         }
 
         public async Task<Event> GetElementById(Guid id)
@@ -39,8 +39,6 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                var userId = await _userRepository.GetUserById(createEvent.UserId);
-
                 bool existingEvent = await _context.Events.AnyAsync(t => t.Name == createEvent.Name);
                 if (existingEvent)
                 {

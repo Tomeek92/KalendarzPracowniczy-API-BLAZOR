@@ -1,4 +1,5 @@
 ﻿using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
+using KalendarzPracowniczyApplication.CQRS.Commands.Users.Login;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Update;
 using KalendarzPracowniczyApplication.Dto;
 
@@ -11,6 +12,25 @@ namespace KalendarzPracowniczyUI.Service
         public UserServiceUI(HttpClient httpClient)
         {
             _httpClient = httpClient;
+        }
+
+        public async Task<bool> LoginAsync(string userName, string password)
+        {
+            var loginData = new LoginCommand
+            {
+                UserName = userName,
+                Password = password
+            };
+            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/User", loginData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public async Task Create(CreateUserCommand userCommand)
