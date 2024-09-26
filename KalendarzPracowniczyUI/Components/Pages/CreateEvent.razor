@@ -1,12 +1,15 @@
 ﻿@page "/event"
 @using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
 @using KalendarzPracowniczyApplication.Dto
+@using KalendarzPracowniczyDomain.Entities.Users
 @using KalendarzPracowniczyUI.Service
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
 @rendermode InteractiveServer
 @inject EventServiceUI EventServiceUI
 @inject AuthenticationStateProvider AuthenticationStateProvider
-
+@inject UserManager<User> UserManager
+@inject IHttpContextAccessor HttpContextAccessor
 <style>
     .event-form-container {
         max-width: 600px;
@@ -94,7 +97,7 @@
         border: 1px solid #f5c6cb;
     }
 </style>
-<NavigationMenu/>
+<NavigationMenu />
 <div class="logo">
     <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" />
 </div>
@@ -119,43 +122,58 @@
             <InputDate @bind-Value="eventCommand.EndDate" />
         </div>
         <div>
-            <p>Dodał: @currentUserName</p>
+            <p>Dodał: @currentUser?.UserName</p>
         </div>
         <div>
             <button type="submit">Dodaj wyjazd!</button>
         </div>
     </EditForm>
-    </div>
-    @if (!string.IsNullOrEmpty(message))
-    {
-        <p class="message">@message</p> 
-    }
+</div>
+@if (!string.IsNullOrEmpty(message))
+{
+    <p class="message">@message</p>
+}
 
-    @if (isSuccess)
-    {
-        <p class="success-message">Zadanie zostało dodane pomyślnie!</p>
-    }
+@if (isSuccess)
+{
+    <p class="success-message">Zadanie zostało dodane pomyślnie!</p>
+}
 @if (isLoading)
 {
     <div class="loader"></div>
 }
 
 @code {
-    [SupplyParameterFromForm]
-    public CreateEventCommand eventCommand { get; set; } = new();
-    private string? currentUserName;
+    public CreateEventCommand eventCommand = new CreateEventCommand();
     private string? message;
     private bool isSuccess;
     private bool isLoading = false;
+    private IdentityUser currentUser;
+
+
 
     public async Task CreateEventAsync()
     {
+        isLoading = true;
+        isSuccess = false;
+        message = null;
+
         try
         {
-            isLoading = true;
+            var user = HttpContextAccessor.HttpContext.User;
+
+            Console.WriteLine($"IsAuthenticated: {user.Identity.IsAuthenticated}");
+            Console.WriteLine($"UserName: {user.Identity.Name}");
+            if (user.Identity.IsAuthenticated)
+            {
+                currentUser = await UserManager.GetUserAsync(user);
+            }
+            else
+            {
+                message = $"Błąd autoryzacji";
+            }
             await EventServiceUI.Create(eventCommand);
             isSuccess = true;
-            message = null;
         }
         catch (Exception ex)
         {
@@ -168,3 +186,4 @@
         }
     }
 }
+

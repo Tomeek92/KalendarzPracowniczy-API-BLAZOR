@@ -9,16 +9,20 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
     {
         private readonly IEventRepository _eventRepository;
         private readonly IMapper _mapper;
+
         public CreateEventCommandHandler(IEventRepository eventRepository, IMapper mapper)
         {
             _eventRepository = eventRepository;
             _mapper = mapper;
         }
+
         public async Task Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var mapp = _mapper.Map<Event>(request);
+                mapp.Id = Guid.NewGuid();
+
                 await _eventRepository.Create(mapp);
             }
             catch (AutoMapperMappingException ex)

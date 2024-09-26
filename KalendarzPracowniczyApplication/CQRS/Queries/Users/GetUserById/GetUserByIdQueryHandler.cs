@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using KalendarzPracowniczyApplication.Dto;
-using KalendarzPracowniczyApplication.Interfaces;
 using KalendarzPracowniczyDomain.Interfaces;
 using MediatR;
 
@@ -10,11 +9,13 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Users.GetUserById
     {
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
+
         public GetUserByIdQueryHandler(IMapper mapper, IUserRepository userRepository)
         {
             _mapper = mapper;
             _userRepository = userRepository;
         }
+
         public async Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
             try

@@ -3,7 +3,9 @@ using KalendarzPracowniczyApplication.CQRS.Commands.Events.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetAll;
 using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetElementById;
+using KalendarzPracowniczyDomain.Entities.Users;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KalendarzPracowniczyAPI.Controllers
@@ -12,11 +14,13 @@ namespace KalendarzPracowniczyAPI.Controllers
     [Route("api/[controller]")]
     public class EventController : ControllerBase
     {
+        private readonly UserManager<User> _userManager;
         private readonly IMediator _mediator;
 
-        public EventController(IMediator mediator)
+        public EventController(IMediator mediator, UserManager<User> user)
         {
             _mediator = mediator;
+            _userManager = user;
         }
 
         [HttpPost]
@@ -24,6 +28,13 @@ namespace KalendarzPracowniczyAPI.Controllers
         {
             try
             {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+                command.UserDtoId = user.Id;
+
                 await _mediator.Send(command);
                 return Ok();
             }

@@ -7,20 +7,31 @@ namespace KalendarzPracowniczyUI.Service
     public class EventServiceUI
     {
         private readonly HttpClient _httpClient;
+
         public EventServiceUI(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
+
         public async Task Create(CreateEventCommand command)
         {
-            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Event", command);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Event", command);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Błąd {ex.Message}");
+            }
         }
+
         public async Task Delete(Guid id)
         {
             var response = await _httpClient.DeleteAsync($"https://localhost:7164/api/Event/{id}");
             response.EnsureSuccessStatusCode();
         }
+
         public async Task<EventDto> GetById(Guid id)
         {
             var response = await _httpClient.GetAsync($"https://localhost:7164/api/Event/{id}");
@@ -41,6 +52,7 @@ namespace KalendarzPracowniczyUI.Service
                 throw new Exception($"Nie można znaleźć zdarzenia z ID {id}. Status Code: {response.StatusCode}");
             }
         }
+
         public async Task<IEnumerable<EventDto>> GetAll()
         {
             var allEvents = await _httpClient.GetFromJsonAsync<IEnumerable<EventDto>>($"https://localhost:7164/api/Event");
@@ -53,6 +65,7 @@ namespace KalendarzPracowniczyUI.Service
                 throw new Exception($"Brak Zadań");
             }
         }
+
         public async Task Update(UpdateEventCommand command)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Event", command);

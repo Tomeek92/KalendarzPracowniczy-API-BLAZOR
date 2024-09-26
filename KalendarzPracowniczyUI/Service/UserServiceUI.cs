@@ -1,7 +1,8 @@
 ﻿using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
-using KalendarzPracowniczyApplication.CQRS.Commands.Users.Login;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Update;
+using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login;
 using KalendarzPracowniczyApplication.Dto;
+using System.Text.Json;
 
 namespace KalendarzPracowniczyUI.Service
 {
@@ -14,22 +15,38 @@ namespace KalendarzPracowniczyUI.Service
             _httpClient = httpClient;
         }
 
-        public async Task<bool> LoginAsync(string userName, string password)
+        public async Task<UserDto> Login(LoginQuery loginCommand)
         {
-            var loginData = new LoginCommand
+            try
             {
-                UserName = userName,
-                Password = password
-            };
-            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/User", loginData);
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/User/login", loginCommand);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Status odpowiedzi: {response.StatusCode}");
+                Console.WriteLine($"Treść odpowiedzi: {responseContent}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var userDto = JsonSerializer.Deserialize<UserDto>(responseContent);
+                    Console.WriteLine($"Zalogowany użytkownik: {userDto?.Email}");
+                    if (userDto == null)
+                    {
+                        throw new Exception("Odpowiedź nie zawiera poprawnych danych JSON.");
+                    }
 
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
+                    return userDto;
+                }
+                else
+                {
+                    throw new Exception($"Błąd przy logowaniu: {response.StatusCode}, Treść odpowiedzi: {await response.Content.ReadAsStringAsync()}");
+                }
             }
-            else
+            catch (JsonException jsonEx)
             {
-                return false;
+                Console.WriteLine($"Błąd deserializacji JSON: {jsonEx.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Błąd podczas logowania: {ex.Message}");
             }
         }
 

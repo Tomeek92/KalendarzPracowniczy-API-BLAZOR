@@ -2,9 +2,12 @@
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetUserById;
-using KalendarzPracowniczyApplication.Dto;
+using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace KalendarzPracowniczyAPI.Controllers
 {
@@ -13,10 +16,48 @@ namespace KalendarzPracowniczyAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
+
         public UserController(IMediator mediator)
         {
             _mediator = mediator;
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginQuery command)
+        {
+            try
+            {
+                Console.WriteLine($"Otrzymano dane logowania: {command.Email}");
+                var userDto = await _mediator.Send(command);
+
+                if (userDto == null)
+                {
+                    Console.WriteLine("Nieprawidłowe dane logowania.");
+                    return Unauthorized(new { message = "Nieprawidłowe dane logowania." });
+                }
+
+                var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, command.Email),
+            new Claim(ClaimTypes.NameIdentifier, userDto.Id.ToString()),
+            new Claim("UserName", userDto.Name),
+            new Claim("Surname", userDto.Surname)
+        };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+                Console.WriteLine("Zalogowano pomyślnie");
+                return Ok(userDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Wystąpił błąd: {ex.Message}");
+                return StatusCode(500, new { message = $"Nieoczekiwany błąd: {ex.Message}" });
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateUserCommand userCommand)
         {
@@ -30,6 +71,7 @@ namespace KalendarzPracowniczyAPI.Controllers
                 return StatusCode(500, $"Internal server error {ex}");
             }
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -48,6 +90,7 @@ namespace KalendarzPracowniczyAPI.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateUserCommand userUpdateCommand)
         {
@@ -65,6 +108,7 @@ namespace KalendarzPracowniczyAPI.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(string id)
         {
@@ -82,7 +126,6 @@ namespace KalendarzPracowniczyAPI.Controllers
             {
                 return StatusCode(500, "Internal server error");
             }
-
         }
     }
 }

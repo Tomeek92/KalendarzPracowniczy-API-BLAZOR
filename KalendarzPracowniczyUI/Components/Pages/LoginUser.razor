@@ -1,7 +1,9 @@
 ﻿@page "/"
+@using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login
 @using KalendarzPracowniczyUI.Service
 @rendermode InteractiveServer
 @inject UserServiceUI UserServiceUI
+@inject NavigationManager Navigation
 <style>
     /* Styl logo */
     .logo-page img {
@@ -21,13 +23,13 @@
 
     /* Pudełko formularza */
     .login-box {
-        background: #2b2f3a; 
+        background: #2b2f3a;
         padding: 40px 30px;
         border-radius: 16px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         width: 100%;
         max-width: 400px;
-        color: #f1f1f1; 
+        color: #f1f1f1;
         text-align: center;
         animation: fadeIn 0.7s ease-in-out;
     }
@@ -38,7 +40,7 @@
             font-size: 28px;
             font-weight: 600;
             letter-spacing: 1px;
-            color: #78909c; 
+            color: #78909c;
         }
 
     /* Grupy formularza */
@@ -53,17 +55,17 @@
             padding: 14px;
             padding-left: 5px;
             border-radius: 12px;
-            border: 1px solid #546e7a; 
+            border: 1px solid #546e7a;
             font-size: 16px;
             background-color: rgba(255, 255, 255, 0.1);
-            color: #f1f1f1; 
+            color: #f1f1f1;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
             .input-group input:focus {
                 outline: none;
                 background-color: rgba(255, 255, 255, 0.2);
-                border-color: #78909c; 
+                border-color: #78909c;
             }
 
         /* Styl etykiety (placeholder) */
@@ -82,14 +84,14 @@
         .input-group input:not(:placeholder-shown) + label {
             top: -18px;
             font-size: 12px;
-            color: #78909c; 
+            color: #78909c;
         }
 
     /* Przycisk logowania */
     button[type="submit"] {
         width: 100%;
         padding: 14px;
-        background-color: #546e7a; 
+        background-color: #546e7a;
         color: #f1f1f1;
         font-size: 16px;
         font-weight: bold;
@@ -101,7 +103,7 @@
     }
 
         button[type="submit"]:hover {
-            background-color: #78909c; 
+            background-color: #78909c;
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
         }
@@ -112,14 +114,14 @@
     }
 
         .forgot-password a {
-            color: #f1f1f1; 
+            color: #f1f1f1;
             text-decoration: none;
             font-size: 14px;
             transition: color 0.3s ease;
         }
 
             .forgot-password a:hover {
-                color: #78909c; 
+                color: #78909c;
             }
     /* Animacja pojawiania się */
     @@keyframes fadeIn {
@@ -149,30 +151,78 @@
         </div>
         <h2>Logowanie do BIDON!</h2>
         <br />
-        <form>
+        <EditForm Model="@loginQuery" OnValidSubmit="Login" FormName="LoginAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
             <div class="input-group">
-                <input type="text" id="username" required placeholder=" " />
+                <InputText id="username" @bind-Value="loginQuery.UserName" required placeholder=" " />
                 <label for="username">Nazwa użytkownika</label>
             </div>
             <div class="input-group">
-                <input type="password" id="password" required placeholder=" " />
+                <InputText id="name" @bind-Value="loginQuery.Name" required placeholder=" " />
+                <label for="name">Imię</label>
+            </div>
+            <div class="input-group">
+                <InputText id="Surname" @bind-Value="loginQuery.SurName" required placeholder=" " />
+                <label for="Surname">Nazwisko</label>
+            </div>
+            <div class="input-group">
+                <InputText id="Email" @bind-Value="loginQuery.Email" required placeholder=" " />
+                <label for="Email">Email</label>
+            </div>
+            <div class="input-group">
+                <InputText id="password" type="password" @bind-Value="loginQuery.Password" required placeholder=" " />
                 <label for="password">Hasło</label>
             </div>
             <button type="submit">Zaloguj się</button>
             <div class="forgot-password">
                 <a href="#">Zapomniałeś hasła?</a>
             </div>
-        </form>
+            @if (errorMessage != null)
+            {
+                <div class="message">@errorMessage</div>
+                <div class="loader"></div>
+            }
+
+            @if (successMessage != null)
+            {
+                <div class="success-message">@successMessage</div>
+            }
+
+            @if (isLoading)
+            {
+                <div class="loader"></div>
+            }
+        </EditForm>
     </div>
 </div>
 
 
-
-@if (isLoading)
-{
-    <div class="loader"></div>
-}
 @code {
     private bool isLoading = false;
+    private LoginQuery loginQuery = new LoginQuery();
+    private string? errorMessage;
+    private string? successMessage;
+    public async Task Login()
+    {
+        try
+        {
+            isLoading = true;
+            await UserServiceUI.Login(loginQuery);
+            successMessage = "Użytkownik został pomyślnie zalogowany!";
+            errorMessage = null;
+            Navigation.NavigateTo("/kalendarz");
+        }
+        catch(Exception ex)
+        {
+            errorMessage = $"Wystąpił błąd podczas logowania {ex.Message}";
+            successMessage = null;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
 
 }

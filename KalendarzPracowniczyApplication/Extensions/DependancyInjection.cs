@@ -13,11 +13,13 @@ using KalendarzPracowniczyApplication.CQRS.Commands.Works.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetAll;
 using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetElementById;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetUserById;
+using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login;
 using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetAllWorkers;
 using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetWorkerById;
 using KalendarzPracowniczyApplication.CQRS.Queries.Works.GetUserTaskById;
 using KalendarzPracowniczyApplication.CQRS.Queries.Works.GetUserTasks;
 using KalendarzPracowniczyApplication.Mapper;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace KalendarzPracowniczyApplication.Extensions
@@ -45,6 +47,7 @@ namespace KalendarzPracowniczyApplication.Extensions
         typeof(DeleteWorkCommand).Assembly,
         typeof(UpdateWorkCommand).Assembly,
         typeof(GetUserTasksQuery).Assembly,
+          typeof(LoginQuery).Assembly,
         typeof(GetUserTaskByIdQuery).Assembly
            ));
 

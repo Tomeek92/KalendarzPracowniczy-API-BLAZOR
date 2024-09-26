@@ -16,26 +16,23 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             _signInManager = signInManager;
         }
 
-        public async Task Login(LoginDto user)
+        public async Task<User?> FindByUserEmailAsync(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<SignInResult> Login(string userName, string password)
         {
             try
             {
-                var findUser = await _userManager.FindByNameAsync(user.UserName);
-                if (findUser == null)
-                {
-                    throw new Exception($"Nie odnaleziono użytkownika w bazie danych");
-                }
-                var result = await _signInManager.PasswordSignInAsync(findUser.UserName, user.Password, isPersistent: false, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(userName, password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                }
-                else if (result.IsLockedOut)
-                {
-                    throw new Exception("Użytkownik jest zablokowany");
+                    return SignInResult.Success;
                 }
                 else
                 {
-                    throw new Exception("Nieprawidłowa próba logowania");
+                    return SignInResult.Failed;
                 }
             }
             catch (Exception ex)
