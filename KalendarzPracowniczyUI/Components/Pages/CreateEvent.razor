@@ -97,7 +97,6 @@
         border: 1px solid #f5c6cb;
     }
 </style>
-<NavigationMenu />
 <div class="logo">
     <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" />
 </div>
@@ -160,18 +159,6 @@
 
         try
         {
-            var user = HttpContextAccessor.HttpContext.User;
-
-            Console.WriteLine($"IsAuthenticated: {user.Identity.IsAuthenticated}");
-            Console.WriteLine($"UserName: {user.Identity.Name}");
-            if (user.Identity.IsAuthenticated)
-            {
-                currentUser = await UserManager.GetUserAsync(user);
-            }
-            else
-            {
-                message = $"Błąd autoryzacji";
-            }
             await EventServiceUI.Create(eventCommand);
             isSuccess = true;
         }

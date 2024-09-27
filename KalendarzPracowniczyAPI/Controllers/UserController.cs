@@ -1,8 +1,11 @@
 ﻿using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Delete;
+using KalendarzPracowniczyApplication.CQRS.Commands.Users.Logout;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetUserById;
+using KalendarzPracowniczyApplication.CQRS.Queries.Users.LoggedUser;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login;
+using KalendarzPracowniczyApplication.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -22,12 +25,31 @@ namespace KalendarzPracowniczyAPI.Controllers
             _mediator = mediator;
         }
 
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _mediator.Send(new LogOutCommand());
+            return Ok();
+        }
+
+        [HttpGet("me")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var userDto = await _mediator.Send(new LoggedUserQuery());
+
+            if (userDto == null)
+            {
+                return Unauthorized(new { message = "Nie jesteś zalogowany." });
+            }
+
+            return Ok(userDto);
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginQuery command)
         {
             try
             {
-                Console.WriteLine($"Otrzymano dane logowania: {command.Email}");
                 var userDto = await _mediator.Send(command);
 
                 if (userDto == null)
@@ -38,17 +60,20 @@ namespace KalendarzPracowniczyAPI.Controllers
 
                 var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, command.Email),
+            new Claim(ClaimTypes.Name, command.UserName),
             new Claim(ClaimTypes.NameIdentifier, userDto.Id.ToString()),
-            new Claim("UserName", userDto.Name),
+            new Claim("UserName", command.UserName),
             new Claim("Surname", userDto.Surname)
         };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-
-                Console.WriteLine("Zalogowano pomyślnie");
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                };
+                Console.WriteLine("Przed SignInAsync");
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                Console.WriteLine("Po SignInAsync - Zalogowano");
                 return Ok(userDto);
             }
             catch (Exception ex)

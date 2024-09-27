@@ -4,8 +4,10 @@ using KalendarzPracowniczyInfrastructure.Extensions;
 using KalendarzPracowniczyInfrastructureDbContext;
 using KalendarzPracowniczyUI.Components;
 using KalendarzPracowniczyUI.Service;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,33 +34,37 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
         .AddDefaultTokenProviders();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
-builder.Services.AddAuthorizationCore();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7164") });
-builder.Services.AddHttpClient<EventServiceUI>(client =>
+builder.Services.AddAuthorization(options =>
 {
-    client.BaseAddress = new Uri("https://localhost:7164");
-});
-builder.Services.AddHttpClient<UserServiceUI>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7164");
-});
-builder.Services.AddHttpClient<WorkerServiceUI>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7164");
-});
-builder.Services.AddHttpClient<WorkServiceUI>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7164");
+    options.AddPolicy("DefaultPolicy", policy =>
+        policy.RequireAuthenticatedUser());
 });
 
-builder.Services.AddIdentityCore<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<KalendarzPracowniczyDbContext>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7164") });
+builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+builder.Services.AddScoped<UserServiceUI>();
+builder.Services.AddScoped<EventServiceUI>();
+builder.Services.AddScoped<WorkerServiceUI>();
+builder.Services.AddScoped<WorkServiceUI>();
+builder.Services.AddHttpClient("API", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7164");
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new HttpClientHandler
+    {
+        UseCookies = true,
+        CookieContainer = new CookieContainer(),
+        AllowAutoRedirect = false
+    };
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:7136")
+        builder => builder.WithOrigins("https://localhost:7136")
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials());
@@ -69,12 +75,14 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnet
+    // -hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
+app.UseRouting();
+app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();

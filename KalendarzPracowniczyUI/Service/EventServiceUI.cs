@@ -8,9 +8,9 @@ namespace KalendarzPracowniczyUI.Service
     {
         private readonly HttpClient _httpClient;
 
-        public EventServiceUI(HttpClient httpClient)
+        public EventServiceUI(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("API");
         }
 
         public async Task Create(CreateEventCommand command)

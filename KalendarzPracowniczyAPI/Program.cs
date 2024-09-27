@@ -1,4 +1,3 @@
-using Google.Api;
 using KalendarzPracowniczyApplication.Extensions;
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyInfrastructure.Extensions;
@@ -34,24 +33,27 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
         .AddDefaultTokenProviders();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddIdentityCore<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<KalendarzPracowniczyDbContext>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-           .AddCookie(options =>
-           {
-               options.LoginPath = "/api/User/login";
-               options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-               options.SlidingExpiration = true;
-               options.Cookie.HttpOnly = true;
-               options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-           });
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/api/User/login";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    });
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:7136")
+        builder => builder.WithOrigins("http://localhost:7164")
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials());
+});
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 var app = builder.Build();
 
@@ -61,9 +63,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseRouting();
+app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 

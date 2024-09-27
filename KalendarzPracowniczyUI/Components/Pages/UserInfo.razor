@@ -1,0 +1,97 @@
+﻿@page "/userinfo"
+@using KalendarzPracowniczyApplication.Dto
+@using KalendarzPracowniczyUI.Service
+@inject UserServiceUI UserService
+
+
+<style>
+    .initials-circle {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        background-color: green;
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 40px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .user-name {
+        margin-left: 27%;
+        font-size: 16px;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-weight: 400;
+        
+    }
+</style>
+
+@code {
+    private string initials;
+    private string username;
+    private bool isAuthenticated;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var user = await UserService.GetCurrentUserAsync();
+
+            if (user != null)
+            {
+                isAuthenticated = true;
+
+                if (!string.IsNullOrEmpty(user.Name))
+                {
+                    username = user.Name;
+                }
+                else if (!string.IsNullOrEmpty(user.UserName))
+                {
+                    username = user.UserName;
+                }
+                else
+                {
+                    username = "Użytkowniku";
+                }
+                if (!string.IsNullOrEmpty(user.Name) && !string.IsNullOrEmpty(user.Surname))
+                {
+                    initials = $"{user.Name[0]}{user.Surname[0]}".ToUpper();
+                }
+                else if (!string.IsNullOrEmpty(user.UserName))
+                {
+                    initials = user.UserName.Substring(0, 2).ToUpper();
+                }
+                else
+                {
+                    initials = "NN";
+                }
+            }
+            else
+            {
+                isAuthenticated = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd w OnInitializedAsync: {ex.Message}");
+            isAuthenticated = false;
+        }
+    }
+}
+
+@if (isAuthenticated)
+{
+    <div class="user-info">
+        <span class="user-name"> @username</span>
+    </div>
+}
+else
+{
+    <p style="margin-left:32%;margin-top:0%">Brak</p>
+}

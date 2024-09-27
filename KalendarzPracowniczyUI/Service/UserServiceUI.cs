@@ -10,23 +10,56 @@ namespace KalendarzPracowniczyUI.Service
     {
         private readonly HttpClient _httpClient;
 
-        public UserServiceUI(HttpClient httpClient)
+        public UserServiceUI(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("API");
+        }
+
+        public async Task LogoutAsync()
+        {
+            var response = await _httpClient.PostAsync("/api/User/logout", null);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Wylogowywanie nie powiodło się.");
+            }
+        }
+
+        public async Task<UserDto> GetCurrentUserAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("api/User/me");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<UserDto>();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Nie udało się pobrać informacji o zalogowanym użytkowniku.");
+            }
         }
 
         public async Task<UserDto> Login(LoginQuery loginCommand)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/User/login", loginCommand);
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7164/api/User/login")
+                {
+                    Content = JsonContent.Create(loginCommand)
+                };
+
+                var response = await _httpClient.SendAsync(request);
                 var responseContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Status odpowiedzi: {response.StatusCode}");
-                Console.WriteLine($"Treść odpowiedzi: {responseContent}");
+
                 if (response.IsSuccessStatusCode)
                 {
                     var userDto = JsonSerializer.Deserialize<UserDto>(responseContent);
-                    Console.WriteLine($"Zalogowany użytkownik: {userDto?.Email}");
                     if (userDto == null)
                     {
                         throw new Exception("Odpowiedź nie zawiera poprawnych danych JSON.");
@@ -36,7 +69,7 @@ namespace KalendarzPracowniczyUI.Service
                 }
                 else
                 {
-                    throw new Exception($"Błąd przy logowaniu: {response.StatusCode}, Treść odpowiedzi: {await response.Content.ReadAsStringAsync()}");
+                    throw new Exception($"Błąd przy logowaniu: {response.StatusCode}, Treść odpowiedzi: {responseContent}");
                 }
             }
             catch (JsonException jsonEx)

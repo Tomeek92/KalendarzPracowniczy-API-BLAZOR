@@ -147,11 +147,6 @@ h1:focus {
         display: block;
         margin-left: 10px;
     }
-
-    .samochody-flota img {
-        display: none;
-    }
-
     .day-cell {
         padding: 25px;
     }
@@ -302,25 +297,7 @@ h1:focus {
     .fa-pen:hover {
         color: #ffcc00;
     }
-/*samochody logo*/
-.samochody-flota {
-    display: flex;
-    justify-content: space-around;
-    color: white;
-    font-family: "Inter", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-}
 
-.logo-samochody {
-    text-align: center;
-}
-
-    .logo-samochody img {
-        width: 50%;
-        height: 60%;
-    }
 /*Modal*/
 .my_modal {
     position: fixed;

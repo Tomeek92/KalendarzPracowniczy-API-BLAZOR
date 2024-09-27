@@ -1,18 +1,23 @@
 ﻿@page "/kalendarz"
 @using System.Globalization
+@using KalendarzPracowniczyApplication.Dto
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
 @rendermode InteractiveServer
 <style>
-   html, body{
+    html, body {
         background-image: url("unisoft.png");
     }
 </style>
+
 <div class="menu-item">
     <a class="menu-link @menuClickedClass" @onclick="ShowMenu">
         <i class="fa-sharp fa-solid fa-bars fa-flip-vertical fa-2xl"></i>
         <span class="menu-text">Główne menu</span>
     </a>
 </div>
-
 <div class="weekly-schedule-container">
     <div class="logo-page">
         <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" />
@@ -27,73 +32,53 @@
             <div class="schedule-column">Pracownicy</div>
             @foreach (var day in GetDaysOfWeek())
             {
-                <div class="schedule-column">
+                    <div class="schedule-column">
                     @day.ToString("ddd", new System.Globalization.CultureInfo("pl-PL"))<br />
                     @day.Day
-                </div>
+                    </div>
             }
         </div>
 
         @foreach (var user in users)
         {
-            <div class="schedule-row">
-                <div class="employee-cell">@user.FirstName @user.LastName</div>
+                <div class="schedule-row">
+                    <div class="employee-cell">@user.FirstName @user.LastName</div>
                 @foreach (var day in GetDaysOfWeek())
                 {
-                    <div class="day-cell-wrapper">
-                        <div @onclick="() => ShowModal(day)" class="day-cell @(day.Date == DateTime.Today.Date ? "today" : "")"></div>
-                        <a @onclick="ShowSecondModal" class="fa-solid fa-pen"></a>
-                    </div>
+                            <div class="day-cell-wrapper">
+                                <div @onclick="() => ShowModal(day)" class="day-cell @(day.Date == DateTime.Today.Date ? "today" : "")"></div>
+                                <a @onclick="ShowSecondModal" class="fa-solid fa-pen"></a>
+                            </div>
                 }
-            </div>
+                </div>
         }
     </div>
-    <br />
-    <div class="samochody-flota">
-        <div class="logo-samochody">
-            <img src="car_logo_PNG1664.png" />
-            <p>Rapid 1.4D Kosiarka (GA128AM)</p>
-        </div>
-        <div class="logo-samochody">
-            <img src="car_logo_PNG1664.png" />
-            <p>Rapid 1.6D (GA6274U)</p>
-        </div>
-        <div class="logo-samochody">
-            <img src="car_logo_PNG1664.png" />
-            <p>Super B (CB225ME)</p>
-        </div>
-        <div class="logo-samochody">
-            <img src="R.png" />
-            <p>Toyota (GA370EN)</p>
-        </div>
-    </div>
 </div>
-
 @if (selectedDay.HasValue)
 {
-    <div class="my_modal">
-        <div class="my_modal_content">
-            <h1 class="close" @onclick="HideModal">&times;</h1>
-            <CreateEvent />
+        <div class="my_modal">
+            <div class="my_modal_content">
+                <h1 class="close" @onclick="HideModal">&times;</h1>
+                <CreateEvent />
+            </div>
         </div>
-    </div>
 }
 @if (isVisible)
 {
-    <div class="my_modal">
-        <div class="my_modal_content">
-            <h1 class="close" @onclick="CloseModal">&times;</h1>
-            <UpdateEvent />
+        <div class="my_modal">
+            <div class="my_modal_content">
+                <h1 class="close" @onclick="CloseModal">&times;</h1>
+                <UpdateEvent />
+            </div>
         </div>
-    </div>
 }
 @if (isLoading)
 {
-    <div class="loader"></div>
+        <div class="loader"></div>
 }
 @if (isMenuVisible)
 {
-    <NavigationMenu />
+        <NavigationMenu />
 }
 
 @code {
@@ -101,7 +86,8 @@
     private bool isVisible = false;
     private bool isLoading = false;
     private bool isMenuVisible = false;
-    private string menuClickedClass = ""; 
+    private string menuClickedClass = "";
+
 
     private void ShowMenu()
     {
