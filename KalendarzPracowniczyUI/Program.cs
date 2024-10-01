@@ -61,14 +61,6 @@ builder.Services.AddHttpClient("API", client =>
     };
 });
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("https://localhost:7136")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .AllowCredentials());
-});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -82,7 +74,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();

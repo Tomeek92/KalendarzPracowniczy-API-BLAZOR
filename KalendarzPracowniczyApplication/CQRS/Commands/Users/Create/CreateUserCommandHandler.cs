@@ -2,6 +2,7 @@
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Interfaces;
 using MediatR;
+using Microsoft.AspNet.Identity;
 
 namespace KalendarzPracowniczyApplication.CQRS.Commands.Users.Create
 {
@@ -21,6 +22,12 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Users.Create
             try
             {
                 var mapp = _mapper.Map<User>(request);
+                
+                if (string.IsNullOrEmpty(mapp.Id))
+                {
+                    mapp.Id = Guid.NewGuid().ToString();  
+                }
+                
                 await _userRepository.CreateUser(mapp, request.Password);
             }
             catch (AutoMapperMappingException ex)

@@ -10,9 +10,9 @@ namespace KalendarzPracowniczyUI.Service
     {
         private readonly HttpClient _httpClient;
 
-        public UserServiceUI(IHttpClientFactory httpClientFactory)
+        public UserServiceUI(HttpClient httpClient)
         {
-            _httpClient = httpClientFactory.CreateClient("API");
+            _httpClient = httpClient;
         }
 
         public async Task LogoutAsync()
@@ -49,7 +49,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7164/api/User/login")
+                var request = new HttpRequestMessage(HttpMethod.Post, "api/User/login")
                 {
                     Content = JsonContent.Create(loginCommand)
                 };
@@ -87,16 +87,28 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/User", userCommand);
+                var request = new HttpRequestMessage(HttpMethod.Post, "api/User/Create")
+                {
+                    Content = JsonContent.Create(userCommand)
+                };
+
+                var response = await _httpClient.SendAsync(request);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var responseBody = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine("Użytkownik utworzony pomyślnie.");
+                }
+                else
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Błąd podczas tworzenia użytkownika. StatusCode: {response.StatusCode}, Treść odpowiedzi: {responseContent}");
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception("Nieoczekiwany błąd");
+                Console.WriteLine($"Błąd: {ex.Message}");
+                throw new Exception("Nieoczekiwany błąd", ex);
             }
         }
 

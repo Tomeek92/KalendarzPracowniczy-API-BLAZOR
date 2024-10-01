@@ -155,8 +155,7 @@
 }
 
 @code {
-    [SupplyParameterFromForm]
-    private CreateUserCommand userCommand { get; set; } = new();
+    private CreateUserCommand userCommand = new CreateUserCommand();
     private bool isLoading = false;
     private string? errorMessage;
     private string? successMessage;

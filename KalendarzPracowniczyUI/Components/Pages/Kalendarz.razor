@@ -1,85 +1,93 @@
 ﻿@page "/kalendarz"
 @using System.Globalization
 @using KalendarzPracowniczyApplication.Dto
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Identity
+@inject HttpClient _httpClient
+@inject NavigationManager Navigation
 @rendermode InteractiveServer
 <style>
     html, body {
         background-image: url("unisoft.png");
     }
 </style>
-
-<div class="menu-item">
-    <a class="menu-link @menuClickedClass" @onclick="ShowMenu">
-        <i class="fa-sharp fa-solid fa-bars fa-flip-vertical fa-2xl"></i>
-        <span class="menu-text">Główne menu</span>
-    </a>
-</div>
-<div class="weekly-schedule-container">
-    <div class="logo-page">
-        <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" />
+@if (!isAuthenticated)
+{
+    <p>Przekierowanie na stronę logowania...</p>
+}
+else
+{
+    <div class="menu-item">
+        <a class="menu-link @menuClickedClass" @onclick="ShowMenu">
+            <i class="fa-sharp fa-solid fa-bars fa-flip-vertical fa-2xl"></i>
+            <span class="menu-text">Główne menu</span>
+        </a>
     </div>
-    <div class="calendar-controls">
-        <button @onclick="PreviousWeek">❮ Poprzedni tydzień</button>
-        <h2>@currentWeekStart.ToString("MMMM yyyy", new System.Globalization.CultureInfo("pl-PL"))</h2>
-        <button @onclick="NextWeek">Następny tydzień ❯</button>
-    </div>
-    <div class="schedule-grid">
-        <div class="schedule-header">
-            <div class="schedule-column">Pracownicy</div>
-            @foreach (var day in GetDaysOfWeek())
-            {
-                    <div class="schedule-column">
-                    @day.ToString("ddd", new System.Globalization.CultureInfo("pl-PL"))<br />
-                    @day.Day
-                    </div>
-            }
+    <div class="weekly-schedule-container">
+        <div class="logo-page">
+            <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" />
         </div>
-
-        @foreach (var user in users)
-        {
-                <div class="schedule-row">
-                    <div class="employee-cell">@user.FirstName @user.LastName</div>
+        <div class="calendar-controls">
+            <button @onclick="PreviousWeek">❮ Poprzedni tydzień</button>
+            <h2>@currentWeekStart.ToString("MMMM yyyy", new System.Globalization.CultureInfo("pl-PL"))</h2>
+            <button @onclick="NextWeek">Następny tydzień ❯</button>
+        </div>
+        <div class="schedule-grid">
+            <div class="schedule-header">
+                <div class="schedule-column">Pracownicy</div>
                 @foreach (var day in GetDaysOfWeek())
                 {
-                            <div class="day-cell-wrapper">
-                                <div @onclick="() => ShowModal(day)" class="day-cell @(day.Date == DateTime.Today.Date ? "today" : "")"></div>
-                                <a @onclick="ShowSecondModal" class="fa-solid fa-pen"></a>
-                            </div>
+                    <div class="schedule-column">
+                        @day.ToString("ddd", new System.Globalization.CultureInfo("pl-PL"))<br />
+                        @day.Day
+                    </div>
                 }
+            </div>
+            
+            @foreach (var user in users)
+            {
+                <div class="schedule-row">
+                    <div class="employee-cell">@user.FirstName @user.LastName</div>
+                    @foreach (var day in GetDaysOfWeek())
+                    {
+                        <div class="day-cell-wrapper">
+                            <div @onclick="() => ShowModal(day)" class="day-cell @(day.Date == DateTime.Today.Date ? "today" : "")"></div>
+                            <a @onclick="ShowSecondModal" class="fa-solid fa-pen"></a>
+                        </div>
+                    }
                 </div>
-        }
+            }
+        </div>
     </div>
-</div>
-@if (selectedDay.HasValue)
-{
+    @if (selectedDay.HasValue)
+    {
         <div class="my_modal">
             <div class="my_modal_content">
                 <h1 class="close" @onclick="HideModal">&times;</h1>
                 <CreateEvent />
             </div>
         </div>
-}
-@if (isVisible)
-{
+    }
+    @if (isVisible)
+    {
         <div class="my_modal">
             <div class="my_modal_content">
                 <h1 class="close" @onclick="CloseModal">&times;</h1>
                 <UpdateEvent />
             </div>
         </div>
-}
-@if (isLoading)
-{
+    }
+    @if (isLoading)
+    {
         <div class="loader"></div>
-}
-@if (isMenuVisible)
-{
+    }
+    @if (isMenuVisible)
+    {
         <NavigationMenu />
+    }
 }
+
 
 @code {
     private DateTime? selectedDay = null;
@@ -87,8 +95,45 @@
     private bool isLoading = false;
     private bool isMenuVisible = false;
     private string menuClickedClass = "";
+    private bool isAuthenticated = false;
+    private bool shouldRedirect = false;
 
 
+    /* To do pobieranie wszystkich użytkowników!*/
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && shouldRedirect)
+        {
+            Navigation.NavigateTo("/"); 
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("api/User/me");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var user = await response.Content.ReadFromJsonAsync<UserDto>();
+
+                if (user != null)
+                {
+                    isAuthenticated = true;
+                }
+            }
+            if (!isAuthenticated)
+            {
+                shouldRedirect = true; 
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd podczas sprawdzania zalogowanego użytkownika: {ex.Message}");
+            shouldRedirect = true; 
+        }
+    }
     private void ShowMenu()
     {
         isMenuVisible = !isMenuVisible;
@@ -128,7 +173,6 @@
         return selectedDay.HasValue && selectedDay.Value.Date == day.Date;
     }
 
-    private List<User> users = new List<User>();
     private DateTime currentWeekStart = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
 
     private IEnumerable<DateTime> GetDaysOfWeek()
@@ -146,21 +190,5 @@
     {
         currentWeekStart = currentWeekStart.AddDays(7);
         StateHasChanged();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        users = new List<User>
-        {
-            new User { FirstName = "Jan", LastName = "Kowalski" },
-            new User { FirstName = "Anna", LastName = "Nowak" },
-            new User { FirstName = "Piotr", LastName = "Wójcik" }
-        };
-    }
-
-    public class User
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
     }
 }

@@ -83,7 +83,7 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] CreateUserCommand userCommand)
         {
             try
