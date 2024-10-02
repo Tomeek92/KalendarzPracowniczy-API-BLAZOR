@@ -1,8 +1,7 @@
 ﻿using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Update;
-using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login;
 using KalendarzPracowniczyApplication.Dto;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace KalendarzPracowniczyUI.Service
 {
@@ -17,10 +16,39 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task LogoutAsync()
         {
-            var response = await _httpClient.PostAsync("/api/User/logout", null);
+            var response = await _httpClient.PostAsync("https://localhost:7164/api/User/logout", null);
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Wylogowywanie nie powiodło się.");
+            }
+        }
+
+        public async Task<List<UserDto>> GetAll()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("https://localhost:7164/api/User/getAll");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Status Code: {response.StatusCode}");
+                    Console.WriteLine(content);
+                    var users = JsonConvert.DeserializeObject<List<UserDto>>(content);
+                    return users;
+                }
+                else
+                {
+                    throw new Exception("Błąd podczas pobierania danych: " + response.StatusCode);
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                throw new Exception("Problem z połączeniem HTTP: " + httpEx.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Nie udało się pobrać informacji o użytkownikach: " + ex.Message);
             }
         }
 
@@ -28,7 +56,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync("api/User/me");
+                var response = await _httpClient.GetAsync("https://localhost:7164/api/User/me");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -45,13 +73,13 @@ namespace KalendarzPracowniczyUI.Service
             }
         }
 
-        public async Task<UserDto> Login(LoginQuery loginCommand)
+        public async Task<UserDto> Login(UserDto user)
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, "api/User/login")
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7164/api/User/login")
                 {
-                    Content = JsonContent.Create(loginCommand)
+                    Content = JsonContent.Create(user)
                 };
 
                 var response = await _httpClient.SendAsync(request);
@@ -59,7 +87,7 @@ namespace KalendarzPracowniczyUI.Service
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var userDto = JsonSerializer.Deserialize<UserDto>(responseContent);
+                    var userDto = System.Text.Json.JsonSerializer.Deserialize<UserDto>(responseContent);
                     if (userDto == null)
                     {
                         throw new Exception("Odpowiedź nie zawiera poprawnych danych JSON.");
@@ -72,7 +100,7 @@ namespace KalendarzPracowniczyUI.Service
                     throw new Exception($"Błąd przy logowaniu: {response.StatusCode}, Treść odpowiedzi: {responseContent}");
                 }
             }
-            catch (JsonException jsonEx)
+            catch (System.Text.Json.JsonException jsonEx)
             {
                 Console.WriteLine($"Błąd deserializacji JSON: {jsonEx.Message}");
                 throw;

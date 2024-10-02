@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login
+@using KalendarzPracowniczyApplication.Dto
 @using KalendarzPracowniczyUI.Service
 @rendermode InteractiveServer
 @inject UserServiceUI UserServiceUI
@@ -152,28 +152,28 @@
         </div>
         <h2>Logowanie do BIDON!</h2>
         <br />
-        <EditForm Model="@loginQuery" OnValidSubmit="Login" FormName="LoginAsync">
+        <EditForm Model="@userDto" OnValidSubmit="Login" FormName="LoginAsync">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
             <div class="input-group">
-                <InputText id="username" @bind-Value="loginQuery.UserName" required placeholder=" " />
+                <InputText id="username" @bind-Value="userDto.UserName" required placeholder=" " />
                 <label for="username">Nazwa użytkownika</label>
             </div>
             <div class="input-group">
-                <InputText id="name" @bind-Value="loginQuery.Name" required placeholder=" " />
+                <InputText id="name" @bind-Value="userDto.Name" required placeholder=" " />
                 <label for="name">Imię</label>
             </div>
             <div class="input-group">
-                <InputText id="Surname" @bind-Value="loginQuery.SurName" required placeholder=" " />
+                <InputText id="Surname" @bind-Value="userDto.Surname" required placeholder=" " />
                 <label for="Surname">Nazwisko</label>
             </div>
             <div class="input-group">
-                <InputText id="Email" @bind-Value="loginQuery.Email" required placeholder=" " />
+                <InputText id="Email" @bind-Value="userDto.Email" required placeholder=" " />
                 <label for="Email">Email</label>
             </div>
             <div class="input-group">
-                <InputText id="password" type="password" @bind-Value="loginQuery.Password" required placeholder=" " />
+                <InputText id="password" type="password" @bind-Value="userDto.Password" required placeholder=" " />
                 <label for="password">Hasło</label>
             </div>
             <button type="submit">Zaloguj się</button>
@@ -202,7 +202,7 @@
 
 @code {
     private bool isLoading = false;
-    private LoginQuery loginQuery = new LoginQuery();
+    private UserDto userDto = new UserDto();
     private string? errorMessage;
     private string? successMessage;
 
@@ -211,7 +211,7 @@
         try
         {
             isLoading = true;
-            await UserServiceUI.Login(loginQuery);
+            await UserServiceUI.Login(userDto);
             successMessage = "Użytkownik został pomyślnie zalogowany!";
             errorMessage = null;
             Navigation.NavigateTo("/kalendarz");

@@ -1,9 +1,12 @@
 ﻿@page "/kalendarz"
+@using KalendarzPracowniczyUI.Components.Pages
 @using System.Globalization
 @using KalendarzPracowniczyApplication.Dto
 @using System.Security.Claims
+@using KalendarzPracowniczyUI.Service
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Identity
+@inject UserServiceUI UserService
 @inject HttpClient _httpClient
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
@@ -44,11 +47,12 @@ else
                     </div>
                 }
             </div>
-            
+
             @foreach (var user in users)
             {
                 <div class="schedule-row">
-                    <div class="employee-cell">@user.FirstName @user.LastName</div>
+                    <div class="employee-cell">@user.Name @user.Surname</div>
+
                     @foreach (var day in GetDaysOfWeek())
                     {
                         <div class="day-cell-wrapper">
@@ -97,9 +101,19 @@ else
     private string menuClickedClass = "";
     private bool isAuthenticated = false;
     private bool shouldRedirect = false;
+    private List<UserDto> users = new List<UserDto>();
 
-
-    /* To do pobieranie wszystkich użytkowników!*/
+    private async Task GetAllUsers()
+    {
+        try
+        {
+            users = await UserService.GetAll();
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Błąd podczas pobierania użytkowników");
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -112,20 +126,19 @@ else
     {
         try
         {
-            var response = await _httpClient.GetAsync("api/User/me");
+            var response = await UserService.GetCurrentUserAsync();
 
-            if (response.IsSuccessStatusCode)
-            {
-                var user = await response.Content.ReadFromJsonAsync<UserDto>();
-
-                if (user != null)
-                {
-                    isAuthenticated = true;
-                }
+            if (response != null)
+            {   
+                isAuthenticated = true;       
             }
             if (!isAuthenticated)
             {
                 shouldRedirect = true; 
+            }
+            else
+            {
+                await GetAllUsers();
             }
         }
         catch (Exception ex)

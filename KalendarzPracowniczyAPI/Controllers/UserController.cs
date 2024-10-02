@@ -2,6 +2,7 @@
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Logout;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Update;
+using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetAllUsers;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetUserById;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.LoggedUser;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login;
@@ -150,6 +151,25 @@ namespace KalendarzPracowniczyAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                var query = new GetAllUsersQuery();
+             var users =  await _mediator.Send(query);
+                return Ok(users);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new KeyNotFoundException($"Nie odnaleziono użytkowników {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Błąd podczas odnajdywania użytkowników {ex.Message}");
             }
         }
     }

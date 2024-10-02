@@ -16,5 +16,7 @@ namespace KalendarzPracowniczyDomain.Interfaces
         Task<User?> FindByUserEmailAsync(string? email);
 
         Task<SignInResult> Login(string userName, string password);
+
+        Task<List<User>> GetAllUsers();
     }
 }

@@ -68,6 +68,7 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetUserTaskById(Guid id)
         {
             try
@@ -86,6 +87,7 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetAllUserTask()
         {
             try

@@ -2,6 +2,7 @@
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace KalendarzPracowniczyInfrastructure.Repositories
 {
@@ -67,6 +68,23 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             catch (Exception ex)
             {
                 throw new Exception($"Nieoczekiwany błąd podczas pobierania Id użytkownika", ex);
+            }
+        }
+
+        public async Task<List<User>> GetAllUsers()
+        {
+            try
+            {
+                var allUsers = await _userManager.Users.ToListAsync();
+                if (allUsers == null)
+                {
+                    throw new Exception($"Nie znaleziono użytkowników");
+                }
+                return allUsers;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
             }
         }
 

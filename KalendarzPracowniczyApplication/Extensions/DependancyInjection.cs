@@ -13,6 +13,7 @@ using KalendarzPracowniczyApplication.CQRS.Commands.Works.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Works.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetAll;
 using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetElementById;
+using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetAllUsers;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetUserById;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login;
 using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetAllWorkers;
@@ -47,6 +48,7 @@ namespace KalendarzPracowniczyApplication.Extensions
         typeof(DeleteWorkCommand).Assembly,
         typeof(UpdateWorkCommand).Assembly,
          typeof(LogOutCommand).Assembly,
+         typeof(GetAllUsersQuery).Assembly,
         typeof(GetUserTasksQuery).Assembly,
           typeof(LoginQuery).Assembly,
         typeof(GetUserTaskByIdQuery).Assembly

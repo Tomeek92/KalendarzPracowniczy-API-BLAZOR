@@ -44,12 +44,17 @@
 </div>
 
 @code {
-    private async Task Logout()
+    public async Task Logout()
     {
-
-        await UserServiceUI.LogoutAsync();
-
-        NavigationManager.NavigateTo("/");
+        try
+        {
+            await UserServiceUI.LogoutAsync();
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error during logout: {ex.Message}");
+        }
     }
 }
 
