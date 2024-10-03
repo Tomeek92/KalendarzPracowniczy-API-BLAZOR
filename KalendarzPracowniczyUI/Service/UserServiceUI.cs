@@ -32,8 +32,6 @@ namespace KalendarzPracowniczyUI.Service
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Status Code: {response.StatusCode}");
-                    Console.WriteLine(content);
                     var users = JsonConvert.DeserializeObject<List<UserDto>>(content);
                     return users;
                 }

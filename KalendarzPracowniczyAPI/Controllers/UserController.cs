@@ -6,7 +6,6 @@ using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetAllUsers;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetUserById;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.LoggedUser;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login;
-using KalendarzPracowniczyApplication.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -160,7 +159,7 @@ namespace KalendarzPracowniczyAPI.Controllers
             try
             {
                 var query = new GetAllUsersQuery();
-             var users =  await _mediator.Send(query);
+                var users = await _mediator.Send(query);
                 return Ok(users);
             }
             catch (KeyNotFoundException ex)

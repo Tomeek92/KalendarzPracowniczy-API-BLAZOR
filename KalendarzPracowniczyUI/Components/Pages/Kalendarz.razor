@@ -7,6 +7,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Identity
 @inject UserServiceUI UserService
+@inject EventServiceUI EventService
 @inject HttpClient _httpClient
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
@@ -56,8 +57,18 @@ else
                     @foreach (var day in GetDaysOfWeek())
                     {
                         <div class="day-cell-wrapper">
-                            <div @onclick="() => ShowModal(day)" class="day-cell @(day.Date == DateTime.Today.Date ? "today" : "")"></div>
-                            <a @onclick="ShowSecondModal" class="fa-solid fa-pen"></a>
+                            <div @onclick="() => ShowModal(day)" class="day-cell @(day.Date == DateTime.Today.Date ? "today" : "")">
+                                @foreach (var eventItem in GetEventsForDay(day).Where(e => e.UserId == user.Id))
+                                {
+                                    <div>
+                                        <p> @eventItem.Title</p>
+                                        <p> @eventItem.Description</p>
+                                        <p> @eventItem.Id</p>
+                                        <a @onclick=" async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen"></a>
+                                    </div>
+                                }
+                            </div>
+                          
                         </div>
                     }
                 </div>
@@ -78,7 +89,7 @@ else
         <div class="my_modal">
             <div class="my_modal_content">
                 <h1 class="close" @onclick="CloseModal">&times;</h1>
-                <UpdateEvent />
+                <UpdateEvent EventIdParam="@selectedEvent.Id" />
             </div>
         </div>
     }
@@ -94,6 +105,7 @@ else
 
 
 @code {
+
     private DateTime? selectedDay = null;
     private bool isVisible = false;
     private bool isLoading = false;
@@ -102,16 +114,34 @@ else
     private bool isAuthenticated = false;
     private bool shouldRedirect = false;
     private List<UserDto> users = new List<UserDto>();
+    private IEnumerable<EventDto> userEvents = new List<EventDto>();
+    private EventDto selectedEvent = new EventDto();
 
+    private IEnumerable<EventDto> GetEventsForDay(DateTime day)
+    {
+        return userEvents.Where(e => e.StartDate.HasValue && e.StartDate.Value.Date == day.Date);
+    }
     private async Task GetAllUsers()
     {
         try
         {
             users = await UserService.GetAll();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             throw new Exception($"Błąd podczas pobierania użytkowników");
+        }
+    }
+    private async Task GetAllEvents()
+    {
+        try
+        {
+            userEvents = await EventService.GetAll();
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd podczas pobierania wydarzeń: {ex.Message}");
         }
     }
 
@@ -119,7 +149,7 @@ else
     {
         if (firstRender && shouldRedirect)
         {
-            Navigation.NavigateTo("/"); 
+            Navigation.NavigateTo("/");
         }
     }
     protected override async Task OnInitializedAsync()
@@ -129,22 +159,24 @@ else
             var response = await UserService.GetCurrentUserAsync();
 
             if (response != null)
-            {   
-                isAuthenticated = true;       
+            {
+                isAuthenticated = true;
             }
             if (!isAuthenticated)
             {
-                shouldRedirect = true; 
+                shouldRedirect = true;
             }
             else
             {
                 await GetAllUsers();
+                await GetAllEvents();
+
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Błąd podczas sprawdzania zalogowanego użytkownika: {ex.Message}");
-            shouldRedirect = true; 
+            shouldRedirect = true;
         }
     }
     private void ShowMenu()
@@ -166,9 +198,32 @@ else
         isVisible = false;
     }
 
-    private void ShowSecondModal()
+    private async Task ShowSecondModal(Guid Id)
     {
-        isVisible = true;
+        try
+        {
+
+            var eventToUpdate = await EventService.GetById(Id);
+            Console.WriteLine($"Event to update: Title: {eventToUpdate.Title}, Id: {eventToUpdate.Id}");
+
+            if (eventToUpdate != null)
+            {
+                Console.WriteLine($"Event to update: Title: {eventToUpdate.Title}, Id: {eventToUpdate.Id}");
+                selectedEvent = eventToUpdate;
+                isVisible = true;
+                StateHasChanged();
+
+            }
+            else
+            {
+                Console.WriteLine($"Nie znaleziono wydarzenia o ID: {Id}");
+            }
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+        }
+
     }
 
     private void HideModal()
@@ -179,6 +234,7 @@ else
     private void ShowModal(DateTime day)
     {
         selectedDay = day;
+
     }
 
     private bool IsModalVisible(DateTime day)

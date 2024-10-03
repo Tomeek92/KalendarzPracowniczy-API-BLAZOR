@@ -13,18 +13,24 @@ namespace KalendarzPracowniczyApplication.Mapper
     {
         public MapperProfile()
         {
-            CreateMap<EventDto, KalendarzPracowniczyDomain.Entities.Events.Event>()
-               .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserDtoId.ToString()));
+            CreateMap<EventDto, Event>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id))
+             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title));
 
-            CreateMap<CreateEventCommand, Event>()
-           .ForMember(dest => dest.Id, opt => opt.Ignore())
-           .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserDtoId));
+            CreateMap<Event, EventDto>()
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
 
             CreateMap<UserDto, User>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<User, UserDto>();
-
 
             CreateMap<WorkDto, Work>()
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id))
@@ -40,6 +46,11 @@ namespace KalendarzPracowniczyApplication.Mapper
             .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
 
             CreateMap<WorkerDto, Worker>();
+
+            CreateMap<CreateEventCommand, Event>()
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
         }
     }
 }

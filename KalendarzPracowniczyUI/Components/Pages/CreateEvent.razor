@@ -1,15 +1,9 @@
 ﻿@page "/event"
-@using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
 @using KalendarzPracowniczyApplication.Dto
-@using KalendarzPracowniczyDomain.Entities.Users
 @using KalendarzPracowniczyUI.Service
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Identity
 @rendermode InteractiveServer
 @inject EventServiceUI EventServiceUI
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject UserManager<User> UserManager
-@inject IHttpContextAccessor HttpContextAccessor
+
 <style>
     .event-form-container {
         max-width: 600px;
@@ -103,25 +97,18 @@
 <div class="event-form-container">
     <h2>Dodaj nowy wyjazd</h2>
 
-    <EditForm Model="eventCommand" OnValidSubmit="CreateEventAsync">
+    <EditForm Model="eventDto" OnValidSubmit="CreateEventAsync">
         <div>
             <p>Miejsce wyjazdu</p>
-            <InputText @bind-Value="eventCommand.Title" />
+            <InputText @bind-Value="eventDto.Title" />
         </div>
         <div>
             <p>Opis</p>
-            <InputText @bind-Value="eventCommand.Description" />
+            <InputText @bind-Value="eventDto.Description" />
         </div>
         <div>
             <p>Data dodania:</p>
-            <InputDate @bind-Value="eventCommand.StartDate" />
-        </div>
-        <div>
-            <p>Prawdopodobny czas zakończenia:</p>
-            <InputDate @bind-Value="eventCommand.EndDate" />
-        </div>
-        <div>
-            <p>Dodał: @currentUser?.UserName</p>
+            <InputDate @bind-Value="eventDto.StartDate" />
         </div>
         <div>
             <button type="submit">Dodaj wyjazd!</button>
@@ -143,11 +130,10 @@
 }
 
 @code {
-    public CreateEventCommand eventCommand = new CreateEventCommand();
+    public EventDto eventDto = new EventDto();
     private string? message;
     private bool isSuccess;
     private bool isLoading = false;
-    private IdentityUser currentUser;
 
 
 
@@ -159,7 +145,7 @@
 
         try
         {
-            await EventServiceUI.Create(eventCommand);
+            await EventServiceUI.Create(eventDto);
             isSuccess = true;
         }
         catch (Exception ex)

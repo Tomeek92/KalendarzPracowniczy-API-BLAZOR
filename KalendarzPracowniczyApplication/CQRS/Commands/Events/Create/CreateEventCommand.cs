@@ -3,9 +3,11 @@ using MediatR;
 
 namespace KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
 {
-    public class CreateEventCommand : EventDto, IRequest
+    public class CreateEventCommand : IRequest<EventDto>
     {
-        public string UserDtoId { get; set; }
-        public string CreateBy { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public DateTime StartDate { get; set; }
+
     }
 }

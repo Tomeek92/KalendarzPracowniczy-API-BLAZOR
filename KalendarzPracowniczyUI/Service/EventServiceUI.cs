@@ -1,6 +1,9 @@
 ﻿using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update;
 using KalendarzPracowniczyApplication.Dto;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace KalendarzPracowniczyUI.Service
 {
@@ -8,16 +11,17 @@ namespace KalendarzPracowniczyUI.Service
     {
         private readonly HttpClient _httpClient;
 
-        public EventServiceUI(IHttpClientFactory httpClientFactory)
+        public EventServiceUI(HttpClient httpClient)
         {
-            _httpClient = httpClientFactory.CreateClient("API");
+            _httpClient = httpClient;
         }
 
-        public async Task Create(CreateEventCommand command)
+        public async Task Create(EventDto eventDto)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Event", command);
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Event/Create", eventDto);
+
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
@@ -55,20 +59,45 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task<IEnumerable<EventDto>> GetAll()
         {
-            var allEvents = await _httpClient.GetFromJsonAsync<IEnumerable<EventDto>>($"https://localhost:7164/api/Event");
-            if (allEvents != null)
+            try
             {
-                return allEvents;
+                var response = await _httpClient.GetAsync($"https://localhost:7164/api/Event/GetAll");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+
+                    var allEvents = JsonConvert.DeserializeObject<IEnumerable<EventDto>>(content);
+
+                    if (allEvents == null)
+                    {
+                        throw new Exception("Nie udało się zdeserializować odpowiedzi z API.");
+                    }
+
+                    return allEvents;
+                }
+                else
+                {
+                    throw new Exception($"Błąd podczas pobierania danych: {response.StatusCode}");
+                }
             }
-            else
+            catch (HttpRequestException httpEx)
             {
-                throw new Exception($"Brak Zadań");
+                throw new Exception($"Problem z połączeniem HTTP: {httpEx.Message}");
+            }
+            catch (Newtonsoft.Json.JsonException jsonEx)
+            {
+                throw new Exception($"Błąd podczas deserializacji odpowiedzi: {jsonEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Błąd podczas pobierania wydarzeń: {ex.Message}");
             }
         }
 
-        public async Task Update(UpdateEventCommand command)
+        public async Task Update(EventDto eventDto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/Event", command);
+            var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Event/Update", eventDto);
             response.EnsureSuccessStatusCode();
         }
     }

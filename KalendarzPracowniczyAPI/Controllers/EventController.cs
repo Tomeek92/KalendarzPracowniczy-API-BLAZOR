@@ -7,6 +7,8 @@ using KalendarzPracowniczyDomain.Entities.Users;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace KalendarzPracowniczyAPI.Controllers
 {
@@ -23,18 +25,11 @@ namespace KalendarzPracowniczyAPI.Controllers
             _userManager = user;
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] CreateEventCommand command)
         {
             try
             {
-                var user = await _userManager.GetUserAsync(User);
-                if (user == null)
-                {
-                    return Unauthorized();
-                }
-                command.UserDtoId = user.Id;
-
                 await _mediator.Send(command);
                 return Ok();
             }
@@ -82,26 +77,27 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllEventsDto()
         {
             try
             {
                 var getAll = new GetAllEventQuery();
                 var result = await _mediator.Send(getAll);
-                if (result == null)
+
+                foreach (var evt in result)
                 {
-                    return NotFound("Nie odnaleziono zadań!");
+                    Console.WriteLine($"Event Title: {evt.Title}, Id: {evt.Id}");
                 }
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, $"Internal server error {ex.Message} ");
             }
         }
 
-        [HttpPut]
+        [HttpPut("Update")]
         public async Task<IActionResult> Update([FromBody] UpdateEventCommand eventCommand)
         {
             try

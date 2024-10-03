@@ -4,6 +4,7 @@ using KalendarzPracowniczyDomain.Interfaces;
 using KalendarzPracowniczyInfrastructureDbContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace KalendarzPracowniczyInfrastructure.Repositories
 {
@@ -35,17 +36,12 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
         }
 
-        public async Task Create(Event createEvent)
+        public async Task Create(Event createEvent, CancellationToken cancellationToken)
         {
             try
             {
-                bool existingEvent = await _context.Events.AnyAsync(t => t.Name == createEvent.Name);
-                if (existingEvent)
-                {
-                    throw new Exception($"Istnieje już taka sama nazwa zadania! {createEvent.Name}");
-                }
                 _context.Add(createEvent);
-                await _context.SaveChangesAsync();
+                var result = await _context.SaveChangesAsync(cancellationToken);
             }
             catch (Exception ex)
             {
@@ -94,6 +90,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             try
             {
                 var allEvents = await _context.Events.ToListAsync();
+
                 if (allEvents == null)
                 {
                     throw new KeyNotFoundException($"Nie znaleziono żadnych zadań!");

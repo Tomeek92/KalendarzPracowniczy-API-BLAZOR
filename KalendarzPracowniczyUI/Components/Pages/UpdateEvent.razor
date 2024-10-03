@@ -1,12 +1,9 @@
-﻿@page "/update-event"
-@using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
-@using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update
+﻿
 @using KalendarzPracowniczyApplication.Dto
 @using KalendarzPracowniczyUI.Service
-@using Microsoft.AspNetCore.Components.Authorization
-@rendermode InteractiveServer
+
 @inject EventServiceUI EventServiceUI
-@inject AuthenticationStateProvider AuthenticationStateProvider
+
 
 <style>
     .event-form-container {
@@ -101,31 +98,25 @@
 <div class="event-form-container">
     <h2>Zmień dane wyjazdu</h2>
 
-    <EditForm Model="eventCommand" OnValidSubmit="UpdateEvents">
+    <EditForm Model="eventDto" OnValidSubmit="UpdateEvents">
         <div>
             <p>Miejsce wyjazdu</p>
-            <InputText @bind-Value="eventCommand.Title" />
+            <InputText @bind-Value="eventDto.Title" />
         </div>
         <div>
             <p>Opis</p>
-            <InputText @bind-Value="eventCommand.Description" />
+            <InputText @bind-Value="eventDto.Description" />
         </div>
         <div>
             <p>Data dodania:</p>
-            <InputDate @bind-Value="eventCommand.StartDate" />
-        </div>
-        <div>
-            <p>Prawdopodobny czas zakończenia:</p>
-            <InputDate @bind-Value="eventCommand.EndDate" />
-        </div>
-        <div>
-            <p>Dodał: @currentUserName</p>
+            <InputDate @bind-Value="eventDto.StartDate" />
         </div>
         <div>
             <button type="submit">Zmień wyjazd!</button>
         </div>
     </EditForm>
 </div>
+
 @if (!string.IsNullOrEmpty(message))
 {
     <p class="message">@message</p>
@@ -133,7 +124,7 @@
 
 @if (isSuccess)
 {
-    <p class="success-message">Zadanie zostało dodane pomyślnie!</p>
+    <p class="success-message">Zadanie zostało zaktualizowane pomyślnie!</p>
 }
 @if (isLoading)
 {
@@ -141,24 +132,23 @@
 }
 
 @code {
-    [SupplyParameterFromForm]
-    public UpdateEventCommand eventCommand { get; set; } = new();
-    private string? currentUserName;
+  [Parameter]
+    public Guid EventIdParam { get; set; } 
+
+    public EventDto eventDto;
     private string? message;
     private bool isSuccess;
     private bool isLoading = false;
+
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity.IsAuthenticated)
+      if (EventIdParam != Guid.Empty)
         {
-            currentUserName = user.Identity.Name;
+            Console.WriteLine($"Event do edycji: {eventDto?.Title}, ID: {EventIdParam}");
         }
         else
         {
-            currentUserName = "Niezalogowany";
+            Console.WriteLine("Nie przekazano prawidłowego ID.");
         }
     }
 
@@ -167,7 +157,7 @@
         try
         {
             isLoading = true;
-            await EventServiceUI.Update(eventCommand);
+            await EventServiceUI.Update(eventDto);
             isSuccess = true;
             message = null;
         }

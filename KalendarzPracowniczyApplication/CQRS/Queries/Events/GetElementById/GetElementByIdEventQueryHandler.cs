@@ -9,16 +9,22 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Events.GetElementById
     {
         private readonly IMapper _mapper;
         private readonly IEventRepository _eventRepository;
+
         public GetElementByIdEventQueryHandler(IEventRepository eventRepository, IMapper mapper)
         {
             _mapper = mapper;
             _eventRepository = eventRepository;
         }
+
         public async Task<EventDto> Handle(GetElementByIdEventQuery request, CancellationToken cancellationToken)
         {
             try
             {
                 var existingEvent = await _eventRepository.GetElementById(request.Id);
+                if (existingEvent == null)
+                {
+                    throw new KeyNotFoundException($"Nie odnaleziono eventu");
+                }
                 var mapp = _mapper.Map<EventDto>(existingEvent);
                 return mapp;
             }
@@ -26,7 +32,6 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Events.GetElementById
             {
                 throw new AutoMapperMappingException($"Błąd mapowania", ex);
             }
-
         }
     }
 }
