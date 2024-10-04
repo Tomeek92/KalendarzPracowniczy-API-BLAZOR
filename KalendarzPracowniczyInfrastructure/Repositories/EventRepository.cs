@@ -2,9 +2,9 @@
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Interfaces;
 using KalendarzPracowniczyInfrastructureDbContext;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace KalendarzPracowniczyInfrastructure.Repositories
 {
@@ -12,11 +12,13 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
     {
         private readonly KalendarzPracowniczyDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public EventRepository(KalendarzPracowniczyDbContext context, UserManager<User> userManager)
+        public EventRepository(KalendarzPracowniczyDbContext context, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Event> GetElementById(Guid id)
@@ -76,12 +78,22 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                 {
                     throw new KeyNotFoundException($"Nie znaleziono takiego zadania w bazie danych! {updateEvent.Id}");
                 }
+                var userName = _httpContextAccessor.HttpContext.User.Identity.Name;
+                if (userName == null)
+                {
+                    throw new Exception($"Brak zalogowanego użytkownika");
+                }
+                else
+                {
+                    updateEvent.LastModifiedBy = userName;
+                    updateEvent.LastModifiedTime = DateTime.Now;
+                }
                 _context.Events.Update(updateEvent);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw new Exception($"Błąd podczas aktualizowania zadania!", ex);
+                throw new Exception($"Błąd podczas aktualizowania zadania! {ex.Message}");
             }
         }
 

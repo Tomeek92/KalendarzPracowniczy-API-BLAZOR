@@ -7,8 +7,6 @@ using KalendarzPracowniczyDomain.Entities.Users;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace KalendarzPracowniczyAPI.Controllers
 {
@@ -107,11 +105,11 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound("Nie odnaleziono zadania do zaktualizowania");
+                return NotFound($"Nie odnaleziono zadania do zaktualizowania {ex.Message}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, $"Internal server error {ex.Message}");
             }
         }
     }

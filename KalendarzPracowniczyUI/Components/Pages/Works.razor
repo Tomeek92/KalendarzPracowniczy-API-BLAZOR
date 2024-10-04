@@ -11,39 +11,41 @@
     max-width: 600px;
     margin: 120px auto;
     padding: 20px;
-    background-color: #2b2f3a; 
+    background-color: rgba(0, 10, 30, 0.85);
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); 
-    color: #f1f1f1; 
+    box-shadow: 0 0 20px rgba(0, 150, 255, 0.4);
+    color: #f1f1f1;
 }
 
 h3 {
     text-align: center;
-    color: #78909c; 
+    color: #00aaff;
     margin-bottom: 20px;
+    font-size: 25px;
 }
 
 label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    color: #78909c;
+    color: #00aaff;
 }
 
 input[type="text"] {
+    display: block;
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-bottom: 15px;
-    border: 1px solid #546e7a;
-    border-radius: 5px;
-    background-color: #37474f; 
-    color: #f1f1f1; 
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f1f1f1;
+    border: 1px solid rgba(0, 150, 255, 0.5);
 }
 
 button {
     width: 100%;
     padding: 10px;
-    background-color: #546e7a; 
+    background-color: rgba(0, 150, 255, 0.5);
     color: white;
     border: none;
     border-radius: 5px;
@@ -54,7 +56,7 @@ button {
 }
 
 button:hover {
-    background-color: #78909c; 
+    background-color: #00aaff;
 }
 
 table {
@@ -66,25 +68,25 @@ table {
 th, td {
     padding: 15px;
     text-align: left;
-    border: 1px solid #546e7a; 
+    border: 1px solid rgba(0, 150, 255, 0.5);
     transition: background-color 0.3s;
 }
 
 th {
-    background-color: #455a64; 
-    color: white; 
+    background-color: rgba(0, 150, 255, 0.3);
+    color: white;
 }
 
 tr {
-    background-color: #2b2f3a; 
+    background-color: rgba(0, 10, 30, 0.85);
 }
 
 tr:hover {
-    background-color: #37474f;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 tr.completed {
-    background-color: #00c853; 
+    background-color: #00c853;
 }
 
 input[type="checkbox"] {
@@ -95,7 +97,7 @@ input[type="checkbox"] {
 .loader {
     border: 4px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    border-top: 4px solid #546e7a; 
+    border-top: 4px solid #00aaff;
     width: 30px;
     height: 30px;
     animation: spin 1s linear infinite;
@@ -103,25 +105,30 @@ input[type="checkbox"] {
 }
 
 .input-group {
-    width: 80%;
+    width: 100%;
     padding: 12px;
     margin-bottom: 15px;
-    border: 1px solid #546e7a;
+    border: 1px solid rgba(0, 150, 255, 0.5);
     border-radius: 8px;
-    background-color: #37474f; 
-    color: #f1f1f1; 
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f1f1f1;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .input-group:focus {
-    border-color: #78909c; 
-    box-shadow: 0 0 5px rgba(120, 144, 156, 0.5); 
+    border-color: #00aaff;
+    box-shadow: 0 0 5px rgba(120, 144, 156, 0.5);
     outline: none;
 }
 
 @@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>
 <div class="menu-item">
@@ -138,7 +145,7 @@ input[type="checkbox"] {
         <ValidationSummary />
 
         <label for="title">Tytuł zadania</label>
-        <InputText id="title" @bind-Value="newTask.Title" placeholder="Wprowadź tytuł zadania" class="input-group"/>
+        <InputText id="title" @bind-Value="newTask.Title" placeholder="Wprowadź tytuł zadania" class="input-group" />
 
         <label for="description">Opis zadania</label>
         <InputText id="description" @bind-Value="newTask.Description" placeholder="Wprowadź opis zadania" class="input-group" />
@@ -216,7 +223,7 @@ input[type="checkbox"] {
             isLoading = true;
             tasks.Add(newTask);
             successMessage = "Zadanie zostało dodane!";
-            newTask = new TaskModel(); 
+            newTask = new TaskModel();
         }
         catch (Exception ex)
         {
@@ -224,13 +231,13 @@ input[type="checkbox"] {
         }
         finally
         {
-            isLoading = false; 
+            isLoading = false;
         }
     }
 
     private void UpdateTaskStatus(TaskModel task)
     {
-        
+
     }
 
     private void RemoveTask(TaskModel task)
@@ -255,6 +262,6 @@ input[type="checkbox"] {
     {
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public bool IsCompleted { get; set; } = false; 
+        public bool IsCompleted { get; set; } = false;
     }
 }

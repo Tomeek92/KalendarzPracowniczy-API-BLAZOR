@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create;
+using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login;
 using KalendarzPracowniczyApplication.Dto;
 using KalendarzPracowniczyDomain.Entities.Events;
@@ -18,14 +19,16 @@ namespace KalendarzPracowniczyApplication.Mapper
              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title));
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+             .ForMember(dest => dest.Car, opt => opt.MapFrom(src => src.Car));
 
             CreateMap<Event, EventDto>()
             .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+            .ForMember(dest => dest.Car, opt => opt.MapFrom(src => src.Car));
 
             CreateMap<UserDto, User>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
@@ -46,6 +49,8 @@ namespace KalendarzPracowniczyApplication.Mapper
             .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
 
             CreateMap<WorkerDto, Worker>();
+
+            CreateMap<UpdateEventCommand, Event>();
 
             CreateMap<CreateEventCommand, Event>()
             .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))

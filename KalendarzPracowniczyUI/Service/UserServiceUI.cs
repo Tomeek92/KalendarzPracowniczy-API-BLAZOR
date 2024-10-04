@@ -113,7 +113,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, "api/User/Create")
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7164/api/User/Create")
                 {
                     Content = JsonContent.Create(userCommand)
                 };

@@ -5,144 +5,175 @@
 @inject UserServiceUI UserServiceUI
 @inject NavigationManager Navigation
 <style>
-    /* Styl logo */
-    .logo-page img {
-        margin-left: 25%;
-        width: 50%;
-        height: 50%;
-    }
+/* Styl logo */
+.logo-page img {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 50%;
+    height: auto;
+}
 
-    /* Tło */
-    .login-container {
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+/* Tło */
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('background.jpg') no-repeat center center/cover;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    overflow: hidden;
+}
 
-    /* Pudełko formularza */
+.login-container::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.05);
+    animation: rotateBackground 15s infinite linear;
+    z-index: 0;
+}
+
+@@keyframes rotateBackground {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Pudełko formularza */
+.login-box {
+    position: relative;
+    z-index: 1;
+    background: rgba(0, 10, 30, 0.85); 
+    padding: 20px 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(0, 100, 255, 0.3);
+    border: 1px solid rgba(0, 100, 255, 0.3); 
+    width: 100%;
+    max-width: 400px;
+    color: #f1f1f1;
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+    backdrop-filter: blur(10px);
+}
+
+/* Animacje pojawiania się */
+@@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Neonowy efekt nagłówka */
+.login-box h2 {
+    margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #00aaff; 
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(0, 170, 255, 0.8), 0 0 12px rgba(0, 170, 255, 0.6);
+}
+
+/* Grupy formularza */
+.input-group {
+    position: relative;
+    margin-bottom: 35px;
+}
+
+/* Pola tekstowe */
+.input-group input {
+    width: 90%;
+    padding: 14px;
+    padding-left: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 150, 255, 0.5); 
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f1f1f1;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #00aaff;
+    box-shadow: 0 0 10px rgba(0, 150, 255, 0.5), inset 0 0 8px rgba(0, 150, 255, 0.4);
+}
+
+/* Styl etykiety (placeholder) */
+.input-group label {
+    position: absolute;
+    left: 12px;
+    top: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    transition: 0.2s ease all;
+    pointer-events: none;
+}
+
+/* Efekt animacji etykiety */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    top: -18px;
+    font-size: 12px;
+    color: #00aaff;
+}
+
+/* Przycisk logowania */
+button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background-color: rgba(0, 150, 255, 0.5); /* Niebieski neon */
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 15px rgba(0, 150, 255, 0.4);
+}
+
+button[type="submit"]:hover {
+    background-color: #00aaff; /* Mocniejszy niebieski */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 150, 255, 0.5), 0 0 20px rgba(0, 150, 255, 0.6);
+}
+
+/* Link zapomnianego hasła */
+.forgot-password {
+    margin-top: 15px;
+}
+
+.forgot-password a {
+    color: #f1f1f1;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+    color: #00aaff;
+}
+
+/* Responsywność */
+@@media (max-width: 768px) {
     .login-box {
-        background: #2b2f3a;
-        padding: 40px 30px;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-        width: 100%;
-        max-width: 400px;
-        color: #f1f1f1;
-        text-align: center;
-        animation: fadeIn 0.7s ease-in-out;
+        width: 90%;
+        padding: 30px;
     }
-
-        /* Nagłówek */
-        .login-box h2 {
-            margin-bottom: 20px;
-            font-size: 28px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: #78909c;
-        }
-
-    /* Grupy formularza */
-    .input-group {
-        position: relative;
-        margin-bottom: 35px;
-    }
-
-        /* Pola tekstowe */
-        .input-group input {
-            width: 100%;
-            padding: 14px;
-            padding-left: 5px;
-            border-radius: 12px;
-            border: 1px solid #546e7a;
-            font-size: 16px;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #f1f1f1;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
-            .input-group input:focus {
-                outline: none;
-                background-color: rgba(255, 255, 255, 0.2);
-                border-color: #78909c;
-            }
-
-        /* Styl etykiety (placeholder) */
-        .input-group label {
-            position: absolute;
-            left: 10px;
-            top: 14px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-            transition: 0.2s ease all;
-            pointer-events: none;
-        }
-
-        /* Efekt animacji etykiety */
-        .input-group input:focus + label,
-        .input-group input:not(:placeholder-shown) + label {
-            top: -18px;
-            font-size: 12px;
-            color: #78909c;
-        }
-
-    /* Przycisk logowania */
-    button[type="submit"] {
-        width: 100%;
-        padding: 14px;
-        background-color: #546e7a;
-        color: #f1f1f1;
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 12px;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-        button[type="submit"]:hover {
-            background-color: #78909c;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-        }
-
-    /* Link zapomnianego hasła */
-    .forgot-password {
-        margin-top: 15px;
-    }
-
-        .forgot-password a {
-            color: #f1f1f1;
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
-
-            .forgot-password a:hover {
-                color: #78909c;
-            }
-    /* Animacja pojawiania się */
-    @@keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-30px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Responsywność */
-    @@media (max-width: 768px) {
-        .login-box {
-            width: 90%;
-            padding: 30px;
-        }
-    }
+}
 </style>
 
 <div class="login-container">

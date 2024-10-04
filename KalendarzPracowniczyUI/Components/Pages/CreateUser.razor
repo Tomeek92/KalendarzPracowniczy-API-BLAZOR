@@ -4,102 +4,132 @@
 @rendermode InteractiveServer
 @inject UserServiceUI UserServiceUI
 <style>
-    .create-user-container {
-        max-width: 500px;
+    .form-container {
+        display: flex;
+        justify-content: space-between;
+        max-width: 900px;
         margin: 0 auto;
-        margin-top: 120px;
+        margin-top: 150px; 
         padding: 40px;
-        background-color: #2b2f3a; 
-        border-radius: 10px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-        color: #f1f1f1; 
+        background-color: rgba(0, 10, 30, 0.85);
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0, 150, 255, 0.4);
+        color: #f1f1f1;
+        backdrop-filter: blur(10px);
     }
 
-        .create-user-container h1 {
-            text-align: center;
-            color: #78909c; 
-        }
+    .form-left {
+        width: 50%;
+        padding-right: 20px;
+    }
 
+    .form-right {
+        width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .company-logo {
+        max-width: 80%;
+        height: auto;
+    }
+
+    .form-left h1 {
+        text-align: center;
+        color: #00aaff;
+        text-shadow: 0 0 8px rgba(0, 170, 255, 0.8), 0 0 12px rgba(0, 170, 255, 0.6);
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    /* Grupa inputów */
     .input-group {
         position: relative;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
 
-        /* Styl etykiety (placeholder) */
+        /* Etykieta (placeholder) */
         .input-group label {
             position: absolute;
-            left: 10px;
+            left: 12px;
             top: 14px;
-            color: rgba(255, 255, 255, 0.7); 
+            color: rgba(255, 255, 255, 0.7);
             font-size: 16px;
             transition: 0.2s ease all;
             pointer-events: none;
         }
 
+        /* Pola input */
         .input-group input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 15px;
-            border: 1px solid #546e7a; 
-            border-radius: 5px;
+            border: 1px solid rgba(0, 150, 255, 0.5);
+            border-radius: 8px;
             box-sizing: border-box;
-            background-color: #37474f; 
+            background-color: rgba(255, 255, 255, 0.1);
             color: #f1f1f1;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
             .input-group input:focus {
                 outline: none;
-                background-color: #444;
-                border-color: #78909c; 
+                background-color: rgba(255, 255, 255, 0.2);
+                border-color: #00aaff;
+                box-shadow: 0 0 10px rgba(0, 150, 255, 0.5), inset 0 0 8px rgba(0, 150, 255, 0.4);
             }
 
-                /* Efekt animacji etykiety */
+                /* Animacja etykiety */
                 .input-group input:focus + label,
                 .input-group input:not(:placeholder-shown) + label {
                     top: -18px;
                     font-size: 12px;
-                    color: #78909c; 
+                    color: #00aaff;
                 }
 
-    .create-user-container button {
+    /* Przycisk formularza */
+    button {
         width: 100%;
-        padding: 10px;
-        background-color: #546e7a; 
+        padding: 12px;
+        background-color: rgba(0, 150, 255, 0.5);
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
         font-size: 16px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
     }
 
-        .create-user-container button:hover {
-            background-color: #78909c; 
+        button:hover {
+            background-color: #00aaff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 150, 255, 0.5), 0 0 15px rgba(0, 150, 255, 0.6);
         }
 
+    /* Wiadomości */
     .message {
-        color: red;
+        color: #ff4c4c;
         font-weight: bold;
         text-align: center;
         margin-top: 10px;
+        font-size: 16px;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
     }
 
     .success-message {
-        color: green;
+        color: #00ff00;
         font-weight: bold;
         text-align: center;
         margin-top: 10px;
-    }
+        font-size: 16px;
+        box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
 </style>
 
-
-<div class="menu-item">
-    <a class="menu-link @menuClickedClass" @onclick="ShowMenu">
-        <i class="fa-sharp fa-solid fa-bars fa-flip-vertical fa-2xl"></i>
-        <span class="menu-text">Główne menu</span>
-    </a>
-</div>
-    <div class="create-user-container">
-        <h1>Stwórz nowego użytkownika</h1>
+<div class="form-container">
+    <div class="form-left">
+        <h1>Stwórz nowe konto</h1>
 
         <EditForm Model="@userCommand" OnValidSubmit="CreateUserAsync">
             <DataAnnotationsValidator />
@@ -109,33 +139,28 @@
                 <InputText id="name" @bind-Value="userCommand.Name" required placeholder=" " />
                 <label for="name">Imię</label>
             </div>
-
             <div class="input-group">
                 <InputText id="surname" @bind-Value="userCommand.Surname" required placeholder=" " />
                 <label for="surname">Nazwisko</label>
             </div>
-
             <div class="input-group">
                 <InputText id="username" @bind-Value="userCommand.UserName" required placeholder=" " />
                 <label for="username">Nazwa użytkownika</label>
             </div>
-
             <div class="input-group">
                 <InputText id="password" @bind-Value="userCommand.Password" type="password" required placeholder=" " />
                 <label for="password">Hasło</label>
             </div>
-
             <div class="input-group">
                 <InputText id="email" @bind-Value="userCommand.Email" required placeholder=" " />
                 <label for="email">Email</label>
             </div>
 
-            <button type="submit">Stwórz użytkownika</button>
+            <button type="submit">Stwórz konto</button>
 
             @if (errorMessage != null)
             {
                 <div class="message">@errorMessage</div>
-                <div class="loader"></div>
             }
 
             @if (successMessage != null)
@@ -148,11 +173,11 @@
                 <div class="loader"></div>
             }
         </EditForm>
+    </div>
+    <div class="form-right">
+        <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" alt="Logo Unisoft" class="company-logo" />
+    </div>
 </div>
-@if (isMenuVisible)
-{
-    <NavigationMenu />
-}
 
 @code {
     private CreateUserCommand userCommand = new CreateUserCommand();

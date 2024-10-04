@@ -11,11 +11,7 @@
 @inject HttpClient _httpClient
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
-<style>
-    html, body {
-        background-image: url("unisoft.png");
-    }
-</style>
+
 @if (!isAuthenticated)
 {
     <p>Przekierowanie na stronę logowania...</p>
@@ -30,7 +26,7 @@ else
     </div>
     <div class="weekly-schedule-container">
         <div class="logo-page">
-            <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" />
+            <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width:25%;" />
         </div>
         <div class="calendar-controls">
             <button @onclick="PreviousWeek">❮ Poprzedni tydzień</button>
@@ -57,38 +53,57 @@ else
                     @foreach (var day in GetDaysOfWeek())
                     {
                         <div class="day-cell-wrapper">
-                            <div @onclick="() => ShowModal(day)" class="day-cell @(day.Date == DateTime.Today.Date ? "today" : "")">
+                          
+                            <div class="day-cell @(day.Date == DateTime.Today.Date ? "today" : "")" @onclick="() => ShowModal(day)">
+
                                 @foreach (var eventItem in GetEventsForDay(day).Where(e => e.UserId == user.Id))
                                 {
-                                    <div>
-                                        <p> @eventItem.Title</p>
-                                        <p> @eventItem.Description</p>
-                                        <p> @eventItem.Id</p>
-                                        <a @onclick=" async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen"></a>
+                                    <div class="event-item" @onclick:stopPropagation>
+                                        <div class="event-details">
+                                            <p>@eventItem.Title</p>
+                                            <p>@eventItem.Description</p>
+                                            <i class="fa-solid fa-car-side"></i><span>@eventItem.Car</span>
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-info-circle"
+                                               @onmouseover="() => ShowModificationDetails(eventItem.Id, eventItem.LastModifiedBy, eventItem.LastModifiedTime)"
+                                               @onmouseout="HideModificationDetails"></i>
+                                            <i @onclick="() => AkceptDelete(eventItem.Id)" class="fa-solid fa-trash delete-icon"></i>
+
+                                            @if (selectedEvent.Id == eventItem.Id && showModificationDetails)
+                                            {
+                                                <div class="modification-details">
+                                                    <p>Ostatnia modyfikacja: @lastModifiedBy</p>
+                                                    <p>@lastModifiedOn?.ToString("g")</p>
+                                                </div>
+                                            }
+                                            </div>
+                                        <a @onclick="async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen edit-icon"></a>
                                     </div>
                                 }
                             </div>
-                          
                         </div>
+                      
                     }
+
                 </div>
             }
         </div>
     </div>
-    @if (selectedDay.HasValue)
+    @if (selectedDay.HasValue && !isVisible)
     {
         <div class="my_modal">
             <div class="my_modal_content">
-                <h1 class="close" @onclick="HideModal">&times;</h1>
+                <h1 class="close" @onclick="CloseModalAndRefresh">&times;</h1>
                 <CreateEvent />
             </div>
         </div>
     }
-    @if (isVisible)
+    else if (isVisible)
     {
         <div class="my_modal">
             <div class="my_modal_content">
-                <h1 class="close" @onclick="CloseModal">&times;</h1>
+                <h1 class="close" @onclick="CloseModalAndRefresh">&times;</h1>
                 <UpdateEvent EventIdParam="@selectedEvent.Id" />
             </div>
         </div>
@@ -97,15 +112,24 @@ else
     {
         <div class="loader"></div>
     }
+    @if (showDeleteConfirmation)
+    {
+        <div class="my_modal">
+            <div class="my_modal_content">
+                <h1 class="close" @onclick="() => showDeleteConfirmation = false">&times;</h1>
+                <p style="color:white;">Czy na pewno chcesz usunąć ten wyjazd?</p>
+                <button @onclick="async () => await ConfirmDelete()" class="btn btn-danger">Usuń</button>
+                <button @onclick="() => showDeleteConfirmation = false" class="btn btn-secondary">Anuluj</button>
+            </div>
+        </div>
+    }
     @if (isMenuVisible)
     {
         <NavigationMenu />
     }
 }
 
-
 @code {
-
     private DateTime? selectedDay = null;
     private bool isVisible = false;
     private bool isLoading = false;
@@ -116,6 +140,44 @@ else
     private List<UserDto> users = new List<UserDto>();
     private IEnumerable<EventDto> userEvents = new List<EventDto>();
     private EventDto selectedEvent = new EventDto();
+    private string? lastModifiedBy = null;
+    private DateTime? lastModifiedOn = null;
+    private bool showModificationDetails = false;
+    private bool showDeleteConfirmation = false;
+    private Guid confirmedDeleteEventId;
+    private DateTime currentWeekStart = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+
+    private void ShowModificationDetails(Guid eventId, string? modifiedBy, DateTime? modifiedOn)
+    {
+        selectedEvent.Id = eventId;
+        lastModifiedBy = modifiedBy;
+        lastModifiedOn = modifiedOn;
+        showModificationDetails = true;
+    }
+    private void AkceptDelete(Guid eventId)
+    {
+        confirmedDeleteEventId = eventId;
+        showDeleteConfirmation = true;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        try
+        {
+
+            await EventService.Delete(confirmedDeleteEventId);
+            await GetAllEvents();
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+        }
+
+    }
+    private void HideModificationDetails()
+    {
+        showModificationDetails = false;
+    }
 
     private IEnumerable<EventDto> GetEventsForDay(DateTime day)
     {
@@ -192,69 +254,58 @@ else
             menuClickedClass = "";
         }
     }
-
-    private void CloseModal()
+    private async Task CloseModalAndRefresh()
     {
         isVisible = false;
-    }
+        selectedDay = null;
+        await GetAllEvents();
 
+        StateHasChanged();
+    }
     private async Task ShowSecondModal(Guid Id)
     {
         try
         {
-
             var eventToUpdate = await EventService.GetById(Id);
-            Console.WriteLine($"Event to update: Title: {eventToUpdate.Title}, Id: {eventToUpdate.Id}");
 
             if (eventToUpdate != null)
             {
-                Console.WriteLine($"Event to update: Title: {eventToUpdate.Title}, Id: {eventToUpdate.Id}");
                 selectedEvent = eventToUpdate;
                 isVisible = true;
-                StateHasChanged();
-
+                await InvokeAsync(StateHasChanged);
             }
             else
             {
-                Console.WriteLine($"Nie znaleziono wydarzenia o ID: {Id}");
+                throw new Exception($"Nie odnaleziono wyjazdu!");
             }
         }
         catch(Exception ex)
         {
             throw new Exception($"Nieoczekiwany błąd {ex.Message}");
         }
-
     }
-
     private void HideModal()
     {
         selectedDay = null;
     }
-
     private void ShowModal(DateTime day)
     {
         selectedDay = day;
 
     }
-
     private bool IsModalVisible(DateTime day)
     {
         return selectedDay.HasValue && selectedDay.Value.Date == day.Date;
     }
-
-    private DateTime currentWeekStart = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
-
     private IEnumerable<DateTime> GetDaysOfWeek()
     {
         return Enumerable.Range(0, 5).Select(offset => currentWeekStart.AddDays(offset));
     }
-
     private void PreviousWeek()
     {
         currentWeekStart = currentWeekStart.AddDays(-7);
         StateHasChanged();
     }
-
     private void NextWeek()
     {
         currentWeekStart = currentWeekStart.AddDays(7);

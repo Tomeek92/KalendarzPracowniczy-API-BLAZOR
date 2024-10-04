@@ -1,9 +1,5 @@
-﻿using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create;
-using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update;
-using KalendarzPracowniczyApplication.Dto;
+﻿using KalendarzPracowniczyApplication.Dto;
 using Newtonsoft.Json;
-using System.Net.Http;
-using System.Text.Json;
 
 namespace KalendarzPracowniczyUI.Service
 {
@@ -97,8 +93,23 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task Update(EventDto eventDto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Event/Update", eventDto);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Event/Update", eventDto);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Błąd API: {response.StatusCode}, Treść odpowiedzi: {responseContent}");
+                }
+            }
+            catch (Newtonsoft.Json.JsonException jsonEx)
+            {
+                throw new Exception($"Błąd podczas deserializacji odpowiedzi: {jsonEx.Message}");
+            }
+            catch (HttpRequestException httpEx)
+            {
+                throw new Exception($"Problem z połączeniem HTTP: {httpEx.Message}");
+            }
         }
     }
 }
