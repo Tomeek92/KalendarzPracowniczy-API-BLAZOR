@@ -12,7 +12,7 @@ namespace KalendarzPracowniczyInfrastructureDbContext
         public DbSet<Event>? Events { get; set; }
         public DbSet<User>? Users { get; set; }
         public DbSet<Worker>? Workers { get; set; }
-        public DbSet<Work>? Works { get; }
+        public DbSet<Work>? Works { get; set; }
 
         public KalendarzPracowniczyDbContext(DbContextOptions<KalendarzPracowniczyDbContext> options) : base(options)
         {
@@ -26,8 +26,25 @@ namespace KalendarzPracowniczyInfrastructureDbContext
                 .HasMany(u => u.Events)
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.UserId)
-                .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                 .HasMany(u => u.Works)
+                 .WithOne(w => w.User)
+                 .HasForeignKey(w => w.UserId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Work>()
+                .Property(w => w.StartDate)
+                .HasColumnType("date");
+
+            modelBuilder.Entity<Work>()
+                .Property(w => w.EndDate)
+                .HasColumnType("date");
+
+            modelBuilder.Entity<Work>()
+                .Property(w => w.CreatedAt)
+                .HasColumnType("date");
         }
     }
 }

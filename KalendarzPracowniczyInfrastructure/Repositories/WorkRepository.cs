@@ -2,6 +2,7 @@
 using KalendarzPracowniczyDomain.Interfaces;
 using KalendarzPracowniczyInfrastructureDbContext;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace KalendarzPracowniczyInfrastructure.Repositories
 {
@@ -19,20 +20,43 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             return await _context.Works.ToListAsync();
         }
 
-        public async Task<Work> GetTaskByIdAsync(Guid id)
+        public async Task<List<Work>> GetTaskByIdAsync(string userid)
         {
-            return await _context.Works.FindAsync(id);
+            try
+            {
+                if (string.IsNullOrEmpty(userid))
+                {
+                    throw new ArgumentException("Parametr 'userid' nie może być pusty.", nameof(userid));
+                }
+                if (_context.Works == null)
+                {
+                    throw new InvalidOperationException("Sprawdź czy są rekordy w bazie danych!");
+                }
+                var userWorks = await _context.Works
+                    .Where(w => w.UserId == userid)
+                    .ToListAsync();
+
+                return userWorks;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+            }
         }
 
         public async Task AddTaskAsync(Work work)
         {
-            _context.Works.Add(work);
+            if (work.Id == Guid.Empty)
+            {
+                work.Id = Guid.NewGuid();
+            }
+            _context.Add(work);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateTaskAsync(Work work)
         {
-            _context.Works.Update(work);
+            _context.Update(work);
             await _context.SaveChangesAsync();
         }
 

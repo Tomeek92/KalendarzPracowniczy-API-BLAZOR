@@ -16,7 +16,7 @@ namespace KalendarzPracowniczyDomain.Entities.Events
         public string? LastModifiedBy { get; set; }
         public DateTime? LastModifiedTime { get; set; }
         public string? Car { get; set; }
-        public string? UserId { get; set; } 
+        public string? UserId { get; set; }
         public User? User { get; set; }
     }
 }

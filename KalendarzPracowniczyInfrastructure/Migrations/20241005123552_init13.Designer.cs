@@ -4,6 +4,7 @@ using KalendarzPracowniczyInfrastructureDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KalendarzPracowniczyInfrastructure.Migrations
 {
     [DbContext(typeof(KalendarzPracowniczyDbContext))]
-    partial class KalendarzPracowniczyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241005123552_init13")]
+    partial class init13
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,21 +166,21 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<bool?>("IsCompleted")
+                    b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .HasMaxLength(100)
@@ -339,9 +342,8 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
             modelBuilder.Entity("KalendarzPracowniczyDomain.Entities.Works.Work", b =>
                 {
                     b.HasOne("KalendarzPracowniczyDomain.Entities.Users.User", "User")
-                        .WithMany("Works")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -400,8 +402,6 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
             modelBuilder.Entity("KalendarzPracowniczyDomain.Entities.Users.User", b =>
                 {
                     b.Navigation("Events");
-
-                    b.Navigation("Works");
                 });
 #pragma warning restore 612, 618
         }

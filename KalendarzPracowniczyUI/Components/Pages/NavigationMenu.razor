@@ -2,48 +2,60 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject UserServiceUI UserServiceUI
 @inject NavigationManager NavigationManager
-<div class="sidebar" id="sidebar">
-    <nav class="nav">
-        <div class="logo">
-            <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width: 90%; height: 90%; margin-left:5px;" />      
-        </div>
-        <i class="fa-solid fa-user fa-2x" style="margin-left:35%;"></i>
-        <div class="ikon">
-            <span><UserInfo /></span>
-        </div>
-      <br />
-      <br />
-        <div class="nav-item">
-            <a class="nav-link" href="/kalendarz">
-                <i class="fas fa-home"></i>
-                <span class="nav-text">Strona główna</span>
-            </a>
-        </div>
-        <br/>
-        <div class="nav-item">
-            <a class="nav-link" href="/to-do">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span class="nav-text">Twoje zadania</span>
-            </a>
-        </div>
-        <br />
-        <div class="nav-item">
-            <a class="nav-link" href="/create-user">
-                <i class="fas fa-user-plus"></i>
-                <span class="nav-text">Nowy użytkownik</span>
-            </a>
-        </div>
-        <br />
-        <div class="nav-item">
-            <a class="nav-link" @onclick="Logout">
-                <i class="fas fa-sign-out-alt"></i>
-                <span class="nav-text">Wyloguj</span>
-            </a>
-        </div>
-    </nav>
+
+<div class="menu-item">
+    <a class="menu-link @menuClicked" @onclick="ShowMenu">
+        <i class="fa-sharp fa-solid fa-bars fa-flip-vertical fa-2xl"></i>
+        <span class="menu-text">Główne menu</span>
+    </a>
 </div>
+@if (isMenuVisible)
+{
+    <div class="sidebar" id="sidebar">
+        <nav class="nav">
+            <div class="logo">
+                <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width: 90%; height: 90%; margin-left:5px;" />
+            </div>
+            <i class="fa-solid fa-user fa-2x" style="margin-left:35%;"></i>
+            <div class="ikon">
+                <span><UserInfo /></span>
+            </div>
+            <br />
+            <br />
+            <div class="nav-item">
+                <a class="nav-link" href="/kalendarz">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Strona główna</span>
+                </a>
+            </div>
+            <br />
+            <div class="nav-item">
+                <a class="nav-link" href="/to-do">
+                    <i class="fa-regular fa-calendar-check"></i>
+                    <span class="nav-text">Twoje zadania</span>
+                </a>
+            </div>
+            <br />
+            <div class="nav-item">
+                <a class="nav-link" href="/create-user">
+                    <i class="fas fa-user-plus"></i>
+                    <span class="nav-text">Nowy użytkownik</span>
+                </a>
+            </div>
+            <br />
+            <div class="nav-item">
+                <a class="nav-link" @onclick="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-text">Wyloguj</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+}
 
 @code {
+    private bool isMenuVisible = false;
+    private string menuClicked = "";
     public async Task Logout()
     {
         try
@@ -55,6 +67,11 @@
         {
             Console.Error.WriteLine($"Error during logout: {ex.Message}");
         }
+    }
+    private void ShowMenu()
+    {
+        isMenuVisible = !isMenuVisible;
+        menuClicked = isMenuVisible ? "menu-clicked" : "";
     }
 }
 

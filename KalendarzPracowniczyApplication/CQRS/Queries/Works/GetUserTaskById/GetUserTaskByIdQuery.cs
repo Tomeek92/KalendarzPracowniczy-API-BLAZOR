@@ -3,13 +3,13 @@ using MediatR;
 
 namespace KalendarzPracowniczyApplication.CQRS.Queries.Works.GetUserTaskById
 {
-    public class GetUserTaskByIdQuery : IRequest<WorkDto>
+    public class GetUserTaskByIdQuery : IRequest<List<WorkDto>>
     {
-        public Guid Id { get; set; }
+        public string UserId { get; set; }
 
-        public GetUserTaskByIdQuery(Guid id)
+        public GetUserTaskByIdQuery(string userid)
         {
-            Id = id;
+            UserId = userid;
         }
     }
 }

@@ -6,7 +6,7 @@ namespace KalendarzPracowniczyDomain.Interfaces
     {
         Task<List<Work>> GetUserTasksAsync();
 
-        Task<Work> GetTaskByIdAsync(Guid id);
+        Task<List<Work>> GetTaskByIdAsync(string id);
 
         Task AddTaskAsync(Work work);
 

@@ -3,6 +3,7 @@
 @using KalendarzPracowniczyApplication.Dto
 @using KalendarzPracowniczyUI.Service
 @inject WorkServiceUI workService
+@inject UserServiceUI userService
 @using System.Collections.Generic
 @using Microsoft.AspNetCore.Components.Forms
 
@@ -105,7 +106,7 @@ input[type="checkbox"] {
 }
 
 .input-group {
-    width: 100%;
+    width: 90%;
     padding: 12px;
     margin-bottom: 15px;
     border: 1px solid rgba(0, 150, 255, 0.5);
@@ -113,6 +114,7 @@ input[type="checkbox"] {
     background-color: rgba(255, 255, 255, 0.1);
     color: #f1f1f1;
     transition: border-color 0.3s, box-shadow 0.3s;
+    font-size:17px;
 }
 
 .input-group:focus {
@@ -131,25 +133,25 @@ input[type="checkbox"] {
     }
 }
 </style>
-<div class="menu-item">
-    <a class="menu-link @menuClickedClass" @onclick="ShowMenu">
-        <i class="fa-sharp fa-solid fa-bars fa-flip-vertical fa-2xl"></i>
-        <span class="menu-text">Główne menu</span>
-    </a>
-</div>
+<NavigationMenu />
 <div class="task-manager-container">
     <h3>Zarządzaj zadaniami</h3>
 
-    <EditForm Model="@newTask" OnValidSubmit="AddTaskAsync">
+    <EditForm Model="@newWork" OnValidSubmit="AddTaskAsync">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
         <label for="title">Tytuł zadania</label>
-        <InputText id="title" @bind-Value="newTask.Title" placeholder="Wprowadź tytuł zadania" class="input-group" />
+        <InputText id="title" @bind-Value="newWork.Title" placeholder="Wprowadź tytuł zadania" class="input-group" />
 
         <label for="description">Opis zadania</label>
-        <InputText id="description" @bind-Value="newTask.Description" placeholder="Wprowadź opis zadania" class="input-group" />
+        <InputText id="description" @bind-Value="newWork.Description" placeholder="Wprowadź opis zadania" class="input-group" />
 
+        <label for="startDate">Data rozpoczęcia</label>
+        <InputDate id="startDate" @bind-Value="newWork.StartDate" Format="dd.MM.yyyy" class="input-group" />
+
+        <label for="endDate">Prawdopodobny czas zakończenia zadania</label>
+        <InputDate id="endDate" @bind-Value="newWork.EndDate" Format="dd.MM.yyyy" class="input-group" />
         <button type="submit">Dodaj zadanie</button>
 
         @if (isLoading)
@@ -165,15 +167,11 @@ input[type="checkbox"] {
         @if (successMessage != null)
         {
             <div class="success-message">@successMessage</div>
-        }
-        @if (isMenuVisible)
-        {
-            <NavigationMenu />
-        }
+        } 
     </EditForm>
 
     <h4>Lista zadań:</h4>
-    @if (tasks.Count == 0)
+    @if (works.Count == 0)
     {
         <p>Brak zadań do wyświetlenia.</p>
     }
@@ -182,23 +180,23 @@ input[type="checkbox"] {
         <table>
             <thead>
                 <tr>
-                    <th>Status</th>
                     <th>Tytuł</th>
                     <th>Opis</th>
-                    <th>Akcje</th>
+                    <th>Data rozpoczęcia:</th>
+                    <th>Prawdopodobna data zakończenia:</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var task in tasks)
+                @foreach (var work in works)
                 {
-                    <tr class="@(task.IsCompleted ? "completed" : "")">
+                    <tr>
+                        
+                        <td>@work.Title</td>
+                        <td>@work.Description</td>
+                        <td>@(work.StartDate.HasValue ? work.StartDate.Value.ToString("dd.MM.yyyy") : "Brak daty")</td>
+                        <td>@(work.EndDate.HasValue ? work.EndDate.Value.ToString("dd.MM.yyyy") :"Brak daty")</td>
                         <td>
-                            <input type="checkbox" @bind="task.IsCompleted" />
-                        </td>
-                        <td>@task.Title</td>
-                        <td>@task.Description</td>
-                        <td>
-                            <button @onclick="() => RemoveTask(task)">Usuń</button>
+                            <button @onclick="() => RemoveTask(work.Id)">Usuń</button>
                         </td>
                     </tr>
                 }
@@ -208,22 +206,22 @@ input[type="checkbox"] {
 </div>
 
 @code {
-    private TaskModel newTask = new();
-    private List<TaskModel> tasks = new();
+    private WorkDto newWork = new();
+    private List<WorkDto> works = new();
     private bool isLoading = false;
     private string? errorMessage;
     private string? successMessage;
-    private bool isMenuVisible = false;
-    private string menuClickedClass = "";
+    private string userId;
 
     private async Task AddTaskAsync()
     {
         try
         {
             isLoading = true;
-            tasks.Add(newTask);
+            newWork.UserId = userId;
+            await workService.Create(newWork);
             successMessage = "Zadanie zostało dodane!";
-            newTask = new TaskModel();
+            await GetAllWork();
         }
         catch (Exception ex)
         {
@@ -234,34 +232,51 @@ input[type="checkbox"] {
             isLoading = false;
         }
     }
-
-    private void UpdateTaskStatus(TaskModel task)
+    protected override async Task OnInitializedAsync()
     {
+        newWork.StartDate = DateTime.UtcNow.Date;
+        newWork.EndDate = DateTime.UtcNow.Date;
+        newWork.CreatedAt = DateTime.UtcNow.Date;
+        await GetAllWork();
 
     }
 
-    private void RemoveTask(TaskModel task)
+    private async void UpdateTaskStatus(WorkDto task)
     {
-        tasks.Remove(task);
-        successMessage = "Zadanie zostało usunięte!";
-    }
-    private void ShowMenu()
-    {
-        isMenuVisible = !isMenuVisible;
-
-        if (isMenuVisible)
+        try
         {
-            menuClickedClass = "menu-clicked";
+            await workService.Update(task);
+            successMessage = "Zadanie zostało zaktualizowane!";
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Błąd podczas aktualizowania zadania {errorMessage = ex.Message}");
+        }
+    }
+    private async Task GetAllWork()
+    {
+        var currentUser = await userService.GetCurrentUserAsync();
+        if(currentUser != null)
+        {
+            userId = currentUser.Id;
+            works = await workService.GetUserTaskById(userId);
         }
         else
         {
-            menuClickedClass = "";
+            errorMessage = "Nie udało się pobrać zalogowanego użytkownika.";
         }
     }
-    public class TaskModel
+    private async void RemoveTask(Guid id)
     {
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public bool IsCompleted { get; set; } = false;
+        try
+        {
+            await workService.Delete(id);
+            successMessage = "Zadanie zostało usunięte!";
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Błąd podczas usuwania zadania {errorMessage = ex.Message}");
+            
+        }
     }
 }

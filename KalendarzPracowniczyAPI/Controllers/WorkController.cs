@@ -5,9 +5,12 @@ using KalendarzPracowniczyApplication.CQRS.Queries.Works.GetUserTaskById;
 using KalendarzPracowniczyApplication.CQRS.Queries.Works.GetUserTasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace KalendarzPracowniczyAPI.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class WorkController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -17,7 +20,7 @@ namespace KalendarzPracowniczyAPI.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] CreateWorkCommand createWorkCommand)
         {
             try
@@ -68,14 +71,14 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetUserTaskById(Guid id)
+        [HttpGet("{userid}")]
+        public async Task<IActionResult> GetUserTaskById(string userid)
         {
             try
             {
-                var query = new GetUserTaskByIdQuery(id);
-                await _mediator.Send(query);
-                return Ok();
+                var query = new GetUserTaskByIdQuery(userid);
+                var result = await _mediator.Send(query);
+                return Ok(result);
             }
             catch (KeyNotFoundException ex)
             {
@@ -87,8 +90,8 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllUserTask()
+        [HttpGet("getAlltask")]
+        public async Task<IActionResult> GetAllTask()
         {
             try
             {

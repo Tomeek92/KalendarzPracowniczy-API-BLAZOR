@@ -18,12 +18,7 @@
 }
 else
 {
-    <div class="menu-item">
-        <a class="menu-link @menuClickedClass" @onclick="ShowMenu">
-            <i class="fa-sharp fa-solid fa-bars fa-flip-vertical fa-2xl"></i>
-            <span class="menu-text">Główne menu</span>
-        </a>
-    </div>
+    <NavigationMenu />
     <div class="weekly-schedule-container">
         <div class="logo-page">
             <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width:25%;" />
@@ -122,19 +117,13 @@ else
                 <button @onclick="() => showDeleteConfirmation = false" class="btn btn-secondary">Anuluj</button>
             </div>
         </div>
-    }
-    @if (isMenuVisible)
-    {
-        <NavigationMenu />
-    }
+    }  
 }
 
 @code {
     private DateTime? selectedDay = null;
     private bool isVisible = false;
     private bool isLoading = false;
-    private bool isMenuVisible = false;
-    private string menuClickedClass = "";
     private bool isAuthenticated = false;
     private bool shouldRedirect = false;
     private List<UserDto> users = new List<UserDto>();
@@ -241,19 +230,7 @@ else
             shouldRedirect = true;
         }
     }
-    private void ShowMenu()
-    {
-        isMenuVisible = !isMenuVisible;
 
-        if (isMenuVisible)
-        {
-            menuClickedClass = "menu-clicked";
-        }
-        else
-        {
-            menuClickedClass = "";
-        }
-    }
     private async Task CloseModalAndRefresh()
     {
         isVisible = false;

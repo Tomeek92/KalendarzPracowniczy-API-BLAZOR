@@ -1,6 +1,5 @@
-﻿using KalendarzPracowniczyApplication.CQRS.Commands.Works.Create;
-using KalendarzPracowniczyApplication.CQRS.Commands.Works.Update;
-using KalendarzPracowniczyApplication.Dto;
+﻿using KalendarzPracowniczyApplication.Dto;
+using KalendarzPracowniczyUI.Components.Pages;
 
 namespace KalendarzPracowniczyUI.Service
 {
@@ -8,16 +7,16 @@ namespace KalendarzPracowniczyUI.Service
     {
         private readonly HttpClient _httpClient;
 
-        public WorkServiceUI(IHttpClientFactory httpClientFactory)
+        public WorkServiceUI(HttpClient httpClient)
         {
-            _httpClient = httpClientFactory.CreateClient("API");
+            _httpClient = httpClient;
         }
 
-        public async Task Create(CreateWorkCommand createWorkCommand)
+        public async Task Create(WorkDto workDto)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Worker", createWorkCommand);
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Work/Create", workDto);
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
@@ -39,11 +38,11 @@ namespace KalendarzPracowniczyUI.Service
             }
         }
 
-        public async Task Update(UpdateWorkCommand updateWorkCommand)
+        public async Task Update(WorkDto workDto)
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Work/", updateWorkCommand);
+                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Work/", workDto);
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
@@ -52,12 +51,27 @@ namespace KalendarzPracowniczyUI.Service
             }
         }
 
-        public async Task GetUserTaskById(Guid id)
+        public async Task<List<WorkDto>> GetUserTaskById(string userid)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"https://localhost:7164/api/Work/{id}");
-                response.EnsureSuccessStatusCode();
+                var response = await _httpClient.GetAsync($"https://localhost:7164/api/Work/{userid}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var workDto = await response.Content.ReadFromJsonAsync<List<WorkDto>>();
+                    if (workDto != null)
+                    {
+                        return workDto;
+                    }
+                    else
+                    {
+                        throw new Exception($"Nie znaleziono zdarzenia z numerem {userid}");
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Nie można znaleźć zdarzenia z ID {userid}. Status Code: {response.StatusCode} {response}");
+                }
             }
             catch (Exception ex)
             {
@@ -65,7 +79,7 @@ namespace KalendarzPracowniczyUI.Service
             }
         }
 
-        public async Task<List<WorkDto>> GetUserAllTasks()
+        public async Task<List<WorkDto>> GetAllTasks()
         {
             try
             {

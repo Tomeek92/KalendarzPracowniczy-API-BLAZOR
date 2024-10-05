@@ -1,4 +1,6 @@
-﻿namespace KalendarzPracowniczyApplication.Dto
+﻿using KalendarzPracowniczyDomain.Entities.Works;
+
+namespace KalendarzPracowniczyApplication.Dto
 {
     public class UserDto
     {
@@ -9,5 +11,6 @@
         public string? Email { get; set; }
         public string Password { get; set; } = null!;
         public ICollection<EventDto>? Events { get; set; }
+        public List<Work>? Works { get; set; }
     }
 }

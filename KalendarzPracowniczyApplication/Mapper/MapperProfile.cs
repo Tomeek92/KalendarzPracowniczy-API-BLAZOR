@@ -37,7 +37,8 @@ namespace KalendarzPracowniczyApplication.Mapper
 
             CreateMap<WorkDto, Work>()
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id))
-            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<LoginQuery, User>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
@@ -46,7 +47,8 @@ namespace KalendarzPracowniczyApplication.Mapper
 
             CreateMap<Work, WorkDto>()
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<WorkerDto, Worker>();
 

@@ -2,7 +2,6 @@
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.LoggedUser;
 using KalendarzPracowniczyApplication.Dto;
 using KalendarzPracowniczyDomain.Entities.Events;
-using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Interfaces;
 using MediatR;
 

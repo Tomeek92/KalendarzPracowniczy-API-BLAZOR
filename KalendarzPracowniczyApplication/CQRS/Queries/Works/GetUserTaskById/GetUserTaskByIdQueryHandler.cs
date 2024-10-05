@@ -5,7 +5,7 @@ using MediatR;
 
 namespace KalendarzPracowniczyApplication.CQRS.Queries.Works.GetUserTaskById
 {
-    public class GetUserTaskByIdQueryHandler : IRequestHandler<GetUserTaskByIdQuery, WorkDto>
+    public class GetUserTaskByIdQueryHandler : IRequestHandler<GetUserTaskByIdQuery, List<WorkDto>>
     {
         private readonly IMapper _mapper;
         private readonly IWorkRepository _workRepository;
@@ -16,12 +16,12 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Works.GetUserTaskById
             _workRepository = workRepository;
         }
 
-        public async Task<WorkDto> Handle(GetUserTaskByIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<WorkDto>> Handle(GetUserTaskByIdQuery request, CancellationToken cancellationToken)
         {
             try
             {
-                var findId = await _workRepository.GetTaskByIdAsync(request.Id);
-                var mapp = _mapper.Map<WorkDto>(findId);
+                var works = await _workRepository.GetTaskByIdAsync(request.UserId);
+                var mapp = _mapper.Map<List<WorkDto>>(works);
                 return mapp;
             }
             catch (AutoMapperMappingException ex)
