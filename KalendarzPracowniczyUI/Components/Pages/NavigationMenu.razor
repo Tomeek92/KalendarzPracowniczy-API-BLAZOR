@@ -51,10 +51,15 @@
             </div>
         </nav>
     </div>
+    @if (errorMessage != null)
+    {
+        <div class="message">@errorMessage</div>
+    }
 }
 
 @code {
     private bool isMenuVisible = false;
+    private string? errorMessage;
     private string menuClicked = "";
     public async Task Logout()
     {
@@ -65,7 +70,7 @@
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Error during logout: {ex.Message}");
+            errorMessage = ($"Błąd podczas wylogowywania!: {ex.Message}");
         }
     }
     private void ShowMenu()

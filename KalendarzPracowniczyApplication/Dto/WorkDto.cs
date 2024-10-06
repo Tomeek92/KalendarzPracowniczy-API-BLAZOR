@@ -7,10 +7,12 @@ namespace KalendarzPracowniczyApplication.Dto
     {
         public Guid Id { get; set; }
 
-        [MaxLength(100)]
+        [Required(ErrorMessage = "Tytuł zadania jest wymagany")]
+        [StringLength(100, ErrorMessage = "Tytuł zadania nie może przekraczać 100 znaków")]
         public string? Title { get; set; }
 
-        [MaxLength(500)]
+        [Required(ErrorMessage = "Opis zadania jest wymagany")]
+        [StringLength(500, ErrorMessage = "Opis zadania nie może przekraczać 500 znaków")]
         public string? Description { get; set; }
 
         public DateTime? StartDate { get; set; }

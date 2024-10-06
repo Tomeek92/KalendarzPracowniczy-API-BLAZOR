@@ -12,9 +12,50 @@
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-@if (!isAuthenticated)
+<style>
+    .btn-danger {
+        width: 60%;
+        padding: 12px;
+        background-color: rgba(255, 69, 58, 0.7); 
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 8px rgba(255, 69, 58, 0.3), 0 0 10px rgba(255, 69, 58, 0.4); 
+    }
+
+        .btn-danger:hover {
+            background-color: #ff453a; 
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(255, 69, 58, 0.5), 0 0 15px rgba(255, 69, 58, 0.6);
+        }
+
+    .btn-secondary {
+        width: 60%;
+        padding: 12px;
+        background-color: rgba(0, 150, 255, 0.7); /
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4); 
+    }
+
+        .btn-secondary:hover {
+            background-color: #00aaff; 
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 150, 255, 0.5), 0 0 15px rgba(0, 150, 255, 0.6); 
+        }
+</style>
+
+@if (!isAuthenticated && isLoading)
 {
-    <p>Przekierowanie na stronę logowania...</p>
+    <p style="color:white;">Przekierowanie na stronę logowania...</p>
+    <div class="loader"></div>
 }
 else
 {
@@ -107,6 +148,10 @@ else
     {
         <div class="loader"></div>
     }
+    @if (errorMessage != null)
+    {
+        <div class="message">@errorMessage</div>
+    }
     @if (showDeleteConfirmation)
     {
         <div class="my_modal">
@@ -115,12 +160,19 @@ else
                 <p style="color:white;">Czy na pewno chcesz usunąć ten wyjazd?</p>
                 <button @onclick="async () => await ConfirmDelete()" class="btn btn-danger">Usuń</button>
                 <button @onclick="() => showDeleteConfirmation = false" class="btn btn-secondary">Anuluj</button>
+                @if (isSuccess)
+                {
+                    <p class="success-message">Wyjazd został usunięty!</p>
+                }
             </div>
         </div>
     }  
+   
 }
 
 @code {
+    private string? errorMessage;
+    private bool isSuccess = false;
     private DateTime? selectedDay = null;
     private bool isVisible = false;
     private bool isLoading = false;
@@ -153,13 +205,15 @@ else
     {
         try
         {
-
             await EventService.Delete(confirmedDeleteEventId);
+            isSuccess = true;
+
             await GetAllEvents();
         }
         catch(Exception ex)
         {
-            throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+            errorMessage = ($"Nieoczekiwany błąd {ex.Message}");
+            isSuccess = false;
         }
 
     }
@@ -180,7 +234,7 @@ else
         }
         catch (Exception ex)
         {
-            throw new Exception($"Błąd podczas pobierania użytkowników");
+            errorMessage = ($"Błąd podczas pobierania użytkowników");
         }
     }
     private async Task GetAllEvents()
@@ -192,7 +246,7 @@ else
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Błąd podczas pobierania wydarzeń: {ex.Message}");
+            errorMessage = ($"Błąd podczas pobierania wydarzeń: {ex.Message}");
         }
     }
 
@@ -226,7 +280,7 @@ else
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Błąd podczas sprawdzania zalogowanego użytkownika: {ex.Message}");
+            errorMessage = ($"Błąd podczas sprawdzania zalogowanego użytkownika: {ex.Message}");
             shouldRedirect = true;
         }
     }
@@ -253,12 +307,12 @@ else
             }
             else
             {
-                throw new Exception($"Nie odnaleziono wyjazdu!");
+                errorMessage = ($"Nie odnaleziono wyjazdu!");
             }
         }
         catch(Exception ex)
         {
-            throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+            errorMessage = ($"Nieoczekiwany błąd {ex.Message}");
         }
     }
     private void HideModal()

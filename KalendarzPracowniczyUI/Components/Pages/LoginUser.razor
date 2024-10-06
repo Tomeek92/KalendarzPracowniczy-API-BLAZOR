@@ -134,7 +134,7 @@
 button[type="submit"] {
     width: 100%;
     padding: 14px;
-    background-color: rgba(0, 150, 255, 0.5); /* Niebieski neon */
+    background-color: rgba(0, 150, 255, 0.5); 
     color: #fff;
     font-size: 16px;
     font-weight: bold;
@@ -146,7 +146,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #00aaff; /* Mocniejszy niebieski */
+    background-color: #00aaff;
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 150, 255, 0.5), 0 0 20px rgba(0, 150, 255, 0.6);
 }
@@ -188,23 +188,23 @@ button[type="submit"]:hover {
             <ValidationSummary />
 
             <div class="input-group">
-                <InputText id="username" @bind-Value="userDto.UserName" required placeholder=" " />
+                <InputText id="username" @bind-Value="userDto.UserName" placeholder=" " />
                 <label for="username">Nazwa użytkownika</label>
             </div>
             <div class="input-group">
-                <InputText id="name" @bind-Value="userDto.Name" required placeholder=" " />
+                <InputText id="name" @bind-Value="userDto.Name" placeholder=" " />
                 <label for="name">Imię</label>
             </div>
             <div class="input-group">
-                <InputText id="Surname" @bind-Value="userDto.Surname" required placeholder=" " />
+                <InputText id="Surname" @bind-Value="userDto.Surname"  placeholder=" " />
                 <label for="Surname">Nazwisko</label>
             </div>
             <div class="input-group">
-                <InputText id="Email" @bind-Value="userDto.Email" required placeholder=" " />
+                <InputText id="Email" @bind-Value="userDto.Email"  placeholder=" " />
                 <label for="Email">Email</label>
             </div>
             <div class="input-group">
-                <InputText id="password" type="password" @bind-Value="userDto.Password" required placeholder=" " />
+                <InputText id="password" type="password" @bind-Value="userDto.Password"  placeholder=" " />
                 <label for="password">Hasło</label>
             </div>
             <button type="submit">Zaloguj się</button>
@@ -214,7 +214,6 @@ button[type="submit"]:hover {
             @if (errorMessage != null)
             {
                 <div class="message">@errorMessage</div>
-                <div class="loader"></div>
             }
 
             @if (successMessage != null)
@@ -243,7 +242,6 @@ button[type="submit"]:hover {
         {
             isLoading = true;
             await UserServiceUI.Login(userDto);
-            successMessage = "Użytkownik został pomyślnie zalogowany!";
             errorMessage = null;
             Navigation.NavigateTo("/kalendarz");
         }

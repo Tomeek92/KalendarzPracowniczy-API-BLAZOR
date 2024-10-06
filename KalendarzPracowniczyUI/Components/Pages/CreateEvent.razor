@@ -165,6 +165,8 @@
     <h2>Dodaj nowy wyjazd</h2>
 
     <EditForm Model="eventDto" OnValidSubmit="CreateEventAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
         <div>
             <p>Miejsce wyjazdu</p>
             <InputText @bind-Value="eventDto.Title" />
