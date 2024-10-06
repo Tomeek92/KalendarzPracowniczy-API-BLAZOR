@@ -250,7 +250,7 @@ input[type="checkbox"] {
         }
         catch(Exception ex)
         {
-            throw new Exception($"Błąd podczas aktualizowania zadania {errorMessage = ex.Message}");
+            errorMessage = ($"Błąd podczas aktualizowania zadania {ex.Message}");
         }
     }
     private async Task GetAllWork()
@@ -266,16 +266,17 @@ input[type="checkbox"] {
             errorMessage = "Nie udało się pobrać zalogowanego użytkownika.";
         }
     }
-    private async void RemoveTask(Guid id)
+    private async Task RemoveTask(Guid id)
     {
         try
         {
             await workService.Delete(id);
+            await GetAllWork();
             successMessage = "Zadanie zostało usunięte!";
         }
         catch(Exception ex)
         {
-            throw new Exception($"Błąd podczas usuwania zadania {errorMessage = ex.Message}");
+          errorMessage = ($"Błąd podczas usuwania zadania  {ex.Message}");
             
         }
     }

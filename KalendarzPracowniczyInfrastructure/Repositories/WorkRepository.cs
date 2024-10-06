@@ -68,6 +68,10 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                 _context.Works.Remove(work);
                 await _context.SaveChangesAsync();
             }
+            else
+            {
+                throw new Exception($"Błąd podczas usuwania zadania z bazy danych!");
+            }
         }
     }
 }

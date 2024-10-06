@@ -21,6 +21,11 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Users.Create
         {
             try
             {
+                var existingUser = await _userRepository.FindByUserEmailAsync(request.Email);
+                if (existingUser != null)
+                {
+                    throw new Exception(request.Email);
+                }
                 var mapp = _mapper.Map<User>(request);
                 
                 if (string.IsNullOrEmpty(mapp.Id))

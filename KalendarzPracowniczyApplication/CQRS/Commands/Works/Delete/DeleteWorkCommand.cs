@@ -3,7 +3,7 @@ using MediatR;
 
 namespace KalendarzPracowniczyApplication.CQRS.Commands.Works.Delete
 {
-    public class DeleteWorkCommand : WorkDto, IRequest
+    public class DeleteWorkCommand :WorkDto, IRequest
     {
         public Guid Id { get; set; }
 

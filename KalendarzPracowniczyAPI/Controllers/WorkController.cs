@@ -40,7 +40,7 @@ namespace KalendarzPracowniczyAPI.Controllers
             try
             {
                 var command = new DeleteWorkCommand(id);
-                await _mediator.Send(id);
+                await _mediator.Send(command);
                 return Ok();
             }
             catch (KeyNotFoundException ex)

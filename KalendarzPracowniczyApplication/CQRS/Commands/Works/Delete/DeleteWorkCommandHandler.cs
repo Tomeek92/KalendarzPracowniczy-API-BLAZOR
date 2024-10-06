@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KalendarzPracowniczyApplication.Dto;
 using KalendarzPracowniczyDomain.Entities.Works;
 using KalendarzPracowniczyDomain.Interfaces;
 using MediatR;
@@ -20,7 +21,8 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Works.Delete
         {
             try
             {
-                await _workRepository.DeleteTaskAsync(request.Id);
+               await _workRepository.DeleteTaskAsync(request.Id);
+              
             }
             catch (Exception ex)
             {
