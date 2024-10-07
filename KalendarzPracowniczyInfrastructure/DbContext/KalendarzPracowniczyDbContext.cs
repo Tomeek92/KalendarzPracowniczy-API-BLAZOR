@@ -1,6 +1,6 @@
-﻿using KalendarzPracowniczyDomain.Entities.Events;
+﻿using KalendarzPracowniczyDomain.Entities.Cars;
+using KalendarzPracowniczyDomain.Entities.Events;
 using KalendarzPracowniczyDomain.Entities.Users;
-using KalendarzPracowniczyDomain.Entities.Workers;
 using KalendarzPracowniczyDomain.Entities.Works;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ namespace KalendarzPracowniczyInfrastructureDbContext
     {
         public DbSet<Event>? Events { get; set; }
         public DbSet<User>? Users { get; set; }
-        public DbSet<Worker>? Workers { get; set; }
+        public DbSet<Car>? Cars { get; set; }
         public DbSet<Work>? Works { get; set; }
 
         public KalendarzPracowniczyDbContext(DbContextOptions<KalendarzPracowniczyDbContext> options) : base(options)

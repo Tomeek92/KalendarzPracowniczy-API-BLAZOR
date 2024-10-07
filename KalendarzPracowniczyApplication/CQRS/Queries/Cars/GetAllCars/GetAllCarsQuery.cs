@@ -3,7 +3,7 @@ using MediatR;
 
 namespace KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetAllWorkers
 {
-    public class GetAllWorkersQuery : IRequest<IEnumerable<WorkerDto>>
+    public class GetAllCarsQuery : IRequest<IEnumerable<CarDto>>
     {
 
     }

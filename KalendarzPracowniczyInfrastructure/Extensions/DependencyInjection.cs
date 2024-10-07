@@ -17,7 +17,7 @@ namespace KalendarzPracowniczyInfrastructure.Extensions
                  options.UseSqlServer(configuration.GetConnectionString("KalendarzPracowniczy")));
 
             services.AddScoped<IEventRepository, EventRepository>();
-            services.AddScoped<IWorkerRepository, WorkerRepository>();
+            services.AddScoped<ICarRepository, CarRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IWorkRepository, WorkRepository>();
 

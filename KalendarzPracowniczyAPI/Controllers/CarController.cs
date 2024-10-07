@@ -10,21 +10,21 @@ namespace KalendarzPracowniczyAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WorkerController : Controller
+    public class CarController : Controller
     {
         private readonly IMediator _mediator;
 
-        public WorkerController(IMediator mediator)
+        public CarController(IMediator mediator)
         {
             _mediator = mediator;
         }
-        [HttpPost]
 
-        public async Task<IActionResult> Create([FromBody] CreateWorkerCommand workerCommand)
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateCarCommand carCommand)
         {
             try
             {
-                await _mediator.Send(workerCommand);
+                await _mediator.Send(carCommand);
                 return Ok();
             }
             catch (Exception)
@@ -38,7 +38,7 @@ namespace KalendarzPracowniczyAPI.Controllers
         {
             try
             {
-                var command = new DeleteWorkerCommand(id);
+                var command = new DeleteCarCommand(id);
                 await _mediator.Send(command);
                 return Ok();
             }
@@ -57,7 +57,7 @@ namespace KalendarzPracowniczyAPI.Controllers
         {
             try
             {
-                var query = new GetWorkerByIdQuery(id);
+                var query = new GetCarByIdQuery(id);
                 var result = await _mediator.Send(query);
                 if (result == null)
                 {
@@ -71,12 +71,12 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllWorkerDto()
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAllCarsDto()
         {
             try
             {
-                var query = new GetAllWorkersQuery();
+                var query = new GetAllCarsQuery();
                 var result = await _mediator.Send(query);
                 if (result == null)
                 {
@@ -91,11 +91,11 @@ namespace KalendarzPracowniczyAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateWorkerCommand workerCommand)
+        public async Task<IActionResult> Update([FromBody] UpdateCarCommand carCommand)
         {
             try
             {
-                await _mediator.Send(workerCommand);
+                await _mediator.Send(carCommand);
                 return Ok();
             }
             catch (KeyNotFoundException)

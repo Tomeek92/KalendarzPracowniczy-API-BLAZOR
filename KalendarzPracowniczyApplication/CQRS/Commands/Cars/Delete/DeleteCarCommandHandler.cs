@@ -4,17 +4,17 @@ using MediatR;
 
 namespace KalendarzPracowniczyApplication.CQRS.Commands.Workers.Delete
 {
-    public class DeleteWorkerCommandHandler : IRequestHandler<DeleteWorkerCommand>
+    public class DeleteCarCommandHandler : IRequestHandler<DeleteCarCommand>
     {
         private readonly IMapper _mapper;
-        private readonly IWorkerRepository _workerRepository;
-        public DeleteWorkerCommandHandler(IMapper mapper, IWorkerRepository workerRepository)
+        private readonly ICarRepository _workerRepository;
+        public DeleteCarCommandHandler(IMapper mapper, ICarRepository workerRepository)
         {
             _mapper = mapper;
             _workerRepository = workerRepository;
         }
 
-        public async Task Handle(DeleteWorkerCommand request, CancellationToken cancellationToken)
+        public async Task Handle(DeleteCarCommand request, CancellationToken cancellationToken)
         {
             await _workerRepository.Delete(request.Id);
         }

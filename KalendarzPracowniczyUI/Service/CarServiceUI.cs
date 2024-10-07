@@ -1,21 +1,21 @@
-﻿using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Create;
-using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Update;
+﻿using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Update;
 using KalendarzPracowniczyApplication.Dto;
+using Newtonsoft.Json;
 
 namespace KalendarzPracowniczyUI.Service
 {
-    public class WorkerServiceUI
+    public class CarServiceUI
     {
         private readonly HttpClient _httpClient;
 
-        public WorkerServiceUI(IHttpClientFactory httpClientFactory)
+        public CarServiceUI(HttpClient httpClient)
         {
-            _httpClient = httpClientFactory.CreateClient("API");
+            _httpClient = httpClient;
         }
 
-        public async Task Create(CreateWorkerCommand workerCommand)
+        public async Task Create(CarDto carCommand)
         {
-            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Worker", workerCommand);
+            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Car", carCommand);
             response.EnsureSuccessStatusCode();
         }
 
@@ -25,31 +25,41 @@ namespace KalendarzPracowniczyUI.Service
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task Update(UpdateWorkerCommand workerCommand)
+        public async Task Update(UpdateCarCommand workerCommand)
         {
             var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Worker/", workerCommand);
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<IEnumerable<WorkerDto>> GetAll()
+        public async Task<IEnumerable<CarDto>> GetAll()
         {
-            var allWorkers = await _httpClient.GetFromJsonAsync<IEnumerable<WorkerDto>>("https://localhost:7164/api/Worker");
-            if (allWorkers != null)
+            var response = await _httpClient.GetAsync($"https://localhost:7164/api/Car/GetAll");
+
+            if (response.IsSuccessStatusCode)
             {
-                return allWorkers;
+                var content = await response.Content.ReadAsStringAsync();
+
+                var allEvents = JsonConvert.DeserializeObject<IEnumerable<CarDto>>(content);
+
+                if (allEvents == null)
+                {
+                    throw new Exception("Nie udało się zdeserializować odpowiedzi z API.");
+                }
+
+                return allEvents;
             }
             else
             {
-                throw new Exception($"Brak pracowników");
+                throw new Exception($"Błąd podczas pobierania danych: {response.StatusCode}");
             }
         }
 
-        public async Task<WorkerDto> GetById(Guid id)
+        public async Task<CarDto> GetById(Guid id)
         {
             var response = await _httpClient.GetAsync($"https://localhost:7164/api/Worker/{id}");
             if (response.IsSuccessStatusCode)
             {
-                var workerDto = await response.Content.ReadFromJsonAsync<WorkerDto>();
+                var workerDto = await response.Content.ReadFromJsonAsync<CarDto>();
                 if (workerDto != null)
                 {
                     return workerDto;

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace KalendarzPracowniczyApplication.CQRS.Commands.Workers.Create
 {
-    public class CreateWorkerCommand : WorkerDto, IRequest
+    public class CreateCarCommand : CarDto, IRequest
     {
     }
 }

@@ -1,0 +1,224 @@
+﻿@page "/car"
+@inject CarServiceUI carService
+@rendermode InteractiveServer
+@using KalendarzPracowniczyApplication.Dto
+@using KalendarzPracowniczyDomain.Entities.Cars
+@using KalendarzPracowniczyUI.Service
+
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px;
+        background-color: rgba(0, 10, 30, 0.85);
+        box-shadow: 0 0 20px rgba(0, 150, 255, 0.4);
+        color: #f1f1f1;
+        backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+    }
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border: 1px solid rgba(0, 150, 255, 0.5);
+        color: #f1f1f1;
+        white-space: nowrap;
+    }
+
+    th {
+        background-color: rgba(0, 150, 255, 0.3);
+        color: white;
+    }
+
+    td input[type="text"], td input[type="date"], .blazor-input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(0, 150, 255, 0.5);
+        color: #f1f1f1;
+        transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        td input[type="text"]:focus, td input[type="date"]:focus, .blazor-input:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: #00aaff;
+            box-shadow: 0 0 10px rgba(0, 150, 255, 0.5), inset 0 0 8px rgba(0, 150, 255, 0.4);
+            outline: none;
+        }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background-color: rgba(0, 150, 255, 0.5);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
+    }
+
+        button:hover {
+            background-color: #00aaff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 150, 255, 0.5), 0 0 15px rgba(0, 150, 255, 0.6);
+        }
+
+    label {
+        font-weight: bold;
+        color: #00aaff;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .delete-btn {
+        background-color: #ff4c4c;
+        color: white;
+        border-radius: 8px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        border: none;
+    }
+
+        .delete-btn:hover {
+            background-color: #ff0000;
+        }
+</style>
+<NavigationMenu />
+
+
+<div class="form-container">
+    <h3>Cars</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Marka</th>
+                <th>Model</th>
+                <th>Rok</th>
+                <th>Car Plates</th>
+                <th>Akcja</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var car in cars)
+            {
+                <tr>
+                    <td>@car.Name</td>
+                    <td>@car.Model</td>
+                    <td>@(car.Year.HasValue ? car.Year.Value.ToString("dd.MM.yyyy") : "-")</td>
+                    <td>@car.CarPlatesNumber</td>
+                    <td><button class="delete-btn" @onclick="() => RemoveCar(car.Id)">Usuń</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+
+
+    <h3>Dodaj Nowy Samochód</h3>
+
+    <EditForm Model="@newCar" OnValidSubmit="AddCar" FormName="Create">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label>Marka:</label>
+            <InputText @bind-Value="newCar.Name" class="blazor-input" />
+        </div>
+        <div>
+            <label>Model:</label>
+            <InputText @bind-Value="newCar.Model" class="blazor-input" />
+        </div>
+        <div>
+            <label>Rok:</label>
+            <InputDate @bind-Value="newCar.Year" class="blazor-input" />
+        </div>
+        <div>
+            <label>Car Plates:</label>
+            <InputText @bind-Value="newCar.CarPlatesNumber" class="blazor-input" />
+        </div>
+        <button type="submit">Dodaj Samochód</button>
+        @if (isLoading)
+        {
+            <div class="loader"></div>
+        }
+
+        @if (errorMessage != null)
+        {
+            <div class="message">@errorMessage</div>
+        }
+
+        @if (successMessage != null)
+        {
+            <div class="success-message">@successMessage</div>
+        }
+    </EditForm>
+
+</div>
+
+@code {
+    private CarDto newCar = new();
+    private List<CarDto> cars = new();
+    private string? errorMessage;
+    private string? successMessage;
+    private bool isLoading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await GetAllCars();
+
+    }
+    private async Task AddCar()
+    {
+        try
+        {
+            isLoading = true;
+            await carService.Create(newCar);
+            successMessage = "Samochód został dodany!";
+            await GetAllCars();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Wystąpił błąd: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+
+    }
+
+    private async Task RemoveCar(Guid id)
+    {
+        isLoading = true;
+        await carService.Delete(id);
+    }
+    private async Task GetAllCars()
+    {
+        try
+        {
+            isLoading = true;
+            await carService.GetAll();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Nie udało się pobrać zalogowanego użytkownika.{ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+
+    }
+}

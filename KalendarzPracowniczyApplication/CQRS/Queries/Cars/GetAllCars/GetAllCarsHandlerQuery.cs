@@ -5,21 +5,23 @@ using MediatR;
 
 namespace KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetAllWorkers
 {
-    public class GetAllWorkersQueryHandler : IRequestHandler<GetAllWorkersQuery, IEnumerable<WorkerDto>>
+    public class GetAllCarsHandlerQuery : IRequestHandler<GetAllCarsQuery, IEnumerable<CarDto>>
     {
         private readonly IMapper _mapper;
-        private readonly IWorkerRepository _workerRepository;
-        public GetAllWorkersQueryHandler(IMapper mapper, IWorkerRepository workerRepository)
+        private readonly ICarRepository _workerRepository;
+
+        public GetAllCarsHandlerQuery(IMapper mapper, ICarRepository workerRepository)
         {
             _mapper = mapper;
             _workerRepository = workerRepository;
         }
-        public async Task<IEnumerable<WorkerDto>> Handle(GetAllWorkersQuery request, CancellationToken cancellationToken)
+
+        public async Task<IEnumerable<CarDto>> Handle(GetAllCarsQuery request, CancellationToken cancellationToken)
         {
             try
             {
                 var workers = await _workerRepository.GetAllWorkers();
-                var mapp = _mapper.Map<IEnumerable<WorkerDto>>(workers);
+                var mapp = _mapper.Map<IEnumerable<CarDto>>(workers);
                 return mapp;
             }
             catch (AutoMapperMappingException ex)

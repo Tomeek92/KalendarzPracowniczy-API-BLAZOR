@@ -3,9 +3,9 @@ using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login;
 using KalendarzPracowniczyApplication.Dto;
+using KalendarzPracowniczyDomain.Entities.Cars;
 using KalendarzPracowniczyDomain.Entities.Events;
 using KalendarzPracowniczyDomain.Entities.Users;
-using KalendarzPracowniczyDomain.Entities.Workers;
 using KalendarzPracowniczyDomain.Entities.Works;
 
 namespace KalendarzPracowniczyApplication.Mapper
@@ -50,7 +50,8 @@ namespace KalendarzPracowniczyApplication.Mapper
             .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
-            CreateMap<WorkerDto, Worker>();
+            CreateMap<CarDto, Car>();
+            CreateMap<Car, CarDto>();
 
             CreateMap<UpdateEventCommand, Event>();
 

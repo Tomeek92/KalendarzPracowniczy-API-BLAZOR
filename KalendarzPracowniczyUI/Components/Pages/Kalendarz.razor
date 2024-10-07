@@ -62,7 +62,7 @@ else
     <NavigationMenu />
     <div class="weekly-schedule-container">
         <div class="logo-page">
-            <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width:25%;" />
+            <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width:12%;" />
         </div>
         <div class="calendar-controls">
             <button @onclick="PreviousWeek">❮ Poprzedni tydzień</button>
@@ -96,9 +96,7 @@ else
                                 {
                                     <div class="event-item" @onclick:stopPropagation>
                                         <div class="event-details">
-                                            <p>@eventItem.Title</p>
-                                            <p>@eventItem.Description</p>
-                                            <i class="fa-solid fa-car-side"></i><span>@eventItem.Car</span>
+                                            <span>@eventItem.Title</span>
                                         </div>
                                         <div>
                                             <i class="fas fa-info-circle"
@@ -109,6 +107,8 @@ else
                                             @if (selectedEvent.Id == eventItem.Id && showModificationDetails)
                                             {
                                                 <div class="modification-details">
+                                                    <p>Opis: @eventItem.Description</p>
+                                                    <span>Samochód: @eventItem.Car</span><i class="fa-solid fa-car-side"></i>
                                                     <p>Ostatnia modyfikacja: @lastModifiedBy</p>
                                                     <p>@lastModifiedOn?.ToString("g")</p>
                                                 </div>
@@ -116,6 +116,7 @@ else
                                             </div>
                                         <a @onclick="async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen edit-icon"></a>
                                     </div>
+
                                 }
                             </div>
                         </div>

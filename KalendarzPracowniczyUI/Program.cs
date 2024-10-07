@@ -23,7 +23,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 builder.Services.AddScoped<UserServiceUI>();
 builder.Services.AddScoped<EventServiceUI>();
-builder.Services.AddScoped<WorkerServiceUI>();
+builder.Services.AddScoped<CarServiceUI>();
 builder.Services.AddScoped<WorkServiceUI>();
 builder.Services.AddHttpClient("API", client =>
 {

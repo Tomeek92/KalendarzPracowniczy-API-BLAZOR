@@ -1,24 +1,24 @@
-﻿using KalendarzPracowniczyDomain.Entities.Workers;
+﻿using KalendarzPracowniczyDomain.Entities.Cars;
 using KalendarzPracowniczyDomain.Interfaces;
 using KalendarzPracowniczyInfrastructureDbContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace KalendarzPracowniczyInfrastructure.Repositories
 {
-    public class WorkerRepository : IWorkerRepository
+    public class CarRepository : ICarRepository
     {
         private readonly KalendarzPracowniczyDbContext _context;
 
-        public WorkerRepository(KalendarzPracowniczyDbContext context)
+        public CarRepository(KalendarzPracowniczyDbContext context)
         {
             _context = context;
         }
 
-        public async Task<Worker> GetElementById(Guid id)
+        public async Task<Car> GetElementById(Guid id)
         {
             try
             {
-                var findIdWorker = await _context.Workers.FindAsync(id);
+                var findIdWorker = await _context.Cars.FindAsync(id);
                 if (findIdWorker == null)
                 {
                     throw new KeyNotFoundException($"Nie znaleziono pracownika o podanym numerze {id}");
@@ -47,16 +47,16 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
         }
 
-        public async Task Update(Worker workerUpdate)
+        public async Task Update(Car carUpdate)
         {
             try
             {
-                var findWorkerToUpdate = await _context.Workers.FindAsync(workerUpdate.Id);
-                if (findWorkerToUpdate == null)
+                var findCarToUpdate = await _context.Cars.FindAsync(carUpdate.Id);
+                if (findCarToUpdate == null)
                 {
-                    throw new KeyNotFoundException($"Nie znaleziono pracownika o podanym numerze Id: {workerUpdate.Id}");
+                    throw new KeyNotFoundException($"Nie znaleziono pracownika o podanym numerze Id: {carUpdate.Id}");
                 }
-                _context.Workers.Update(workerUpdate);
+                _context.Cars.Update(carUpdate);
             }
             catch (Exception ex)
             {
@@ -64,17 +64,17 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
         }
 
-        public async Task Create(Worker newWorker)
+        public async Task Create(Car newCar)
         {
             try
             {
-                bool existingWorker = await _context.Workers.AnyAsync(worker => worker.Name == newWorker.Name);
+                bool existingWorker = await _context.Cars.AnyAsync(worker => worker.Name == newCar.Name);
                 if (existingWorker)
                 {
-                    throw new Exception($"Pracownik o podanej nazwie już istnieje! {newWorker.Name}");
+                    throw new Exception($"Pracownik o podanej nazwie już istnieje! {newCar.Name}");
                 }
 
-                _context.Workers.Add(newWorker);
+                _context.Cars.Add(newCar);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -83,16 +83,16 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<Worker>> GetAllWorkers()
+        public async Task<IEnumerable<Car>> GetAllWorkers()
         {
             try
             {
-                var allWorkers = await _context.Workers.ToListAsync();
-                if (allWorkers == null)
+                var allCars = await _context.Cars.ToListAsync();
+                if (allCars == null)
                 {
                     throw new KeyNotFoundException($"Nie znaleziono pracowników");
                 }
-                return allWorkers;
+                return allCars;
             }
             catch (Exception ex)
             {

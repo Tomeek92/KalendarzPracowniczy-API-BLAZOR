@@ -4,6 +4,7 @@ using KalendarzPracowniczyInfrastructureDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KalendarzPracowniczyInfrastructure.Migrations
 {
     [DbContext(typeof(KalendarzPracowniczyDbContext))]
-    partial class KalendarzPracowniczyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241007070543_init17")]
+    partial class init17
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,29 +24,6 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("KalendarzPracowniczyDomain.Entities.Cars.Car", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CarPlatesNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Model")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Year")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Cars");
-                });
 
             modelBuilder.Entity("KalendarzPracowniczyDomain.Entities.Events.Event", b =>
                 {
@@ -154,6 +134,28 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("KalendarzPracowniczyDomain.Entities.Workers.Worker", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Workers");
                 });
 
             modelBuilder.Entity("KalendarzPracowniczyDomain.Entities.Works.Work", b =>

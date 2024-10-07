@@ -3,10 +3,10 @@ using MediatR;
 
 namespace KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetWorkerById
 {
-    public class GetWorkerByIdQuery : IRequest<WorkerDto>
+    public class GetCarByIdQuery : IRequest<CarDto>
     {
         public Guid Id { get; set; }
-        public GetWorkerByIdQuery(Guid id)
+        public GetCarByIdQuery(Guid id)
         {
             Id = id;
         }
