@@ -12,6 +12,6 @@ namespace KalendarzPracowniczyDomain.Interfaces
 
         Task Create(Car newCar);
 
-        Task<IEnumerable<Car>> GetAllWorkers();
+        Task<IEnumerable<Car>> GetAllCars();
     }
 }

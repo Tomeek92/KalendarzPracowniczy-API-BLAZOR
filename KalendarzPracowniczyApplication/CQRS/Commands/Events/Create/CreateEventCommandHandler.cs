@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.LoggedUser;
+using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetWorkerById;
 using KalendarzPracowniczyApplication.Dto;
+using KalendarzPracowniczyDomain.Entities.Cars;
 using KalendarzPracowniczyDomain.Entities.Events;
 using KalendarzPracowniczyDomain.Interfaces;
 using MediatR;
@@ -29,15 +31,24 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
                 {
                     throw new Exception("Nie można utworzyć wydarzenia bez zalogowanego użytkownika.");
                 }
+
+                var currentCar = await _mediator.Send(new GetCarByIdQuery(request.CarId), cancellationToken);
+                if (currentCar == null)
+                {
+                    throw new Exception("Nie odnaleziono samochodu podczas tworzenia wyjazdu");
+                }
+
                 var newEvent = _mapper.Map<Event>(request);
 
                 newEvent.UserId = loggedUser.Id;
-
                 newEvent.User = null;
+
+                newEvent.Car = _mapper.Map<Car>(currentCar);
 
                 await _eventRepository.Create(newEvent, cancellationToken);
 
                 var eventDto = _mapper.Map<EventDto>(newEvent);
+
                 return eventDto;
             }
             catch (AutoMapperMappingException ex)

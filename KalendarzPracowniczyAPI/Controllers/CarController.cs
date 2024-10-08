@@ -80,7 +80,7 @@ namespace KalendarzPracowniczyAPI.Controllers
                 var result = await _mediator.Send(query);
                 if (result == null)
                 {
-                    return NotFound($"Nie odnaleziono pracowników");
+                    return NotFound($"Nie odnaleziono samochodów");
                 }
                 return Ok(result);
             }

@@ -3,6 +3,7 @@
 @using KalendarzPracowniczyUI.Service
 @rendermode InteractiveServer
 @inject EventServiceUI EventServiceUI
+@inject CarServiceUI CarServiceUI
 
 <style>
     .event-form-container {
@@ -181,12 +182,13 @@
         </div>
         <div>
             <p>Samochód:</p>
-            <select @bind="eventDto.Car">
+            <select @bind="eventDto.CarId">
                 <option value="">-- Wybierz samochód --</option>
-                <option value="Skoda">Skoda(kosiarka) Rapid GA128AM</option>
-                <option value="Skoda">Skoda(Czarny) Rapid GA798FA </option>
-                <option value="Toyota">Toyota GA370EN</option>
-                <option value="Skoda">Skoda SuperB CB225ME</option>
+                @foreach (var car in carDtos)
+                {
+                    <option value="@car.Id">@car.Name @car.Model @car.CarPlatesNumber</option>
+                   
+                }
             </select>
         </div>
         <div>
@@ -210,12 +212,17 @@
 }
 
 @code {
-    public EventDto eventDto = new EventDto();
+    public EventDto eventDto = new ();
+    private List<CarDto> carDtos = new List<CarDto>();
     private string? message;
     private bool isSuccess;
     private bool isLoading = false;
 
-
+    protected override async Task OnInitializedAsync()
+    {
+        eventDto.StartDate = DateTime.UtcNow;
+        await GetAllCars();
+    }
 
     public async Task CreateEventAsync()
     {
@@ -236,6 +243,17 @@
         finally
         {
             isLoading = false;
+        }
+    }
+    private async Task GetAllCars()
+    {
+        try
+        {
+           carDtos = await CarServiceUI.GetAll();
+        }
+        catch
+        {
+            message = $"Błąd podczas pobierania samochodów";
         }
     }
 }

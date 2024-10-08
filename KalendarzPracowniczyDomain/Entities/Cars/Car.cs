@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using KalendarzPracowniczyDomain.Entities.Events;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
 
 namespace KalendarzPracowniczyDomain.Entities.Cars
@@ -12,5 +13,6 @@ namespace KalendarzPracowniczyDomain.Entities.Cars
         public DateTime? Year { get; set; }
         public string? Model { get; set; }
         public string? CarPlatesNumber { get; set; }
+        public ICollection<Event> Events { get; set; } = new List<Event>();
     }
 }

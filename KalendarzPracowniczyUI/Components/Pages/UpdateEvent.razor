@@ -1,7 +1,7 @@
 ﻿
 @using KalendarzPracowniczyApplication.Dto
 @using KalendarzPracowniczyUI.Service
-
+@inject CarServiceUI CarServiceUI
 @inject EventServiceUI EventServiceUI
 
 
@@ -181,12 +181,13 @@
         </div>
         <div>
             <p>Samochód:</p>
-            <select @bind="eventDto.Car">
+            <select @bind="carDto.Id">
                 <option value="">-- Wybierz samochód --</option>
-                <option value="Skoda(kosiarka) Rapid GA128AM">Skoda(kosiarka) Rapid GA128AM</option>
-                <option value="Skoda(Czarny) Rapid GA798FA">Skoda(Czarny) Rapid GA798FA </option>
-                <option value="Toyota GA370EN">Toyota GA370EN</option>
-                <option value="Skoda SuperB CB225ME">Skoda SuperB CB225ME</option>
+                @foreach (var car in carDtos)
+                {
+                    <option value="@car.Id">@car.Name @car.Model @car.CarPlatesNumber</option>
+
+                }
             </select>
         </div>
         <div>
@@ -218,19 +219,32 @@
     private string? message;
     private bool isSuccess;
     private bool isLoading = false;
+    private List<CarDto> carDtos = new();
+    private CarDto carDto = new();
 
     protected override async Task OnInitializedAsync()
     {
-      if (EventIdParam != Guid.Empty)
-      {
-          eventDto = await EventServiceUI.GetById(EventIdParam);
-      }
-      else
-      {
-          message = ("Nie przekazano prawidłowego ID.");
-      }
+        if (EventIdParam != Guid.Empty)
+        {
+            eventDto = await EventServiceUI.GetById(EventIdParam);
+        }
+        else
+        {
+            message = ("Nie przekazano prawidłowego ID.");
+        }
     }
- 
+    private async Task GetAllCars()
+    {
+        try
+        {
+            carDtos = await CarServiceUI.GetAll();
+        }
+        catch
+        {
+            message = ("Błąd podczas pobierania listy samochodów");
+        }
+    }
+
     public async Task UpdateEvents()
     {
         try

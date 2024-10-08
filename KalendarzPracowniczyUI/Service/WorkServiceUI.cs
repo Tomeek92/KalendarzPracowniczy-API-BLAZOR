@@ -1,5 +1,4 @@
 ﻿using KalendarzPracowniczyApplication.Dto;
-using KalendarzPracowniczyUI.Components.Pages;
 
 namespace KalendarzPracowniczyUI.Service
 {

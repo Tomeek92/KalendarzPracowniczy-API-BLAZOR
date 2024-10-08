@@ -18,6 +18,12 @@ namespace KalendarzPracowniczyUI.Service
             {
                 var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Event/Create", eventDto);
 
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Błąd: {response.StatusCode}, Szczegóły: {errorContent}");
+                }
+
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
@@ -62,7 +68,7 @@ namespace KalendarzPracowniczyUI.Service
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-
+                    Console.WriteLine(content);
                     var allEvents = JsonConvert.DeserializeObject<IEnumerable<EventDto>>(content);
 
                     if (allEvents == null)

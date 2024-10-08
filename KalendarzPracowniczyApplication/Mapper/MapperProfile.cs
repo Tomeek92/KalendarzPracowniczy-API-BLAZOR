@@ -50,8 +50,15 @@ namespace KalendarzPracowniczyApplication.Mapper
             .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
-            CreateMap<CarDto, Car>();
-            CreateMap<Car, CarDto>();
+            CreateMap<CarDto, Car>()
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Model))
+            .ForMember(dest => dest.CarPlatesNumber, opt => opt.MapFrom(src => src.CarPlatesNumber));
+
+            CreateMap<Car, CarDto>()
+             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Model))
+            .ForMember(dest => dest.CarPlatesNumber, opt => opt.MapFrom(src => src.CarPlatesNumber));
 
             CreateMap<UpdateEventCommand, Event>();
 

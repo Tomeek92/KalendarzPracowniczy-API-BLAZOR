@@ -21,7 +21,11 @@ namespace KalendarzPracowniczyInfrastructureDbContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            modelBuilder.Entity<Event>()
+                .HasOne(e =>e.Car)
+                .WithMany(c =>c.Events)
+                .HasForeignKey(e => e.CarId)
+                .OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Events)
                 .WithOne(e => e.User)

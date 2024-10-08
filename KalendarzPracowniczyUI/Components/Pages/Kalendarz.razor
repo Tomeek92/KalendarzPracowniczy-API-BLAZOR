@@ -96,7 +96,7 @@ else
                                 {
                                     <div class="event-item" @onclick:stopPropagation>
                                         <div class="event-details">
-                                            <span>@eventItem.Title</span>
+                                            <span style="width: 100%; padding-left: 0;"> @eventItem.Title</span>
                                         </div>
                                         <div>
                                             <i class="fas fa-info-circle"
@@ -108,12 +108,13 @@ else
                                             {
                                                 <div class="modification-details">
                                                     <p>Opis: @eventItem.Description</p>
-                                                    <span>Samochód: @eventItem.Car</span><i class="fa-solid fa-car-side"></i>
+                                                    <span>@(eventItem.Car != null && !string.IsNullOrEmpty(eventItem.Car.Model) ? $"{eventItem.Car.Name} {eventItem.Car.Model}" : "Brak samochodu")</span><i class="fa-solid fa-car-side"></i>
                                                     <p>Ostatnia modyfikacja: @lastModifiedBy</p>
                                                     <p>@lastModifiedOn?.ToString("g")</p>
                                                 </div>
                                             }
-                                            </div>
+                                            
+                                        </div>
                                         <a @onclick="async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen edit-icon"></a>
                                     </div>
 
@@ -200,6 +201,7 @@ else
     {
         confirmedDeleteEventId = eventId;
         showDeleteConfirmation = true;
+        isSuccess = false;
     }
 
     private async Task ConfirmDelete()
@@ -216,6 +218,7 @@ else
             errorMessage = ($"Nieoczekiwany błąd {ex.Message}");
             isSuccess = false;
         }
+   
 
     }
     private void HideModificationDetails()

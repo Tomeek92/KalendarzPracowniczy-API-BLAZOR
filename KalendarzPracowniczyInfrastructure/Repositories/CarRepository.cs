@@ -18,12 +18,12 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                var findIdWorker = await _context.Cars.FindAsync(id);
-                if (findIdWorker == null)
+                var findIdcar = await _context.Cars.FindAsync(id);
+                if (findIdcar == null)
                 {
                     throw new KeyNotFoundException($"Nie znaleziono pracownika o podanym numerze {id}");
                 }
-                return findIdWorker;
+                return findIdcar;
             }
             catch (Exception ex)
             {
@@ -35,10 +35,15 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                var findWorker = await GetElementById(id);
-                if (findWorker == null)
+                var findCar = await _context.Cars.FindAsync(id);
+                if (findCar == null)
                 {
                     throw new KeyNotFoundException($"Nie znaleziono pracownika o podanym {id}");
+                }
+                else
+                {
+                    _context.Cars.Remove(findCar);
+                    await _context.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
@@ -68,10 +73,10 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                bool existingWorker = await _context.Cars.AnyAsync(worker => worker.Name == newCar.Name);
+                bool existingWorker = await _context.Cars.AnyAsync(car => car.CarPlatesNumber == newCar.CarPlatesNumber);
                 if (existingWorker)
                 {
-                    throw new Exception($"Pracownik o podanej nazwie już istnieje! {newCar.Name}");
+                    throw new Exception($"Samochód o podanych numerach rejestracyjnych już istnieje! {newCar.CarPlatesNumber}");
                 }
 
                 _context.Cars.Add(newCar);
@@ -83,7 +88,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<Car>> GetAllWorkers()
+        public async Task<IEnumerable<Car>> GetAllCars()
         {
             try
             {

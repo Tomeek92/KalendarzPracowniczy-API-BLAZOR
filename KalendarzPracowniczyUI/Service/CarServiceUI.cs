@@ -21,17 +21,17 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task Delete(Guid id)
         {
-            var response = await _httpClient.DeleteAsync($"https://localhost:7164/api/Worker/{id}");
+            var response = await _httpClient.DeleteAsync($"https://localhost:7164/api/Car/{id}");
             response.EnsureSuccessStatusCode();
         }
 
         public async Task Update(UpdateCarCommand workerCommand)
         {
-            var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Worker/", workerCommand);
+            var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Car/", workerCommand);
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<IEnumerable<CarDto>> GetAll()
+        public async Task<List<CarDto>> GetAll()
         {
             var response = await _httpClient.GetAsync($"https://localhost:7164/api/Car/GetAll");
 
@@ -39,7 +39,7 @@ namespace KalendarzPracowniczyUI.Service
             {
                 var content = await response.Content.ReadAsStringAsync();
 
-                var allEvents = JsonConvert.DeserializeObject<IEnumerable<CarDto>>(content);
+                var allEvents = JsonConvert.DeserializeObject<List<CarDto>>(content);
 
                 if (allEvents == null)
                 {

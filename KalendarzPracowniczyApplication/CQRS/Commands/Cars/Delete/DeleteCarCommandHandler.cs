@@ -7,16 +7,23 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Workers.Delete
     public class DeleteCarCommandHandler : IRequestHandler<DeleteCarCommand>
     {
         private readonly IMapper _mapper;
-        private readonly ICarRepository _workerRepository;
-        public DeleteCarCommandHandler(IMapper mapper, ICarRepository workerRepository)
+        private readonly ICarRepository _carRepository;
+        public DeleteCarCommandHandler(IMapper mapper, ICarRepository carRepository)
         {
             _mapper = mapper;
-            _workerRepository = workerRepository;
+            _carRepository = carRepository;
         }
 
         public async Task Handle(DeleteCarCommand request, CancellationToken cancellationToken)
         {
-            await _workerRepository.Delete(request.Id);
+            try
+            {
+                await _carRepository.Delete(request.Id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Błąd podczas usuwania zadania {ex.Message}");
+            }
         }
     }
 }

@@ -25,19 +25,20 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Users.LoggedUser
             try
             {
                 var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userName = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
+                var surName = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Surname);
 
-                if (userId == null)
+                if (string.IsNullOrEmpty(userId))
                 {
-                    throw new Exception($"Nie znaleziono użytkownika");
+                    throw new UnauthorizedAccessException("Nie znaleziono zalogowanego użytkownika.");
                 }
 
-                var user = await _userRepository.GetUserById(userId);
-
-                if (user == null)
+                var userDto = new UserDto
                 {
-                    throw new Exception($"Nie znaleziono użytkownika");
-                }
-                var userDto = _mapper.Map<UserDto>(user);
+                    Id = userId,
+                    UserName = userName,
+                    Surname = surName
+                };
                 return userDto;
             }
             catch (AutoMapperMappingException ex)

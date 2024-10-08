@@ -1,10 +1,13 @@
-﻿using KalendarzPracowniczyDomain.Entities.Events;
+﻿using KalendarzPracowniczyApplication.Dto;
+using KalendarzPracowniczyDomain.Entities.Cars;
+using KalendarzPracowniczyDomain.Entities.Events;
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Interfaces;
 using KalendarzPracowniczyInfrastructureDbContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace KalendarzPracowniczyInfrastructure.Repositories
 {
@@ -42,6 +45,17 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
+                var trackedCar = _context.ChangeTracker.Entries<Car>()
+                                 .FirstOrDefault(e => e.Entity.Id == createEvent.CarId);
+
+                if (trackedCar != null)
+                {
+                    createEvent.Car = trackedCar.Entity;
+                }
+                else
+                {
+                    _context.Attach(createEvent.Car);
+                }
                 _context.Add(createEvent);
                 var result = await _context.SaveChangesAsync(cancellationToken);
             }
@@ -101,17 +115,18 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                var allEvents = await _context.Events.ToListAsync();
-
+                var allEvents = await _context.Events
+                .Include(e => e.Car)
+                    .ToListAsync();
                 if (allEvents == null)
                 {
                     throw new KeyNotFoundException($"Nie znaleziono żadnych zadań!");
                 }
                 return allEvents;
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception($"Wystąpił błąd podczas wyświetlania listy zadań!");
+                throw new Exception($"Wystąpił błąd podczas wyświetlania listy zadań!{ex.Message}");
             }
         }
     }

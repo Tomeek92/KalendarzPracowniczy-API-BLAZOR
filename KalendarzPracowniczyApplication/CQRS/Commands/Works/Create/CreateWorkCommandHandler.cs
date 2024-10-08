@@ -31,7 +31,6 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Works.Create
                 var mapp = _mapper.Map<Work>(request);
 
                 mapp.UserId = loggedUser.Id;
-                
 
                 await _workRepository.AddTaskAsync(mapp);
             }
