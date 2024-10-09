@@ -1,5 +1,4 @@
-﻿using KalendarzPracowniczyApplication.Dto;
-using KalendarzPracowniczyDomain.Entities.Cars;
+﻿using KalendarzPracowniczyDomain.Entities.Cars;
 using KalendarzPracowniczyDomain.Entities.Events;
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Interfaces;
@@ -7,7 +6,6 @@ using KalendarzPracowniczyInfrastructureDbContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace KalendarzPracowniczyInfrastructure.Repositories
 {
@@ -28,7 +26,9 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                var findId = await _context.FindAsync<Event>(id);
+                var findId = await _context.Events
+            .Include(e => e.Car)
+            .FirstOrDefaultAsync(e => e.Id == id);
                 if (findId == null)
                 {
                     throw new Exception($"Element nie został znaleziony w bazie danych");
@@ -65,16 +65,10 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
         }
 
-        public async Task Delete(Guid id)
+        public async Task SaveAsync()
         {
             try
             {
-                var findEventId = await GetElementById(id);
-                if (findEventId == null)
-                {
-                    throw new KeyNotFoundException($"Rekord o danym {id} nie został znaleziony w bazie danych ");
-                }
-                _context.Remove(findEventId);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

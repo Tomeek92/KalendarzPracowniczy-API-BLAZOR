@@ -61,13 +61,12 @@ else
 {
     <NavigationMenu />
     <div class="weekly-schedule-container">
-        <div class="logo-page">
-            <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width:12%;" />
-        </div>
+      
         <div class="calendar-controls">
-            <button @onclick="PreviousWeek">❮ Poprzedni tydzień</button>
+            <button @onclick="PreviousWeek">❮</button>
+            <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width:8%; margin-left:-20%;" />
             <h2>@currentWeekStart.ToString("MMMM yyyy", new System.Globalization.CultureInfo("pl-PL"))</h2>
-            <button @onclick="NextWeek">Następny tydzień ❯</button>
+            <button @onclick="NextWeek">❯</button>
         </div>
         <div class="schedule-grid">
             <div class="schedule-header">
@@ -94,36 +93,52 @@ else
 
                                 @foreach (var eventItem in GetEventsForDay(day).Where(e => e.UserId == user.Id))
                                 {
-                                    <div class="event-item" @onclick:stopPropagation>
-                                        <div class="event-details">
-                                            <span style="width: 100%; padding-left: 0;"> @eventItem.Title</span>
-                                        </div>
+                                    @if (!eventItem.IsDeleted)
+                                    {
+                                        <div class="event-item" @onclick:stopPropagation>
+                                            <div class="event-details">
+                                                <span style="width: 100%; padding-left: 0;"> @eventItem.Title</span>
+                                                <span class="fas fa-info-circle"
+                                                      @onmouseover="() => ShowModificationDetails(eventItem.Id, eventItem.LastModifiedBy, eventItem.LastModifiedTime)"
+                                                      @onmouseout="HideModificationDetails"></span>
+                                                <span @onclick="() => AkceptDelete(eventItem.Id)" class="fa-solid fa-trash delete-icon" style="font-size:large"></span>
+                                            </div>
+                                                @if (selectedEvent.Id == eventItem.Id && showModificationDetails)
+                                                {
+                                                    <div class="modification-details">
+                                                        <p>Opis: @eventItem.Description</p>
+                                                        <span> @eventItem.Name</span>
+                                                        <span>@(eventItem.Car != null && !string.IsNullOrEmpty(eventItem.Car.Model) ? $"{eventItem.Car.Name} {eventItem.Car.Model}" : "Brak samochodu")</span><i class="fa-solid fa-car-side"></i>
+                                                        <p>Ostatnia modyfikacja: @lastModifiedBy</p>
+                                                        <p>@lastModifiedOn?.ToString("g")</p>
+                                                    </div>
+                                                }
+                                       </div>
+                                            <a @onclick="async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen edit-icon" style="font-size:large"></a>                                       
+                                    }
+                                    else
+                                    {
                                         <div>
-                                            <i class="fas fa-info-circle"
+                                            <span class="fas fa-info-circle" style="color:red;"
                                                @onmouseover="() => ShowModificationDetails(eventItem.Id, eventItem.LastModifiedBy, eventItem.LastModifiedTime)"
-                                               @onmouseout="HideModificationDetails"></i>
-                                            <i @onclick="() => AkceptDelete(eventItem.Id)" class="fa-solid fa-trash delete-icon"></i>
-
+                                               @onmouseout="HideModificationDetails"></span>
+                                           
                                             @if (selectedEvent.Id == eventItem.Id && showModificationDetails)
                                             {
                                                 <div class="modification-details">
-                                                    <p>Opis: @eventItem.Description</p>
-                                                    <span>@(eventItem.Car != null && !string.IsNullOrEmpty(eventItem.Car.Model) ? $"{eventItem.Car.Name} {eventItem.Car.Model}" : "Brak samochodu")</span><i class="fa-solid fa-car-side"></i>
-                                                    <p>Ostatnia modyfikacja: @lastModifiedBy</p>
-                                                    <p>@lastModifiedOn?.ToString("g")</p>
+                                                    <span style="color:red;">Usunął: @eventItem.DeletedBy</span>
+                                                    <p style="color:red;">Miejsce: @eventItem.Title</p>
+                                                    <p style="color:red;">Opis: @eventItem.Description</p>
+                                                    <span style="color:red;"><i class="fa-solid fa-car-side" style="color:red;"></i>@(eventItem.Car != null && !string.IsNullOrEmpty(eventItem.Car.Model) ? $"{eventItem.Car.Name} {eventItem.Car.Model}" : "Brak samochodu")</span>
                                                 </div>
                                             }
-                                            
-                                        </div>
-                                        <a @onclick="async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen edit-icon"></a>
-                                    </div>
 
+                                        </div>
+                                    }
                                 }
                             </div>
-                        </div>
-                      
+                        </div>                     
                     }
-
                 </div>
             }
         </div>

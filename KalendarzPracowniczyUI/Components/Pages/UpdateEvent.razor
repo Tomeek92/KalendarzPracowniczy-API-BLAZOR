@@ -7,7 +7,8 @@
 
 <style>
  .event-form-container {
-    max-width: 50%px;
+        height: 500px;
+    max-width: 90%;
     margin: 0 auto;
     padding: 20px;
     border-radius: 12px;
@@ -22,7 +23,7 @@
 }
 
 .event-form-container p {
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     font-weight: bold;
     color: #00aaff; 
 }
@@ -30,7 +31,7 @@
 .event-form-container input {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
+    margin-bottom: -5px;
     border: 1px solid rgba(0, 150, 255, 0.5); 
     border-radius: 8px;
     box-sizing: border-box;
@@ -48,13 +49,13 @@
 
 .event-form-container button {
     width: 100%;
-    padding: 12px;
+    padding: 8px;
     background-color: rgba(0, 150, 255, 0.4); 
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
     box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
 }
@@ -70,8 +71,8 @@
     border: 8px solid rgba(255, 255, 255, 0.2);
     border-top: 8px solid #00aaff; 
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 25px;
+    height: 25px;
     animation: spin 1s linear infinite;
     margin: 20px auto;
 }
@@ -88,7 +89,7 @@
 }
 
 .logo img {
-    width: 150px;
+    width: 80px;
     height: auto;
     margin-right:65%;
 }
@@ -100,7 +101,7 @@
     p {
         font-weight: bold;
         color: #00aaff;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
 
     select {
@@ -132,15 +133,15 @@
         }
 /* Wiadomości */
 .message, .success-message {
-    padding: 15px;
+    padding: 5px;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: bold;
     position: relative;
     left: 10px;
-    margin: 30px auto;
+    margin: 20px auto;
     width: 80%;
-    max-width: 600px;
+    max-width: 400px;
     text-align: center;
 }
 
@@ -171,6 +172,16 @@
             <p>Miejsce wyjazdu</p>
             <InputText @bind-Value="eventDto.Title" />
         </div>
+           <div>
+            <p>Praca - Urlop</p>
+            <select @onchange="(e) => eventDto.Name = e.Value.ToString()">
+                <option value="">Wybierz miejsce</option>
+                <option value="Biuro">Biuro</option>
+                <option value="Zdalna-okazjonalna">Zdalna okazjonalna</option>
+                <option value="Zdalna">Zdalna</option>
+                <option value="Urlop">Urlop</option>
+            </select>
+        </div>
         <div>
             <p>Opis</p>
             <InputText @bind-Value="eventDto.Description" />
@@ -181,7 +192,7 @@
         </div>
         <div>
             <p>Samochód:</p>
-            <select @bind="carDto.Id">
+            <select @bind="eventDto.CarId">
                 <option value="">-- Wybierz samochód --</option>
                 @foreach (var car in carDtos)
                 {
@@ -203,7 +214,7 @@
 
 @if (isSuccess)
 {
-    <p class="success-message">Zadanie zostało zaktualizowane pomyślnie!</p>
+    <p class="success-message">Zadanie zostało zaktualizowane!</p>
 }
 @if (isLoading)
 {
@@ -232,6 +243,7 @@
         {
             message = ("Nie przekazano prawidłowego ID.");
         }
+        await GetAllCars();
     }
     private async Task GetAllCars()
     {
@@ -264,4 +276,5 @@
             isLoading = false;
         }
     }
+    
 }

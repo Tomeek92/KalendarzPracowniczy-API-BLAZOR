@@ -8,7 +8,7 @@ namespace KalendarzPracowniczyDomain.Interfaces
 
         Task Create(Event createEvent, CancellationToken cancellationToken);
 
-        Task Delete(Guid id);
+        Task SaveAsync();
 
         Task Update(Event updateEvent);
 

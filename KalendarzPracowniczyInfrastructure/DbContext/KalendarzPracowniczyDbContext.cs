@@ -3,6 +3,7 @@ using KalendarzPracowniczyDomain.Entities.Events;
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Entities.Works;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace KalendarzPracowniczyInfrastructureDbContext
@@ -22,10 +23,11 @@ namespace KalendarzPracowniczyInfrastructureDbContext
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Event>()
-                .HasOne(e =>e.Car)
-                .WithMany(c =>c.Events)
+                .HasOne(e => e.Car)
+                .WithMany(c => c.Events)
                 .HasForeignKey(e => e.CarId)
                 .OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Events)
                 .WithOne(e => e.User)
@@ -48,6 +50,10 @@ namespace KalendarzPracowniczyInfrastructureDbContext
 
             modelBuilder.Entity<Work>()
                 .Property(w => w.CreatedAt)
+                .HasColumnType("date");
+
+            modelBuilder.Entity<Event>()
+                .Property(e => e.DeletedAt)
                 .HasColumnType("date");
         }
     }
