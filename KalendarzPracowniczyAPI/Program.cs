@@ -30,7 +30,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("https://localhost:7136")
+        builder => builder.WithOrigins("https://localhost:7136")//tylko ta domena mo¿e komunikowaæ siê z API!
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials());
