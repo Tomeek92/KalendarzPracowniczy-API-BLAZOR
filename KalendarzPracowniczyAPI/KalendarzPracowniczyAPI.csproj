@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KalendarzPracowniczyApplication\KalendarzPracowniczyApplication.csproj" />
+    <ProjectReference Include="..\KalendarzPracowniczyDomain\KalendarzPracowniczyDomain.csproj" />
     <ProjectReference Include="..\KalendarzPracowniczyInfrastructure\KalendarzPracowniczyInfrastructure.csproj" />
   </ItemGroup>
 

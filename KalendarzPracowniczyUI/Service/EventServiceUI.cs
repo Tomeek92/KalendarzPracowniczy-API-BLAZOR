@@ -1,5 +1,6 @@
 ﻿using KalendarzPracowniczyApplication.Dto;
 using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace KalendarzPracowniczyUI.Service
 {
@@ -107,10 +108,6 @@ namespace KalendarzPracowniczyUI.Service
                     var responseContent = await response.Content.ReadAsStringAsync();
                     throw new Exception($"Błąd API: {response.StatusCode}, Treść odpowiedzi: {responseContent}");
                 }
-            }
-            catch (Newtonsoft.Json.JsonException jsonEx)
-            {
-                throw new Exception($"Błąd podczas deserializacji odpowiedzi: {jsonEx.Message}");
             }
             catch (HttpRequestException httpEx)
             {

@@ -2,12 +2,13 @@
 @using KalendarzPracowniczyApplication.Dto
 @using KalendarzPracowniczyUI.Service
 @inject CarServiceUI CarServiceUI
+@inject UserServiceUI UserServiceUI
 @inject EventServiceUI EventServiceUI
 
 
 <style>
  .event-form-container {
-        height: 500px;
+    height: 50%;
     max-width: 90%;
     margin: 0 auto;
     padding: 20px;
@@ -191,6 +192,16 @@
             <InputDate @bind-Value="eventDto.StartDate" />
         </div>
         <div>
+            <p>Dla kogo?</p>
+            <select @bind="eventDto.UserId">
+                <option value="">-- Wybierz użytkownika --</option>
+                @foreach (var user in userDtos)
+                {
+                    <option value="@user.Id">@user.Name @user.Surname</option>
+                }
+            </select>
+        </div>
+        <div>
             <p>Samochód:</p>
             <select @bind="eventDto.CarId">
                 <option value="">-- Wybierz samochód --</option>
@@ -227,6 +238,7 @@
     [Parameter] 
     public EventCallback OnClose { get; set; }
     private EventDto eventDto = new EventDto();
+    private List<UserDto> userDtos = new List<UserDto>();
     private string? message;
     private bool isSuccess;
     private bool isLoading = false;
@@ -244,6 +256,7 @@
             message = ("Nie przekazano prawidłowego ID.");
         }
         await GetAllCars();
+        await GetAllUsers();
     }
     private async Task GetAllCars()
     {
@@ -274,6 +287,17 @@
         finally
         {
             isLoading = false;
+        }
+    }
+    private async Task GetAllUsers()
+    {
+        try
+        {
+            userDtos = await UserServiceUI.GetAll();
+        }
+        catch
+        {
+            message = $"Błąd podczas pobierania użytkowników";
         }
     }
     

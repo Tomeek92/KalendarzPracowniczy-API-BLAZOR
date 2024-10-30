@@ -79,30 +79,31 @@ else
                     </div>
                 }
             </div>
+                @foreach (var user in users)
+                {
+                    <div class="schedule-row">
+                        <div class="employee-cell">
+                        <p>@user.Name @user.Surname</p>
+                        </div>
 
-            @foreach (var user in users)
-            {
-                <div class="schedule-row">
-                    <div class="employee-cell">@user.Name @user.Surname</div>
+                        @foreach (var day in GetDaysOfWeek())
+                        {
+                            <div class="day-cell-wrapper">
 
-                    @foreach (var day in GetDaysOfWeek())
-                    {
-                        <div class="day-cell-wrapper">
-                          
-                            <div class="day-cell @(day.Date == DateTime.Today.Date ? "today" : "")" @onclick="() => ShowModal(day)">
+                                <div class="day-cell @(day.Date == DateTime.Today.Date ? "today" : "")" @onclick="() => ShowModal(day)">
 
-                                @foreach (var eventItem in GetEventsForDay(day).Where(e => e.UserId == user.Id))
-                                {
-                                    @if (!eventItem.IsDeleted)
+                                    @foreach (var eventItem in GetEventsForDay(day).Where(e => e.UserId == user.Id))
                                     {
-                                        <div class="event-item" @onclick:stopPropagation>
-                                            <div class="event-details">
-                                                <span style="width: 100%; padding-left: 0;"> @eventItem.Title</span>
-                                                <span class="fas fa-info-circle"
-                                                      @onmouseover="() => ShowModificationDetails(eventItem.Id, eventItem.LastModifiedBy, eventItem.LastModifiedTime)"
-                                                      @onmouseout="HideModificationDetails"></span>
-                                                <span @onclick="() => AkceptDelete(eventItem.Id)" class="fa-solid fa-trash delete-icon" style="font-size:large"></span>
-                                            </div>
+                                        @if (!eventItem.IsDeleted)
+                                        {
+                                            <div class="event-item" @onclick:stopPropagation>
+                                                <div class="event-details">
+                                                    <span style="width: 100%; padding-left: 0;"> @eventItem.Title</span>
+                                                    <span class="fas fa-info-circle"
+                                                          @onmouseover="() => ShowModificationDetails(eventItem.Id, eventItem.LastModifiedBy, eventItem.LastModifiedTime)"
+                                                          @onmouseout="HideModificationDetails"></span>
+                                                    <span @onclick="() => AkceptDelete(eventItem.Id)" class="fa-solid fa-trash delete-icon" style="font-size:large"></span>
+                                                </div>
                                                 @if (selectedEvent.Id == eventItem.Id && showModificationDetails)
                                                 {
                                                     <div class="modification-details">
@@ -113,34 +114,34 @@ else
                                                         <p>@lastModifiedOn?.ToString("g")</p>
                                                     </div>
                                                 }
-                                       </div>
-                                            <a @onclick="async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen edit-icon" style="font-size:large"></a>                                       
-                                    }
-                                    else
-                                    {
-                                        <div>
-                                            <span class="fas fa-info-circle" style="color:red;"
-                                               @onmouseover="() => ShowModificationDetails(eventItem.Id, eventItem.LastModifiedBy, eventItem.LastModifiedTime)"
-                                               @onmouseout="HideModificationDetails"></span>
-                                           
-                                            @if (selectedEvent.Id == eventItem.Id && showModificationDetails)
-                                            {
-                                                <div class="modification-details">
-                                                    <span style="color:red;">Usunął: @eventItem.DeletedBy</span>
-                                                    <p style="color:red;">Miejsce: @eventItem.Title</p>
-                                                    <p style="color:red;">Opis: @eventItem.Description</p>
-                                                    <span style="color:red;"><i class="fa-solid fa-car-side" style="color:red;"></i>@(eventItem.Car != null && !string.IsNullOrEmpty(eventItem.Car.Model) ? $"{eventItem.Car.Name} {eventItem.Car.Model}" : "Brak samochodu")</span>
-                                                </div>
-                                            }
+                                            </div>
+                                            <a @onclick="async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen edit-icon" style="font-size:large"></a>
+                                        }
+                                        else
+                                        {
+                                            <div>
+                                                <span class="fas fa-info-circle" style="color:red;"
+                                                      @onmouseover="() => ShowModificationDetails(eventItem.Id, eventItem.LastModifiedBy, eventItem.LastModifiedTime)"
+                                                      @onmouseout="HideModificationDetails"></span>
 
-                                        </div>
+                                                @if (selectedEvent.Id == eventItem.Id && showModificationDetails)
+                                                {
+                                                    <div class="modification-details">
+                                                        <span style="color:red;">Usunął: @eventItem.DeletedBy</span>
+                                                        <p style="color:red;">Miejsce: @eventItem.Title</p>
+                                                        <p style="color:red;">Opis: @eventItem.Description</p>
+                                                        <span style="color:red;"><i class="fa-solid fa-car-side" style="color:red;"></i>@(eventItem.Car != null && !string.IsNullOrEmpty(eventItem.Car.Model) ? $"{eventItem.Car.Name} {eventItem.Car.Model}" : "Brak samochodu")</span>
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        }
                                     }
-                                }
+                                </div>
                             </div>
-                        </div>                     
-                    }
-                </div>
-            }
+                        }
+                    </div>
+                }
         </div>
     </div>
     @if (selectedDay.HasValue && !isVisible)
@@ -233,7 +234,7 @@ else
             errorMessage = ($"Nieoczekiwany błąd {ex.Message}");
             isSuccess = false;
         }
-   
+
 
     }
     private void HideModificationDetails()
@@ -250,6 +251,7 @@ else
         try
         {
             users = await UserService.GetAll();
+            Console.WriteLine(users);
         }
         catch (Exception ex)
         {
@@ -294,7 +296,7 @@ else
             {
                 await GetAllUsers();
                 await GetAllEvents();
-
+            
             }
         }
         catch (Exception ex)

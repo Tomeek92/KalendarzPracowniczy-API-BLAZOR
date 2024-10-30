@@ -66,9 +66,19 @@ h1:focus {
     flex-direction: column;
     align-items: center;
     color: #ffffff;
-    transition: width 0.3s, background-color 0.3s, box-shadow 0.3s;
+    transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+    overflow: hidden;
+    transform-origin: top;
+    transform: scaleX(0);
+    opacity: 1;
+    transform-origin: left;
     box-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
 }
+
+    .sidebar.visible {
+        transform: scaleX(1);
+        opacity: 1;
+    }
 
 .nav {
     display: flex;
@@ -416,9 +426,9 @@ h1:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
-    margin-top: 20px;
-    margin-right: 95%;
+    position: absolute;
+    bottom: 39%;
+    left:-0.0%;
 }
 
 .menu-link {
@@ -434,14 +444,14 @@ h1:focus {
 }
 
 .menu-clicked {
-    left: 100px;
+    left: 110px;
 }
 
 .menu-text {
     font-size: 12px;
     position: absolute;
-    top: 50%;
-    left: 50px;
+    top: 140%;
+    left: -20%;
     transform: translateY(-50%);
     color: #ffffff;
     opacity: 0;
@@ -455,7 +465,6 @@ h1:focus {
 }
 /*Szczegóły zmian w kalendarzu*/
 
-
 .modification-details {
     position: absolute;
     background-color: #333;
@@ -464,7 +473,7 @@ h1:focus {
     padding: 2px;
     border-radius: 15px;
     bottom: -10%;
-    right: 33%;
+    right: 53%;
     transform: translateX(-50%);
     z-index: 1000;
     font-size: 15px;

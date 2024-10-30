@@ -71,14 +71,12 @@ namespace KalendarzPracowniczyAPI.Controllers
                 {
                     IsPersistent = true,
                 };
-                Console.WriteLine("Przed SignInAsync");
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-                Console.WriteLine("Po SignInAsync - Zalogowano");
+
                 return Ok(userDto);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Wystąpił błąd: {ex.Message}");
                 return StatusCode(500, new { message = $"Nieoczekiwany błąd: {ex.Message}" });
             }
         }

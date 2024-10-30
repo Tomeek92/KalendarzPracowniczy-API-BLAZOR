@@ -14,7 +14,8 @@ namespace KalendarzPracowniczyInfrastructure.Extensions
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = services.AddDbContext<KalendarzPracowniczyDbContext>(options =>
-                 options.UseSqlServer(configuration.GetConnectionString("KalendarzPracowniczy")));
+                 options.UseMySql("Server=172.20.0.2;Database=bidon;User=Tomek;Password=Tomek123;",
+            new MySqlServerVersion(new Version(11, 5, 2))));
 
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ICarRepository, CarRepository>();

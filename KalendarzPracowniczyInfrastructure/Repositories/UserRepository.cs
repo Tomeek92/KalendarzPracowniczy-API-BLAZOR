@@ -1,5 +1,4 @@
-﻿using KalendarzPracowniczyApplication.Dto;
-using KalendarzPracowniczyDomain.Entities.Users;
+﻿using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

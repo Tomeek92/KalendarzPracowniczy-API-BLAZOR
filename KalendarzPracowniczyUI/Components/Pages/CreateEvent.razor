@@ -3,11 +3,12 @@
 @using KalendarzPracowniczyUI.Service
 @rendermode InteractiveServer
 @inject EventServiceUI EventServiceUI
+@inject UserServiceUI UserServiceUI
 @inject CarServiceUI CarServiceUI
 
 <style>
     .event-form-container {
-       height:500px;
+        height:50%;
         max-width: 90%;
         margin: 0 auto;
         padding: 20px;
@@ -191,6 +192,15 @@
             <InputDate @bind-Value="eventDto.StartDate" />
         </div>
         <div>
+            <p>Dla kogo?</p>
+            <select @bind ="eventDto.UserId">
+                @foreach (var user in userDtos)
+                {
+                    <option value="@user.Id">@user.Name @user.Surname</option>
+                }
+            </select>
+        </div>
+        <div>
             <p>Samochód:</p>
             <select @bind="eventDto.CarId">
                 <option value="">-- Wybierz samochód --</option>
@@ -222,8 +232,10 @@
 }
 
 @code {
-    public EventDto eventDto = new ();
+    public EventDto eventDto = new();
     private List<CarDto> carDtos = new List<CarDto>();
+    private List<UserDto> userDtos = new List<UserDto>();
+    private UserDto userDto = new();
     private string? message;
     private bool isSuccess;
     private bool isLoading = false;
@@ -232,6 +244,14 @@
     {
         eventDto.StartDate = DateTime.UtcNow;
         await GetAllCars();
+        await GetAllUsers();
+
+        var loggedUser = await UserServiceUI.GetCurrentUserAsync();
+
+        if (loggedUser != null)
+        {
+            eventDto.UserId = loggedUser.Id;
+        }
     }
 
     public async Task CreateEventAsync()
@@ -259,11 +279,22 @@
     {
         try
         {
-           carDtos = await CarServiceUI.GetAll();
+            carDtos = await CarServiceUI.GetAll();
         }
         catch
         {
             message = $"Błąd podczas pobierania samochodów";
+        }
+    }
+    private async Task GetAllUsers()
+    {
+        try
+        {
+            userDtos = await UserServiceUI.GetAll();
+        }
+        catch
+        {
+            message = $"Błąd podczas pobierania użytkowników";
         }
     }
 }

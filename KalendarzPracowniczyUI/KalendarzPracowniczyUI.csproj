@@ -19,12 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KalendarzPracowniczyApplication\KalendarzPracowniczyApplication.csproj" />
-    <ProjectReference Include="..\KalendarzPracowniczyInfrastructure\KalendarzPracowniczyInfrastructure.csproj" />
+    <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\img\" />
+    <ProjectReference Include="..\KalendarzPracowniczyApplication\KalendarzPracowniczyApplication.csproj" />
+    <ProjectReference Include="..\KalendarzPracowniczyInfrastructure\KalendarzPracowniczyInfrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -26,12 +26,6 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
         {
             try
             {
-                var loggedUser = await _mediator.Send(new LoggedUserQuery(), cancellationToken);
-                if (loggedUser == null)
-                {
-                    throw new Exception("Nie można utworzyć wydarzenia bez zalogowanego użytkownika.");
-                }
-
                 var currentCar = await _mediator.Send(new GetCarByIdQuery(request.CarId), cancellationToken);
                 if (currentCar == null)
                 {
@@ -40,7 +34,7 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
 
                 var newEvent = _mapper.Map<Event>(request);
 
-                newEvent.UserId = loggedUser.Id;
+                newEvent.UserId = request.UserId;
                 newEvent.User = null;
 
                 newEvent.Car = _mapper.Map<Car>(currentCar);

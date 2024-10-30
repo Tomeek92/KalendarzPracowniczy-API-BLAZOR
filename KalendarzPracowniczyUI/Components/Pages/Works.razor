@@ -219,18 +219,40 @@ input[type="checkbox"] {
         {
             isLoading = true;
             newWork.UserId = userId;
-            await workService.Create(newWork);
-            successMessage = "Zadanie zostało dodane!";
-            await GetAllWork();
+
+            if(newWork.EndDate < newWork.StartDate)
+            {
+                errorMessage = "Data końca zadania nie powinna być wcześniejsza od daty startu zadania";
+                isLoading = false;
+                await HideMessage();
+            }
+            else
+            {
+                await workService.Create(newWork);
+
+                successMessage = "Zadanie zostało dodane!";
+
+                await GetAllWork();
+            }
+           
         }
         catch (Exception ex)
         {
             errorMessage = $"Wystąpił błąd: {ex.Message}";
+            await HideMessage();
         }
         finally
         {
             isLoading = false;
+
         }
+    }
+    private async Task HideMessage()
+    {
+        await Task.Delay(7000);
+        errorMessage = null;
+        successMessage = null;
+        StateHasChanged();
     }
     protected override async Task OnInitializedAsync()
     {
@@ -271,13 +293,14 @@ input[type="checkbox"] {
         try
         {
             await workService.Delete(id);
-            await GetAllWork();
             successMessage = "Zadanie zostało usunięte!";
+            await GetAllWork();
+
+            _ = HideMessage();
         }
         catch(Exception ex)
         {
-          errorMessage = ($"Błąd podczas usuwania zadania  {ex.Message}");
-            
+            errorMessage = ($"Błąd podczas usuwania zadania  {ex.Message}");
         }
     }
 }

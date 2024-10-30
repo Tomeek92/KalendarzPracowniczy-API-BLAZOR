@@ -10,5 +10,6 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
         public string? Name { get; set; }
         public DateTime StartDate { get; set; }
         public Guid CarId { get; set; }
+        public string? UserId { get; set; }
     }
 }
