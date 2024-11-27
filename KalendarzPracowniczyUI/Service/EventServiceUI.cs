@@ -1,6 +1,5 @@
 ﻿using KalendarzPracowniczyApplication.Dto;
 using Newtonsoft.Json;
-using System.Text.Json;
 
 namespace KalendarzPracowniczyUI.Service
 {
@@ -60,7 +59,7 @@ namespace KalendarzPracowniczyUI.Service
             }
         }
 
-        public async Task<IEnumerable<EventDto>> GetAll()
+        public async Task<List<EventDto>> GetAll()
         {
             try
             {
@@ -70,7 +69,7 @@ namespace KalendarzPracowniczyUI.Service
                 {
                     var content = await response.Content.ReadAsStringAsync();
                     Console.WriteLine(content);
-                    var allEvents = JsonConvert.DeserializeObject<IEnumerable<EventDto>>(content);
+                    var allEvents = JsonConvert.DeserializeObject<List<EventDto>>(content);
 
                     if (allEvents == null)
                     {

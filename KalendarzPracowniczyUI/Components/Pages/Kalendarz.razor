@@ -10,6 +10,7 @@
 @inject EventServiceUI EventService
 @inject HttpClient _httpClient
 @inject NavigationManager Navigation
+@inject CarServiceUI CarServiceUI
 @rendermode InteractiveServer
 
 <style>
@@ -74,8 +75,8 @@ else
                 @foreach (var day in GetDaysOfWeek())
                 {
                     <div class="schedule-column">
-                        @day.ToString("ddd", new System.Globalization.CultureInfo("pl-PL"))<br />
-                        @day.Day
+                        <span style="font-size:20px; color:white;"> @day.ToString("ddd", new System.Globalization.CultureInfo("pl-PL")) @day.Day </span>
+                        <span>Wolne samochody <i class="fa-solid fa-car-side">: @GetAvailableCars(day)</i></span>
                     </div>
                 }
             </div>
@@ -162,6 +163,7 @@ else
             </div>
         </div>
     }
+
     @if (isLoading)
     {
         <div class="loader"></div>
@@ -189,6 +191,8 @@ else
 }
 
 @code {
+    private List<CarDto> carDtos = new List<CarDto>();
+    private int carCount;
     private string? errorMessage;
     private bool isSuccess = false;
     private DateTime? selectedDay = null;
@@ -197,7 +201,7 @@ else
     private bool isAuthenticated = false;
     private bool shouldRedirect = false;
     private List<UserDto> users = new List<UserDto>();
-    private IEnumerable<EventDto> userEvents = new List<EventDto>();
+    private List<EventDto> userEvents = new List<EventDto>();
     private EventDto selectedEvent = new EventDto();
     private string? lastModifiedBy = null;
     private DateTime? lastModifiedOn = null;
@@ -218,6 +222,34 @@ else
         confirmedDeleteEventId = eventId;
         showDeleteConfirmation = true;
         isSuccess = false;
+    }
+    private async Task<int> GetAllCars()
+    {
+        try
+        {
+            carDtos = await CarServiceUI.GetAll();
+            return carDtos.Count;
+        }
+        catch
+        {
+            return 0;
+        } 
+    }
+    private async Task LoadExistingEvents()
+    {
+        try
+        {
+            userEvents = await EventService.GetAll();
+        }
+        catch
+        {
+            userEvents = new List<EventDto>();
+        }
+    }
+    private int GetAvailableCars(DateTime date)
+    {
+        int reservedCars = userEvents.Count(e => !e.IsDeleted && e.StartDate.Value.Date == date.Date);
+        return carCount - reservedCars;
     }
 
     private async Task ConfirmDelete()
@@ -296,7 +328,8 @@ else
             {
                 await GetAllUsers();
                 await GetAllEvents();
-            
+                carCount = await GetAllCars();
+
             }
         }
         catch (Exception ex)

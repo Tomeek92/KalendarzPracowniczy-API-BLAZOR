@@ -171,16 +171,15 @@
         <DataAnnotationsValidator />
         <ValidationSummary />
         <div>
-            <p>Miejsce wyjazdu</p>
+            <p>Zadanie</p>
             <InputText @bind-Value="eventDto.Title" />
         </div>
         <div>
-            <p>Praca - Urlop</p>
+            <p>Miejsce pracy</p>
             <select @onchange="(e) => eventDto.Name = e.Value.ToString()">
                 <option value="">Wybierz miejsce</option>
                 <option value="Zdalna-okazjonalna">Zdalna okazjonalna</option>
                 <option value="Zdalna">Zdalna</option>
-                <option value="Urlop">Urlop</option>
             </select>
         </div>
         <div>
@@ -217,7 +216,7 @@
     </EditForm>
 </div>
 
-@if (!string.IsNullOrEmpty(message))
+@if (!string.IsNullOrEmpty(message) && !isSuccess)
 {
     <p class="message">@message</p>
 }
@@ -233,9 +232,11 @@
 
 @code {
     public EventDto eventDto = new();
+    private List<EventDto> existingEvents = new List<EventDto>();
     private List<CarDto> carDtos = new List<CarDto>();
     private List<UserDto> userDtos = new List<UserDto>();
     private UserDto userDto = new();
+    private CarDto carDto = new();
     private string? message;
     private bool isSuccess;
     private bool isLoading = false;
@@ -245,13 +246,17 @@
         eventDto.StartDate = DateTime.UtcNow;
         await GetAllCars();
         await GetAllUsers();
-
+        await LoadExistingEvents();
         var loggedUser = await UserServiceUI.GetCurrentUserAsync();
 
         if (loggedUser != null)
         {
             eventDto.UserId = loggedUser.Id;
         }
+    }
+       private async Task LoadExistingEvents()
+    {
+        existingEvents = await EventServiceUI.GetAll(); 
     }
 
     public async Task CreateEventAsync()
@@ -262,8 +267,17 @@
 
         try
         {
-            await EventServiceUI.Create(eventDto);
-            isSuccess = true;
+            if (existingEvents.Any(e => e.CarId == eventDto.CarId && e.StartDate.Value.Date == eventDto.StartDate.Value.Date))
+            {
+                message = "Samochód jest już zarezerwowany na ten dzień.";
+                isSuccess = false;
+            }
+            else
+            {
+                await EventServiceUI.Create(eventDto);
+                isSuccess = true;
+                message = "Zadanie zostało dodane!";
+            }
         }
         catch (Exception ex)
         {

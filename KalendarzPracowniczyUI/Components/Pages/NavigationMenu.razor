@@ -19,21 +19,31 @@
             <br />
             <div class="nav-item">
                 <a class="nav-link" href="/kalendarz">
-                    <i class="fas fa-home"></i>
+                    <i class="fas fa-home fa-lg"></i>
                     <span class="nav-text">Strona główna</span>
                 </a>
             </div>
             <br />
+            <br />
+        <div class="nav-item">
+            <a class="nav-link" href="/dayOff">
+                <i class="fa-solid fa-umbrella-beach fa-lg"></i>
+                <span class="nav-text">Dodaj urlop</span>
+            </a>
+        </div>
+            <br />
+            <br />
             <div class="nav-item">
                 <a class="nav-link" href="/to-do">
-                    <i class="fa-regular fa-calendar-check"></i>
+                <i class="fa-regular fa-calendar-check fa-lg"></i>
                     <span class="nav-text">Twoje zadania</span>
                 </a>
             </div>
-            <br />
+        <br />
+        <br />
             <div class="nav-item">
                 <a class="nav-link" href="/create-user">
-                    <i class="fas fa-user-plus"></i>
+                <i class="fas fa-user-plus fa-lg"></i>
                     <span class="nav-text">Nowy użytkownik</span>
                 </a>
             </div>
@@ -41,14 +51,15 @@
             <br />
             <div class="nav-item">
                 <a class="nav-link" href="/car">
-                    <i class="fa-solid fa-car"></i>
+                <i class="fa-solid fa-car fa-lg"></i>
                     <span class="nav-text">Nowy samochód</span>
                 </a>
             </div>
             <br />
+            <br />
             <div class="nav-item">
                 <a class="nav-link" @onclick="Logout">
-                    <i class="fas fa-sign-out-alt"></i>
+                <i class="fas fa-sign-out-alt fa-lg"></i>
                     <span class="nav-text">Wyloguj</span>
                 </a>
             </div>
@@ -62,6 +73,7 @@
     </a>
 </div>
 
+
     @if (errorMessage != null)
     {
         <div class="message">@errorMessage</div>
@@ -71,6 +83,7 @@
 
 @code {
     private bool isMenuVisible = false;
+    private bool showModal = false;
     private string? errorMessage;
     private string menuClicked = "";
     public async Task Logout()
@@ -90,6 +103,7 @@
         isMenuVisible = !isMenuVisible;
         menuClicked = isMenuVisible ? "menu-clicked" : "";
     }
+   
 }
 
 

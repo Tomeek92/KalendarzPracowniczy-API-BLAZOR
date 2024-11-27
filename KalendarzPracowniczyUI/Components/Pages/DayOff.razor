@@ -1,0 +1,62 @@
+﻿@page "/dayOff"
+@using KalendarzPracowniczyApplication.Dto
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+<style>
+
+        p {
+            font-weight: bold;
+            color: #00aaff;
+            margin-bottom: 3px;
+        }
+
+
+    .btn-secondary {
+        width: 60%;
+        padding: 12px;
+        background-color: rgba(0, 150, 255, 0.7);
+        / color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
+    }
+
+        .btn-secondary:hover {
+            background-color: #00aaff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 150, 255, 0.5), 0 0 15px rgba(0, 150, 255, 0.6);
+        }
+
+</style>
+@if (showModal)
+{
+    <div class="my_modal">
+        <div class="my_modal_content">
+            <h1 class="close">&times;</h1>
+            <h1 class="close" @onclick="CloseModalAndRefresh">&times;</h1>
+                <i class="fa-solid fa-umbrella-beach fa-4x" style="color:white;"></i>
+                <p>Data absencji</p>
+                <InputDate @bind-Value="eventDto.StartDate" />
+
+            <br />
+
+                <button class="btn btn-secondary" type="submit">Dodaj urlop!</button>
+
+        </div>
+    </div>
+}
+
+
+
+@code{
+    private EventDto eventDto = new();
+    private bool showModal = true;
+    public async Task CloseModalAndRefresh()
+    {
+        Navigation.NavigateTo("/kalendarz");
+    }
+
+}
