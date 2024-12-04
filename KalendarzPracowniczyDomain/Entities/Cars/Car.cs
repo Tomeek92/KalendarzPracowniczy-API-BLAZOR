@@ -13,6 +13,8 @@ namespace KalendarzPracowniczyDomain.Entities.Cars
         public DateTime? Year { get; set; }
         public string? Model { get; set; }
         public string? CarPlatesNumber { get; set; }
+        public string? CarKm { get; set; }
+        public DateOnly? CarInspection { get; set; }
         public ICollection<Event> Events { get; set; } = new List<Event>();
     }
 }

@@ -5,6 +5,7 @@ using KalendarzPracowniczyApplication.CQRS.Queries.Users.Login;
 using KalendarzPracowniczyApplication.Dto;
 using KalendarzPracowniczyDomain.Entities.Cars;
 using KalendarzPracowniczyDomain.Entities.Events;
+using KalendarzPracowniczyDomain.Entities.UserDayOff;
 using KalendarzPracowniczyDomain.Entities.Users;
 using KalendarzPracowniczyDomain.Entities.Works;
 
@@ -61,6 +62,10 @@ namespace KalendarzPracowniczyApplication.Mapper
             .ForMember(dest => dest.CarPlatesNumber, opt => opt.MapFrom(src => src.CarPlatesNumber));
 
             CreateMap<UpdateEventCommand, Event>();
+
+            CreateMap<DayOff, DayOffDto>();
+
+            CreateMap<DayOffDto, DayOff>();
 
             CreateMap<CreateEventCommand, Event>()
             .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))

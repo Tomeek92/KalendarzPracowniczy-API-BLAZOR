@@ -56,8 +56,15 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
 
         public async Task UpdateTaskAsync(Work work)
         {
-            _context.Update(work);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Update(work);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Błąd podczas update {ex.Message}");
+            }
         }
 
         public async Task DeleteTaskAsync(Guid id)

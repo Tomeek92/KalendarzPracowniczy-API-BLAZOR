@@ -4,6 +4,7 @@ using KalendarzPracowniczyInfrastructureDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KalendarzPracowniczyInfrastructure.Migrations
 {
     [DbContext(typeof(KalendarzPracowniczyDbContext))]
-    partial class KalendarzPracowniczyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241128081901_Car1")]
+    partial class Car1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,29 +25,14 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("DayOffUser", b =>
-                {
-                    b.Property<Guid>("DaysOffId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("UsersId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("DaysOffId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("UserDayOffs", (string)null);
-                });
-
             modelBuilder.Entity("KalendarzPracowniczyDomain.Entities.Cars.Car", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<DateOnly?>("CarInspection")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("CarInspection")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("CarKm")
                         .HasColumnType("longtext");
@@ -118,20 +106,6 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("KalendarzPracowniczyDomain.Entities.UserDayOff.DayOff", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateOnly>("DateDayOff")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DaysOff");
                 });
 
             modelBuilder.Entity("KalendarzPracowniczyDomain.Entities.Users.User", b =>
@@ -370,21 +344,6 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("DayOffUser", b =>
-                {
-                    b.HasOne("KalendarzPracowniczyDomain.Entities.UserDayOff.DayOff", null)
-                        .WithMany()
-                        .HasForeignKey("DaysOffId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("KalendarzPracowniczyDomain.Entities.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("KalendarzPracowniczyDomain.Entities.Events.Event", b =>

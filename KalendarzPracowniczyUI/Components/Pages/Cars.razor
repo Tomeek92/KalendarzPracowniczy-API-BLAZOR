@@ -112,12 +112,20 @@
             <InputText @bind-Value="newCar.Model" class="blazor-input" />
         </div>
         <div>
-            <label>Rok:</label>
+            <label>Data rejestracji:</label>
             <InputDate @bind-Value="newCar.Year" class="blazor-input" />
         </div>
         <div>
-            <label>Rejestracje:</label>
+            <label>Numery rejestracyjne:</label>
             <InputText @bind-Value="newCar.CarPlatesNumber" class="blazor-input" />
+        </div>
+        <div>
+            <label>Przegląd samochodu:</label>
+            <InputDate @bind-Value="newCar.CarInspection" class="blazor-input" />
+        </div>
+        <div>
+            <label>Przebieg samochodu:</label>
+            <InputText @bind-Value="newCar.CarKm" class="blazor-input" />
         </div>
         <button type="submit">Dodaj Samochód</button>
     </EditForm>
@@ -129,6 +137,8 @@
                 <th>Model</th>
                 <th>Rok produkcji</th>
                 <th>Tablice rejestracyjne</th>
+                <th>Data ostatniego przeglądu</th>
+                <th>Przebieg</th>
                 <th>Akcja</th>
             </tr>
         </thead>
@@ -140,6 +150,8 @@
                     <td>@car.Model</td>
                     <td>@(car.Year.HasValue ? car.Year.Value.ToString("dd.MM.yyyy") : "-")</td>
                     <td>@car.CarPlatesNumber</td>
+                    <td>@car.CarInspection</td>
+                    <td>@car.CarKm</td>
                     <td><button class="delete-btn" @onclick="() => RemoveCar(car.Id)">Usuń</button></td>
                 </tr>
             }
