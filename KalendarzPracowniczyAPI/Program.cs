@@ -21,7 +21,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/kalendarz";
         options.AccessDeniedPath = "/kalendarz";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(6);
+        options.ExpireTimeSpan = TimeSpan.FromHours(6);
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
         options.Cookie.SameSite = SameSiteMode.Lax;

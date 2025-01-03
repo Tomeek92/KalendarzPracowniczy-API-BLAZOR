@@ -21,6 +21,7 @@ namespace KalendarzPracowniczyInfrastructure.Extensions
             services.AddScoped<ICarRepository, CarRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IWorkRepository, WorkRepository>();
+            services.AddScoped<IDayOffRepository, DayOffRepository>();
 
             services.AddIdentity<User, IdentityRole>(options =>
             {

@@ -27,7 +27,7 @@ namespace KalendarzPracowniczyAPI.Controllers
                 await _mediator.Send(carCommand);
                 return Ok();
             }
-            catch (Exception)
+            catch
             {
                 return StatusCode(500, "Internal server error");
             }
@@ -44,9 +44,9 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound($"Nie odnaleziono pracownika do usunięcia");
+                throw new KeyNotFoundException($"Nie odnaleziono pracownika do usunięcia {ex.Message}");
             }
-            catch (Exception ex)
+            catch
             {
                 return StatusCode(500, "Internal server error");
             }

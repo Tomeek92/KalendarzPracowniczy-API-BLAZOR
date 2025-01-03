@@ -1,4 +1,7 @@
-﻿using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create;
+﻿using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Create;
+using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Delete;
+using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Update;
+using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Events.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
@@ -11,6 +14,7 @@ using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Update;
 using KalendarzPracowniczyApplication.CQRS.Commands.Works.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Works.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Works.Update;
+using KalendarzPracowniczyApplication.CQRS.Queries.DayOff.GetDayOffById;
 using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetAll;
 using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetElementById;
 using KalendarzPracowniczyApplication.CQRS.Queries.Users.GetAllUsers;
@@ -51,7 +55,11 @@ namespace KalendarzPracowniczyApplication.Extensions
          typeof(GetAllUsersQuery).Assembly,
         typeof(GetUserTasksQuery).Assembly,
           typeof(LoginQuery).Assembly,
-        typeof(GetUserTaskByIdQuery).Assembly
+        typeof(GetUserTaskByIdQuery).Assembly,
+        typeof(CreateDayOffCommand).Assembly,
+        typeof(UpdateDayOffCommand).Assembly,
+        typeof(DeleteDayOffCommand).Assembly,
+        typeof(GetDayOffByIdQuery).Assembly
            ));
 
             services.AddAutoMapper(typeof(MapperProfile));
