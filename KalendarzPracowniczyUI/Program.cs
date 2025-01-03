@@ -25,6 +25,7 @@ builder.Services.AddScoped<UserServiceUI>();
 builder.Services.AddScoped<EventServiceUI>();
 builder.Services.AddScoped<CarServiceUI>();
 builder.Services.AddScoped<WorkServiceUI>();
+builder.Services.AddScoped<DayOffServiceUI>();
 builder.Services.AddHttpClient("API", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7164");
