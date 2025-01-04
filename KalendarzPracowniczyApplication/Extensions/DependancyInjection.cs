@@ -1,4 +1,7 @@
-﻿using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create;
+﻿using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Create;
+using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Delete;
+using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Update;
+using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Events.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Events.Update;
 using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
@@ -50,6 +53,9 @@ namespace KalendarzPracowniczyApplication.Extensions
          typeof(LogOutCommand).Assembly,
          typeof(GetAllUsersQuery).Assembly,
         typeof(GetUserTasksQuery).Assembly,
+        typeof(CreateDayOffCommand).Assembly,
+        typeof(UpdateDayOffCommand).Assembly,
+        typeof(DeleteDayOffCommand).Assembly,
           typeof(LoginQuery).Assembly,
         typeof(GetUserTaskByIdQuery).Assembly
            ));

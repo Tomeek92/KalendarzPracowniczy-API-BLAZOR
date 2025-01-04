@@ -39,7 +39,7 @@
             <h1 class="close" @onclick="CloseModalAndRefresh">&times;</h1>
                 <i class="fa-solid fa-umbrella-beach fa-4x" style="color:white;"></i>
                 <p>Data absencji</p>
-                <InputDate @bind-Value="eventDto.StartDate" />
+                <InputDate @bind-Value="dayOff.Id" />
 
             <br />
 
@@ -52,7 +52,7 @@
 
 
 @code{
-    private DayOff dayOff = new();
+    private DayOffDto dayOff = new();
     private bool showModal = true;
     public async Task CloseModalAndRefresh()
     {

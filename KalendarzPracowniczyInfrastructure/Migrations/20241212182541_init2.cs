@@ -6,62 +6,62 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KalendarzPracowniczyInfrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<DateOnly>(
+            migrationBuilder.AddColumn<DateOnly>(
                 name: "CarInspection",
                 table: "Cars",
                 type: "date",
-                nullable: true,
-                oldClrType: typeof(DateTime),
-                oldType: "datetime(6)",
-                oldNullable: true);
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "CarKm",
+                table: "Cars",
+                type: "nvarchar(max)",
+                nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "DaysOff",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DateDayOff = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DaysOff", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
-                name: "UserDayOffs",
+                name: "DayOffUser",
                 columns: table => new
                 {
-                    DaysOffId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    UsersId = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    DaysOffId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UsersId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserDayOffs", x => new { x.DaysOffId, x.UsersId });
+                    table.PrimaryKey("PK_DayOffUser", x => new { x.DaysOffId, x.UsersId });
                     table.ForeignKey(
-                        name: "FK_UserDayOffs_AspNetUsers_UsersId",
+                        name: "FK_DayOffUser_AspNetUsers_UsersId",
                         column: x => x.UsersId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserDayOffs_DaysOff_DaysOffId",
+                        name: "FK_DayOffUser_DaysOff_DaysOffId",
                         column: x => x.DaysOffId,
                         principalTable: "DaysOff",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserDayOffs_UsersId",
-                table: "UserDayOffs",
+                name: "IX_DayOffUser_UsersId",
+                table: "DayOffUser",
                 column: "UsersId");
         }
 
@@ -69,19 +69,18 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserDayOffs");
+                name: "DayOffUser");
 
             migrationBuilder.DropTable(
                 name: "DaysOff");
 
-            migrationBuilder.AlterColumn<DateTime>(
+            migrationBuilder.DropColumn(
                 name: "CarInspection",
-                table: "Cars",
-                type: "datetime(6)",
-                nullable: true,
-                oldClrType: typeof(DateOnly),
-                oldType: "date",
-                oldNullable: true);
+                table: "Cars");
+
+            migrationBuilder.DropColumn(
+                name: "CarKm",
+                table: "Cars");
         }
     }
 }
