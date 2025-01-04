@@ -6,6 +6,7 @@ namespace KalendarzPracowniczyApplication.Dto
     {
         public Guid Id { get; set; }
         public DateOnly DateDayOff { get; set; }
-        public ICollection<User> Users { get; set; }
+        public List<UserDto> Users { get; set; }
+        public string? UserId { get; set; }
     }
 }

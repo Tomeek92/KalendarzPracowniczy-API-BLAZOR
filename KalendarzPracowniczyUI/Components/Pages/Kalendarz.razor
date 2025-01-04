@@ -11,9 +11,11 @@
 @inject HttpClient _httpClient
 @inject NavigationManager Navigation
 @inject CarServiceUI CarServiceUI
+@inject DayOffServiceUI DayOffService
 @rendermode InteractiveServer
 
 <style>
+
     .btn-danger {
         width: 60%;
         padding: 12px;
@@ -51,6 +53,49 @@
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 150, 255, 0.5), 0 0 15px rgba(0, 150, 255, 0.6); 
         }
+
+    .car-info {
+        display: flex;
+        flex-direction: column; 
+        align-items: center; 
+        gap: 10px; 
+        padding: 10px;
+    }
+
+    .date {
+        font-size: 20px;
+        color: white;
+        font-weight: bold;
+    }
+    .available-cars {
+        font-size: 16px;
+        color: #00aaff;
+        display: flex;
+        flex-direction: column; 
+        align-items: center; 
+    }
+    .car-icon {
+        font-size: 24px;
+        color: #00aaff;
+        margin-bottom: 5px; 
+    }
+
+ 
+    .car-number {
+        font-weight: bold;
+        color: lightgreen; 
+        font-size: 20px; 
+    }
+    .schedule-column-date{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 150, 255, 0.3);
+        color: #00aaff;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 150, 255, 0.3);
+        font-size: 20px;
+    }
 </style>
 
 @if (!isAuthenticated && isLoading)
@@ -66,7 +111,7 @@ else
         <div class="calendar-controls">
             <button @onclick="PreviousWeek">❮</button>
             <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width:8%; margin-left:-20%;" />
-            <h2>@currentWeekStart.ToString("MMMM yyyy", new System.Globalization.CultureInfo("pl-PL"))</h2>
+            <h2>@currentWeekStart.ToString("yyyy", new System.Globalization.CultureInfo("pl-PL"))</h2>
             <button @onclick="NextWeek">❯</button>
         </div>
         <div class="schedule-grid">
@@ -74,9 +119,15 @@ else
                 <div class="schedule-column">Pracownicy</div>
                 @foreach (var day in GetDaysOfWeek())
                 {
-                    <div class="schedule-column">
-                        <span style="font-size:20px; color:white;"> @day.ToString("ddd", new System.Globalization.CultureInfo("pl-PL")) @day.Day </span>
-                        <span>Wolne samochody <i class="fa-solid fa-car-side">: @GetAvailableCars(day)</i></span>
+                    <div class="schedule-column-date">
+                    <div class="car-info">
+                        <span class="date" style="font-size:22px; color:white;">
+                            @day.ToString("ddd", new System.Globalization.CultureInfo("pl-PL")) @day.Day @day.ToString("MMMM", new System.Globalization.CultureInfo("pl-PL"))
+                        </span>
+                        <span class="available-cars">
+                            Wolne samochody <i class="fa-solid fa-car-side car-icon">: @GetAvailableCars(day)</i>
+                        </span>
+                    </div>
                     </div>
                 }
             </div>
@@ -137,7 +188,9 @@ else
 
                                             </div>
                                         }
-                                    }
+                                   
+                                   }
+                                 
                                 </div>
                             </div>
                         }
@@ -145,6 +198,7 @@ else
                 }
         </div>
     </div>
+
     @if (selectedDay.HasValue && !isVisible)
     {
         <div class="my_modal">
@@ -201,6 +255,7 @@ else
     private bool isAuthenticated = false;
     private bool shouldRedirect = false;
     private List<UserDto> users = new List<UserDto>();
+    private string userId;
     private List<EventDto> userEvents = new List<EventDto>();
     private EventDto selectedEvent = new EventDto();
     private string? lastModifiedBy = null;
@@ -209,6 +264,8 @@ else
     private bool showDeleteConfirmation = false;
     private Guid confirmedDeleteEventId;
     private DateTime currentWeekStart = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+
+
 
     private void ShowModificationDetails(Guid eventId, string? modifiedBy, DateTime? modifiedOn)
     {
@@ -222,6 +279,10 @@ else
         confirmedDeleteEventId = eventId;
         showDeleteConfirmation = true;
         isSuccess = false;
+    }
+    private async Task GetAllDaysOff()
+    {
+       // daysOff = await DayOffService.GetAll();
     }
     private async Task<int> GetAllCars()
     {

@@ -9,6 +9,7 @@ namespace KalendarzPracowniczyDomain.Entities.UserDayOff
         public Guid Id { get; set; }
 
         public DateOnly DateDayOff { get; set; }
-        public ICollection<User> Users { get; set; }
+        public List<User> Users { get; set; }
+        public string UserId { get; set; }
     }
 }

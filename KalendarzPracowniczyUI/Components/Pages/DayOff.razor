@@ -1,6 +1,9 @@
 ﻿@page "/dayOff"
 @using KalendarzPracowniczyApplication.Dto
+@using KalendarzPracowniczyUI.Service
 @inject NavigationManager Navigation
+@inject DayOffServiceUI DayOffService
+@inject UserServiceUI UserService
 @rendermode InteractiveServer
 <style>
 
@@ -15,7 +18,7 @@
         width: 60%;
         padding: 12px;
         background-color: rgba(0, 150, 255, 0.7);
-        / color: white;
+        color: white;
         border: none;
         border-radius: 8px;
         cursor: pointer;
@@ -39,11 +42,29 @@
             <h1 class="close" @onclick="CloseModalAndRefresh">&times;</h1>
                 <i class="fa-solid fa-umbrella-beach fa-4x" style="color:white;"></i>
                 <p>Data absencji</p>
+<<<<<<< HEAD
                 <InputDate @bind-Value="dayOff.Id" />
 
             <br />
 
                 <button class="btn btn-secondary" type="submit">Dodaj urlop!</button>
+=======
+                <EditForm Model="@dayOffDto" OnValidSubmit="CreateDayOffAsync">
+                <InputDate @bind-Value="dayOffDto.DateDayOff" />
+                <div>
+                    <p>Dla kogo?</p>
+                    <select @bind="dayOffDto.UserId">
+                        @foreach (var user in userDtos)
+                        {
+                            <option value="@user.Id">@user.Name @user.Surname</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <button class="btn btn-secondary" type="submit">Dodaj urlop!</button>
+                </div>
+                </EditForm>
+>>>>>>> 5417c2e80fc32c4af9886acd38f6a9630562f648
 
         </div>
     </div>
@@ -52,11 +73,56 @@
 
 
 @code{
+<<<<<<< HEAD
     private DayOffDto dayOff = new();
+=======
+    private DayOffDto dayOffDto = new();
+>>>>>>> 5417c2e80fc32c4af9886acd38f6a9630562f648
     private bool showModal = true;
+    private List<UserDto> userDtos = new();
+    private List<DayOffDto> listUsers = new();
+    private string? errorMessage;
+    protected override async Task OnInitializedAsync()
+    {
+        var loggedUser = await UserService.GetCurrentUserAsync();
+        if (loggedUser != null)
+        {
+            dayOffDto.UserId = loggedUser.Id;
+            dayOffDto.Users = userDtos;
+
+        }
+        await GetAllUsers();
+    }
+
     public async Task CloseModalAndRefresh()
     {
         Navigation.NavigateTo("/kalendarz");
     }
+
+    public async Task CreateDayOffAsync()
+    {
+        try
+        {
+            await DayOffService.Create(dayOffDto);
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Nieoczekiwany bład {ex.Message}");
+        }
+    }
+
+    private async Task GetAllUsers()
+    {
+        try
+        {
+            userDtos = await UserService.GetAll();
+        }
+        catch
+        {
+           errorMessage = $"Błąd podczas pobierania użytkowników";
+        }
+    }
+   
+
 
 }
