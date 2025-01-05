@@ -143,9 +143,16 @@ else
                             <div class="day-cell-wrapper">
 
                                 <div class="day-cell @(day.Date == DateTime.Today.Date ? "today" : "")" @onclick="() => ShowModal(day)">
-
+                                @if (daysOff.Any(h => h.DateDayOff == DateOnly.FromDateTime(day.Date) && h.UserId == user.Id))
+                                {
+                                    <div class="holiday-info">
+                                        <p><i class="fa-solid fa-sun"></i> Urlop</p>
+                                    </div>
+                                }
+                               
                                     @foreach (var eventItem in GetEventsForDay(day).Where(e => e.UserId == user.Id))
                                     {
+
                                         @if (!eventItem.IsDeleted)
                                         {
                                             <div class="event-item" @onclick:stopPropagation>
@@ -255,6 +262,7 @@ else
     private bool isAuthenticated = false;
     private bool shouldRedirect = false;
     private List<UserDto> users = new List<UserDto>();
+    private List<DayOffDto> daysOff = new();
     private string userId;
     private List<EventDto> userEvents = new List<EventDto>();
     private EventDto selectedEvent = new EventDto();
@@ -282,7 +290,14 @@ else
     }
     private async Task GetAllDaysOff()
     {
-       // daysOff = await DayOffService.GetAll();
+        try
+        {
+            daysOff = await DayOffService.GetAll();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ($"Błąd podczas pobierania użytkowników {ex.Message}");
+        }
     }
     private async Task<int> GetAllCars()
     {
@@ -348,7 +363,7 @@ else
         }
         catch (Exception ex)
         {
-            errorMessage = ($"Błąd podczas pobierania użytkowników");
+            errorMessage = ($"Błąd podczas pobierania użytkowników {ex.Message}");
         }
     }
     private async Task GetAllEvents()
@@ -389,6 +404,7 @@ else
             {
                 await GetAllUsers();
                 await GetAllEvents();
+                await GetAllDaysOff();
                 carCount = await GetAllCars();
 
             }

@@ -11,5 +11,7 @@ namespace KalendarzPracowniczyDomain.Interfaces
         Task Create(DayOff createDayOff, CancellationToken cancellationToken);
 
         Task Update(DayOff updateDayOff);
+
+        Task<List<DayOff>> GetAllDaysOff();
     }
 }

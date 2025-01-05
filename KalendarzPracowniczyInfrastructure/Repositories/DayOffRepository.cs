@@ -33,7 +33,24 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                 throw new Exception($"Nieoczekiwany błąd zgłoś się do administratora", ex);
             }
         }
+        public async Task<List<DayOff>> GetAllDaysOff()
+        {
+            try
+            {
+                var allDaysOff = await _context.DaysOff
+                .Include(u => u.Users).ToListAsync();
 
+                if (allDaysOff == null)
+                {
+                    throw new Exception($"Błąd podczas pobierania dni wolnych");
+                }
+                return allDaysOff;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Błąd podczas pobierania dni wolnych {ex.Message}");
+            }
+        }
         public async Task Delete(Guid id)
         {
             try
@@ -64,6 +81,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.InnerException?.Message);
                 throw new Exception($"Błąd podczas dodawania zadania {ex.Message}");
             }
         }

@@ -20,8 +20,8 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetAllWorkers
         {
             try
             {
-                var workers = await _carRepository.GetAllCars();
-                var mapp = _mapper.Map<IEnumerable<CarDto>>(workers);
+                var cars = await _carRepository.GetAllCars();
+                var mapp = _mapper.Map<IEnumerable<CarDto>>(cars);
                 return mapp;
             }
             catch (AutoMapperMappingException ex)

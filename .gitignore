@@ -364,5 +364,4 @@ FodyWeavers.xsd
 /KalendarzPracowniczyInfrastructure/DbContext/KalendarzPracowniczyDbContextFactory.cs
 /KalendarzPracowniczyInfrastructure/DbContext/KalendarzPracowniczyDbContext.cs
 /KalendarzPracowniczyAPI/appsettings.json
-/KalendarzPracowniczyInfrastructure/Extensions/DependencyInjection.cs
 /KalendarzPracowniczyInfrastructure/Migrations/KalendarzPracowniczyDbContextModelSnapshot.cs

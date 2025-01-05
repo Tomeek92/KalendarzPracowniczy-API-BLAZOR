@@ -13,9 +13,9 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "UserId",
                 table: "DaysOff",
-                type: "longtext",
-                nullable: false)
-                .Annotation("MySql:CharSet", "utf8mb4");
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
         }
 
         /// <inheritdoc />

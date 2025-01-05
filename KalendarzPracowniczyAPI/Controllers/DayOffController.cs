@@ -1,6 +1,7 @@
 ﻿using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Update;
+using KalendarzPracowniczyApplication.CQRS.Queries.DayOff.GetAllDaysOff;
 using KalendarzPracowniczyApplication.CQRS.Queries.DayOff.GetDayOffById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -69,7 +70,24 @@ namespace KalendarzPracowniczyAPI.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
+        [HttpGet("GetAllDaysOff")]
+        public async Task<IActionResult> GetAllDaysOffDto()
+        {
+            try
+            {
+                var query = new GetAllDaysOffQuery();
+                var result = await _mediator.Send(query);
+                if (result == null)
+                {
+                    return NotFound($"Nie odnaleziono dnia wolnego");
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd podczas pobierania dni wolnych {ex.Message}");
+            }
+        }
         [HttpPut]
         public async Task<IActionResult> Update(UpdateDayOffCommand updateDayOffCommand)
         {

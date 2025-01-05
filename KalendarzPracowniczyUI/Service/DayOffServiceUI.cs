@@ -1,4 +1,5 @@
 ﻿using KalendarzPracowniczyApplication.Dto;
+using Newtonsoft.Json;
 
 namespace KalendarzPracowniczyUI.Service
 {
@@ -31,7 +32,32 @@ namespace KalendarzPracowniczyUI.Service
                 throw new Exception($"Nieoczekiwany błąd {ex.Message}");
             }
         }
+        public async Task<List<DayOffDto>> GetAll()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("https://localhost:7164/api/DayOff/GetAllDaysOff");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var dayOff = JsonConvert.DeserializeObject<List<DayOffDto>>(content);
 
+                    if (dayOff == null)
+                    {
+                        throw new Exception($"Błąd podczas deserializacji");
+                    }
+                    return dayOff;
+                }
+                else
+                {
+                    throw new Exception("Błąd podczas pobierania danych: " + response.StatusCode);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+            }
+        }
         public async Task Delete(Guid id)
         {
             try

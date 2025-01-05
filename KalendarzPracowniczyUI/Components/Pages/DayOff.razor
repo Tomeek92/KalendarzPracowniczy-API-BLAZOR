@@ -42,13 +42,6 @@
             <h1 class="close" @onclick="CloseModalAndRefresh">&times;</h1>
                 <i class="fa-solid fa-umbrella-beach fa-4x" style="color:white;"></i>
                 <p>Data absencji</p>
-<<<<<<< HEAD
-                <InputDate @bind-Value="dayOff.Id" />
-
-            <br />
-
-                <button class="btn btn-secondary" type="submit">Dodaj urlop!</button>
-=======
                 <EditForm Model="@dayOffDto" OnValidSubmit="CreateDayOffAsync">
                 <InputDate @bind-Value="dayOffDto.DateDayOff" />
                 <div>
@@ -64,8 +57,6 @@
                     <button class="btn btn-secondary" type="submit">Dodaj urlop!</button>
                 </div>
                 </EditForm>
->>>>>>> 5417c2e80fc32c4af9886acd38f6a9630562f648
-
         </div>
     </div>
 }
@@ -73,11 +64,9 @@
 
 
 @code{
-<<<<<<< HEAD
+
     private DayOffDto dayOff = new();
-=======
     private DayOffDto dayOffDto = new();
->>>>>>> 5417c2e80fc32c4af9886acd38f6a9630562f648
     private bool showModal = true;
     private List<UserDto> userDtos = new();
     private List<DayOffDto> listUsers = new();
