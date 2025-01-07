@@ -14,17 +14,17 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             _context = context;
         }
 
-        public async Task<DayOff> GetElementById(Guid id)
+        public async Task<List<DayOff>> GetElementById(string userId)
         {
             try
             {
                 var findIdayOff = await _context.DaysOff
-                    .Include(u => u.Users)
-                    .FirstOrDefaultAsync(e => e.Id == id);
+                  .Where(w => w.UserId == userId)
+                  .ToListAsync();
 
                 if (findIdayOff == null)
                 {
-                    throw new KeyNotFoundException($"Nie znaleziono pracownika o podanym numerze {id}");
+                    throw new KeyNotFoundException($"Nie znaleziono pracownika o podanym numerze {userId}");
                 }
                 return findIdayOff;
             }

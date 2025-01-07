@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using KalendarzPracowniczyApplication.Dto;
-using KalendarzPracowniczyDomain.Entities.UserDayOff;
 using KalendarzPracowniczyDomain.Interfaces;
 using MediatR;
 
 namespace KalendarzPracowniczyApplication.CQRS.Queries.DayOff.GetDayOffById
 {
-    public class GetDayOffByIdQueryHandler : IRequestHandler<GetDayOffByIdQuery, DayOffDto>
+    public class GetDayOffByIdQueryHandler : IRequestHandler<GetDayOffByIdQuery, List<DayOffDto>>
     {
         private readonly IMapper _mapper;
         private readonly IDayOffRepository _dayOffRepository;
@@ -17,16 +16,16 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.DayOff.GetDayOffById
             _dayOffRepository = dayOffRepository;
         }
 
-        public async Task<DayOffDto> Handle(GetDayOffByIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<DayOffDto>> Handle(GetDayOffByIdQuery request, CancellationToken cancellationToken)
         {
             try
             {
-                var getElementById = await _dayOffRepository.GetElementById(request.Id);
+                var getElementById = await _dayOffRepository.GetElementById(request.UserId);
                 if (getElementById == null)
                 {
                     throw new Exception("Nie odnaleziono dnia wolnego");
                 }
-                var mapp = _mapper.Map<DayOffDto>(getElementById);
+                var mapp = _mapper.Map<List<DayOffDto>>(getElementById);
                 return mapp;
             }
             catch (AutoMapperMappingException ex)

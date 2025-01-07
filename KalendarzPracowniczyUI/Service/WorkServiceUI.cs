@@ -55,6 +55,8 @@ namespace KalendarzPracowniczyUI.Service
             try
             {
                 var response = await _httpClient.GetAsync($"https://localhost:7164/api/Work/{userid}");
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Odpowiedź serwera: {content}");
                 if (response.IsSuccessStatusCode)
                 {
                     var workDto = await response.Content.ReadFromJsonAsync<List<WorkDto>>();

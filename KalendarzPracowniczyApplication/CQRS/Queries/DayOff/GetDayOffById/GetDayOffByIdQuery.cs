@@ -3,13 +3,13 @@ using MediatR;
 
 namespace KalendarzPracowniczyApplication.CQRS.Queries.DayOff.GetDayOffById
 {
-    public class GetDayOffByIdQuery : IRequest<DayOffDto>
+    public class GetDayOffByIdQuery : IRequest<List<DayOffDto>>
     {
-        public Guid Id { get; set; }
+        public string UserId { get; set; }
 
-        public GetDayOffByIdQuery(Guid id)
+        public GetDayOffByIdQuery(string userId)
         {
-            Id = id;
+            UserId = userId;
         }
     }
 }

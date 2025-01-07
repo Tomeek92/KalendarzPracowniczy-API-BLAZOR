@@ -32,6 +32,36 @@ namespace KalendarzPracowniczyUI.Service
                 throw new Exception($"Nieoczekiwany błąd {ex.Message}");
             }
         }
+        public async Task<List<DayOffDto>> GetElementById(string userId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"https://localhost:7164/api/DayOff/{userId}");
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Odpowiedź serwera: {content}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var dayOffDto = await response.Content.ReadFromJsonAsync<List<DayOffDto>>();
+
+                    if (dayOffDto != null)
+                    {
+                        return dayOffDto;
+                    }
+                    else
+                    {
+                        throw new Exception($"Nie znaleziono zdarzenia z numerem {userId}");
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Nie można znaleźć zdarzenia z ID {userId}. Status Code: {response.StatusCode} {response}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+            }
+        }
         public async Task<List<DayOffDto>> GetAll()
         {
             try

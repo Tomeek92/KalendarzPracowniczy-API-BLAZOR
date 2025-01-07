@@ -52,14 +52,14 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetElementById(Guid id)
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetElementById(string userId)
         {
             try
             {
-                var query = new GetDayOffByIdQuery(id);
-                await _mediator.Send(query);
-                return Ok(query);
+                var query = new GetDayOffByIdQuery(userId);
+                var result = await _mediator.Send(query);
+                return Ok(result);
             }
             catch (KeyNotFoundException ex)
             {

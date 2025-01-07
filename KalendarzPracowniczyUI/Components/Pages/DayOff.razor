@@ -7,7 +7,7 @@
 @rendermode InteractiveServer
 <style>
 
-        p {
+        p,h3 {
             font-weight: bold;
             color: #00aaff;
             margin-bottom: 3px;
@@ -31,6 +31,42 @@
             background-color: #00aaff;
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 150, 255, 0.5), 0 0 15px rgba(0, 150, 255, 0.6);
+        }
+        
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+    }
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border: 1px solid rgba(0, 150, 255, 0.5);
+        color: #f1f1f1;
+        white-space: nowrap;
+    }
+
+    th {
+        background-color: rgba(0, 150, 255, 0.3);
+        color: white;
+    }
+
+    td input[type="text"], td input[type="date"], .blazor-input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(0, 150, 255, 0.5);
+        color: #f1f1f1;
+        transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        td input[type="text"]:focus, td input[type="date"]:focus, .blazor-input:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: #00aaff;
+            box-shadow: 0 0 10px rgba(0, 150, 255, 0.5), inset 0 0 8px rgba(0, 150, 255, 0.4);
+            outline: none;
         }
 
 </style>
@@ -57,19 +93,36 @@
                     <button class="btn btn-secondary" type="submit">Dodaj urlop!</button>
                 </div>
                 </EditForm>
+                          <h3>Twoje urlopy</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Data urlopu</th>
+                </tr>
+            </thead>
+            <tbody>
+                    @foreach (var dayOff in listDayOff)
+                    {
+                        <tr>
+                            <td>@dayOff.DateDayOff</td>
+
+                        </tr>
+                    }
+            </tbody>
+        </table>
         </div>
     </div>
+  
 }
 
 
 
 @code{
-
-    private DayOffDto dayOff = new();
     private DayOffDto dayOffDto = new();
     private bool showModal = true;
     private List<UserDto> userDtos = new();
-    private List<DayOffDto> listUsers = new();
+    private List<DayOffDto> listDayOff = new();
+    private string userId;
     private string? errorMessage;
     protected override async Task OnInitializedAsync()
     {
@@ -78,9 +131,31 @@
         {
             dayOffDto.UserId = loggedUser.Id;
             dayOffDto.Users = userDtos;
-
         }
         await GetAllUsers();
+        await GetAllDaysOff();
+    }
+
+    private async Task GetAllDaysOff()
+    {
+        try
+        {
+            var currentUser = await UserService.GetCurrentUserAsync();
+
+            if(currentUser != null)
+            {
+                userId = currentUser.Id;
+                listDayOff = await DayOffService.GetElementById(userId);
+            }
+            else
+            {
+                errorMessage = "Błąd podczas pobierania użytkownika";
+            }
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Błąd podczas pobierania dni wolnych {ex.Message}");
+        }
     }
 
     public async Task CloseModalAndRefresh()

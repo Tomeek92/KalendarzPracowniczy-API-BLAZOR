@@ -4,7 +4,7 @@ namespace KalendarzPracowniczyDomain.Interfaces
 {
     public interface IDayOffRepository
     {
-        Task<DayOff> GetElementById(Guid id);
+        Task<List<DayOff>> GetElementById(string UserId);
 
         Task Delete(Guid id);
 

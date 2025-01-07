@@ -40,22 +40,29 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task<EventDto> GetById(Guid id)
         {
-            var response = await _httpClient.GetAsync($"https://localhost:7164/api/Event/{id}");
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var eventDto = await response.Content.ReadFromJsonAsync<EventDto>();
-                if (eventDto != null)
+                var response = await _httpClient.GetAsync($"https://localhost:7164/api/Event/{id}");
+                if (response.IsSuccessStatusCode)
                 {
-                    return eventDto;
+                    var eventDto = await response.Content.ReadFromJsonAsync<EventDto>();
+                    if (eventDto != null)
+                    {
+                        return eventDto;
+                    }
+                    else
+                    {
+                        throw new Exception($"Nie znaleziono zdarzenia z numerem {id}");
+                    }
                 }
                 else
                 {
-                    throw new Exception($"Nie znaleziono zdarzenia z numerem {id}");
+                    throw new Exception($"Nie można znaleźć zdarzenia z ID {id}. Status Code: {response.StatusCode}");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                throw new Exception($"Nie można znaleźć zdarzenia z ID {id}. Status Code: {response.StatusCode}");
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
             }
         }
 
