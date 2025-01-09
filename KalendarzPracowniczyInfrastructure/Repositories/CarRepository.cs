@@ -104,5 +104,25 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                 throw new Exception($"Nieoczekiwany błąd zgłoś się do administratora", ex);
             }
         }
+
+        public async Task<List<Car>> GetAvailableCarsAsync(DateTime? selectedDate)
+        {
+            try
+            {
+                if (selectedDate == DateTime.MinValue)
+                {
+                    throw new ArgumentException($"Błąd podczas pobierania daty");
+                }
+                var cars = await _context.Cars
+                    .Where(car => !_context.Events
+                    .Any(e => e.CarId == car.Id && e.StartDate.HasValue && e.StartDate.Value.Date == selectedDate.Value.Date))
+                .ToListAsync();           
+                return cars;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+            }
+        }
     }
 }

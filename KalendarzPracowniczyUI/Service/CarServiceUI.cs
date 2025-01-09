@@ -74,5 +74,24 @@ namespace KalendarzPracowniczyUI.Service
                 throw new Exception($"Nie można znaleźć pracownika z numerem {id}");
             }
         }
+        public async Task<List<CarDto>> GetAvailableCarsAsync(DateTime selectedDate)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"https://localhost:7164/api/Car/available-cars?selectedDate={selectedDate:yyyy-MM-dd}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var allEvents = JsonConvert.DeserializeObject<List<CarDto>>(content);
+                    return allEvents;
+                }
+                return new List<CarDto>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
+            }
+        }
     }
 }
