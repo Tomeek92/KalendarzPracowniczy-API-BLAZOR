@@ -104,5 +104,20 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                 throw new Exception($"Nieoczekiwany błąd zgłoś się do administratora", ex);
             }
         }
+
+        public async Task<List<Car>> GetAvailableCarsAsync(DateTime selectedDate)
+        {
+            if (selectedDate == DateTime.MinValue)
+            {
+                throw new ArgumentException("Selected date cannot be the default value.");
+            }
+            var cars = await _context.Cars
+                .Where(car => !_context.Events
+                    .Any(e => e.CarId == car.Id && e.StartDate.HasValue && e.StartDate.Value.Date == selectedDate.Date && !e.IsDeleted))
+                .ToListAsync();
+
+            Console.WriteLine(selectedDate);
+            return cars;
+        }
     }
 }

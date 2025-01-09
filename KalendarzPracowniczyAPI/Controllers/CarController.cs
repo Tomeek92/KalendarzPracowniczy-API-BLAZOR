@@ -1,8 +1,10 @@
 ﻿using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Update;
+using KalendarzPracowniczyApplication.CQRS.Queries.Cars.GetAvaliableCar;
 using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetAllWorkers;
 using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetWorkerById;
+using KalendarzPracowniczyApplication.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,6 +52,14 @@ namespace KalendarzPracowniczyAPI.Controllers
             {
                 return StatusCode(500, "Internal server error");
             }
+        }
+
+        [HttpGet("available-cars")]
+        public async Task<List<CarDto>> GetAvailableCarsAsync(DateTime selectedDate)
+        {
+            var query = new GetAvliableCarQuery { Year = selectedDate };
+            Console.WriteLine(selectedDate);
+            return await _mediator.Send(query);
         }
 
         [HttpGet("{id}")]

@@ -188,7 +188,7 @@
         </div>
         <div>
             <p>Data dodania:</p>
-            <InputDate @bind-Value="eventDto.StartDate" />
+            <InputDate @bind-Value="eventDto.StartDate" @onchange="HandleDateChange" />
         </div>
         <div>
             <p>Dla kogo?</p>
@@ -200,7 +200,7 @@
             </select>
         </div>
         <div>
-            <p>Samochód:</p>
+            <p>Dostępne Samochody:</p>
             <select @bind="eventDto.CarId">
                 <option value="">-- Wybierz samochód --</option>
                 @foreach (var car in carDtos)
@@ -240,11 +240,11 @@
     private string? message;
     private bool isSuccess;
     private bool isLoading = false;
+    private DateTime? previousDate;
 
     protected override async Task OnInitializedAsync()
     {
         eventDto.StartDate = DateTime.UtcNow;
-        await GetAllCars();
         await GetAllUsers();
         await LoadExistingEvents();
         var loggedUser = await UserServiceUI.GetCurrentUserAsync();
@@ -254,9 +254,47 @@
             eventDto.UserId = loggedUser.Id;
         }
     }
-       private async Task LoadExistingEvents()
+
+
+
+
+
+    private async Task LoadExistingEvents()
     {
         existingEvents = await EventServiceUI.GetAll(); 
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (eventDto.StartDate != previousDate)
+        {
+            previousDate = eventDto.StartDate;
+            await CheckAvailableCarsAsync(eventDto.StartDate.Value.Date);
+        }
+    }
+
+    private async Task HandleDateChange(ChangeEventArgs e)
+    {
+        var selectedDate = (DateTime)e.Value;
+        await CheckAvailableCarsAsync(selectedDate);
+    }
+
+    private async Task CheckAvailableCarsAsync(DateTime selectedDate)
+    {
+        carDtos = await CarServiceUI.GetAvailableCarsAsync(selectedDate);
+        StateHasChanged();
+    }
+
+    private async Task GetAllCars()
+    {
+        try
+        {
+            carDtos = await CarServiceUI.GetAvailableCarsAsync(eventDto.StartDate.Value.Date);
+        }
+        catch
+        {
+            message = "Błąd podczas pobierania samochodów";
+        }
     }
 
     public async Task CreateEventAsync()
@@ -289,17 +327,7 @@
             isLoading = false;
         }
     }
-    private async Task GetAllCars()
-    {
-        try
-        {
-            carDtos = await CarServiceUI.GetAll();
-        }
-        catch
-        {
-            message = $"Błąd podczas pobierania samochodów";
-        }
-    }
+   
     private async Task GetAllUsers()
     {
         try

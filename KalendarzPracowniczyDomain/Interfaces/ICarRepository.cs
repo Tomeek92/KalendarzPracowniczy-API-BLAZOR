@@ -13,5 +13,7 @@ namespace KalendarzPracowniczyDomain.Interfaces
         Task Create(Car newCar);
 
         Task<IEnumerable<Car>> GetAllCars();
+
+        Task<List<Car>> GetAvailableCarsAsync(DateTime selectedDate);
     }
 }
