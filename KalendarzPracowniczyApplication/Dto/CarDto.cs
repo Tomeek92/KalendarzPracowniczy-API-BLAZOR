@@ -7,11 +7,11 @@ namespace KalendarzPracowniczyApplication.Dto
         public Guid Id { get; set; }
 
         public string? Name { get; set; }
-        public DateTime? Year { get; set; }
+        public DateTime? DateCarBusy { get; set; }
         public string? Model { get; set; }
         public string? CarPlatesNumber { get; set; }
         public string? CarKm { get; set; }
-        public DateTime? CarInspection { get; set; }
+        public DateOnly? CarInspection { get; set; }
 
     }
 }

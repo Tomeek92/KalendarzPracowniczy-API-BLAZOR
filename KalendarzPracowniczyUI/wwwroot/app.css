@@ -83,7 +83,7 @@ h1:focus {
 .nav {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 13px;
 }
 
 .nav-item {
@@ -96,7 +96,7 @@ h1:focus {
 .nav-link {
     text-decoration: none;
     color: #00aaff;
-    font-size: 24px;
+    font-size: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -106,18 +106,18 @@ h1:focus {
     box-shadow: none;
 }
 
-    .nav-link:hover {
-        color: #00aaff;
-        transform: scale(1.2);
-        box-shadow: none;
-    }
+.nav-text:hover {
+    color: white;
+}
+
+.nav-link:hover {
+    color: white;
+}
 
 .nav-text {
-    font-size: 12px;
-    margin-top: 28px;
-    display: none;
+    font-size: 13px;
+    margin-top: 20px;
     text-align: center;
-    opacity: 0;
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
     font-family: "Inter", sans-serif;
     font-weight: 400;
@@ -192,7 +192,7 @@ h1:focus {
     color: #ffffff;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 14px;
+    font-size: 13px;
     letter-spacing: 5px;
 }
 
@@ -218,7 +218,7 @@ h1:focus {
 .schedule-grid {
     display: grid;
     grid-template-columns: 1.5fr repeat(5, 1fr);
-    gap: 13px;
+    gap: 8px;
     width: 100%;
 }
 
@@ -248,7 +248,7 @@ h1:focus {
     padding: 1px;
     text-align: center;
     font-weight: 400;
-    font-size:20px;
+    font-size: 16px;
     border-radius: 12px;
     box-shadow: 0 2px 6px rgba(0, 150, 255, 0.3);
     display: flex;
@@ -266,29 +266,27 @@ h1:focus {
 
 .day-cell {
     background-color: rgba(255, 255, 255, 0.1);
-    width: 210px;
     padding: 1px;
     height: auto;
-    min-height: 55px;
+    min-height: 45px;
     width: auto;
     min-width: 210px;
     flex-direction: row;
     text-align: center;
     border: 1px solid rgba(0, 150, 255, 0.5);
     border-radius: 12px;
-    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.7s;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 13px;
+    font-size: 14px;
     color: #f1f1f1;
-    box-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 150, 255, 0.3);
 }
 
     .day-cell:hover {
         background-color: rgba(255, 255, 255, 0.2);
         border-color: #00aaff;
-        transform: translateY(-3px);
         box-shadow: 0 6px 12px rgba(0, 150, 255, 0.5);
     }
 
@@ -298,7 +296,6 @@ h1:focus {
         padding: 1px;
         color: #ffffff;
         border: 2px solid #00aaff;
-        transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(0, 150, 255, 0.8);
     }
 
@@ -326,7 +323,7 @@ h1:focus {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 10, 30, 0.8);
+    background-color: rgba(0, 10, 20, 0.97);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -335,9 +332,9 @@ h1:focus {
 
 .my_modal_content {
     background-color: rgba(0, 10, 30, 0.95);
-    padding: 20px;
+    padding: 10px;
     border-radius: 12px;
-    width: 400px;
+    width: 25%;
     text-align: center;
     position: relative;
     box-shadow: 0 0 20px rgba(0, 150, 255, 0.5), inset 0 0 20px rgba(0, 150, 255, 0.3);
@@ -428,7 +425,7 @@ h1:focus {
     align-items: center;
     position: absolute;
     bottom: 39%;
-    left:-0.0%;
+    left: 8%;
 }
 
 .menu-link {
@@ -443,15 +440,12 @@ h1:focus {
     left: 0;
 }
 
-.menu-clicked {
-    left: 110px;
-}
 
 .menu-text {
     font-size: 12px;
     position: absolute;
     top: 140%;
-    left: -20%;
+    left: -50%;
     transform: translateY(-50%);
     color: #ffffff;
     opacity: 0;

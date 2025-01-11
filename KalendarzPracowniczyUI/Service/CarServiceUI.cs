@@ -15,8 +15,20 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task Create(CarDto carCommand)
         {
-            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Car", carCommand);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Car", carCommand);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Błąd: {response.StatusCode}, Szczegóły: {errorContent}");
+                }
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Błąd {ex.Message}");
+            }
         }
 
         public async Task Delete(Guid id)
@@ -72,6 +84,25 @@ namespace KalendarzPracowniczyUI.Service
             else
             {
                 throw new Exception($"Nie można znaleźć pracownika z numerem {id}");
+            }
+        }
+        public async Task<List<CarDto>> GetAvailableCarsAsync(DateTime selectedDate)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"https://localhost:7164/api/Car/available-cars?selectedDate={selectedDate:yyyy-MM-dd}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var allEvents = JsonConvert.DeserializeObject<List<CarDto>>(content);
+                    return allEvents;
+                }
+                return new List<CarDto>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
             }
         }
     }

@@ -16,7 +16,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/DayOff", dayOffDto);
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/DayOff/Update", dayOffDto);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
@@ -93,6 +93,26 @@ namespace KalendarzPracowniczyUI.Service
             try
             {
                 var response = await _httpClient.DeleteAsync($"https://localhost:7164/api/DayOff/{id}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException($"Request failed with status code: {response.StatusCode}, content: {errorContent}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new HttpRequestException($"Nieoczekiwany błąd {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+            }
+        }
+        public async Task Update(DayOffDto updateDayOff)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/DayOff/", updateDayOff);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();

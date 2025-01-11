@@ -52,14 +52,19 @@ namespace KalendarzPracowniczyApplication.Mapper
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<CarDto, Car>()
-               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Model))
-            .ForMember(dest => dest.CarPlatesNumber, opt => opt.MapFrom(src => src.CarPlatesNumber));
-
+            .ForMember(dest => dest.CarPlatesNumber, opt => opt.MapFrom(src => src.CarPlatesNumber))
+            .ForMember(dest => dest.DateCarBusy, opt => opt.MapFrom(src => src.DateCarBusy))
+            .ForMember(dest => dest.CarKm, opt => opt.MapFrom(src => src.CarKm))
+            .ForMember(dest => dest.CarInspection, opt => opt.MapFrom(src => src.CarInspection));
             CreateMap<Car, CarDto>()
-             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Model))
-            .ForMember(dest => dest.CarPlatesNumber, opt => opt.MapFrom(src => src.CarPlatesNumber));
+            .ForMember(dest => dest.CarPlatesNumber, opt => opt.MapFrom(src => src.CarPlatesNumber))
+            .ForMember(dest => dest.DateCarBusy, opt => opt.MapFrom(src => src.DateCarBusy))
+            .ForMember(dest => dest.CarKm, opt => opt.MapFrom(src => src.CarKm))
+            .ForMember(dest => dest.CarInspection, opt => opt.MapFrom(src => src.CarInspection));
 
             CreateMap<UpdateEventCommand, Event>();
 

@@ -112,10 +112,6 @@
             <InputText @bind-Value="newCar.Model" class="blazor-input" />
         </div>
         <div>
-            <label>Data rejestracji:</label>
-            <InputDate @bind-Value="newCar.Year" class="blazor-input" />
-        </div>
-        <div>
             <label>Numery rejestracyjne:</label>
             <InputText @bind-Value="newCar.CarPlatesNumber" class="blazor-input" />
         </div>
@@ -148,7 +144,6 @@
                 <tr>
                     <td>@car.Name</td>
                     <td>@car.Model</td>
-                    <td>@(car.Year.HasValue ? car.Year.Value.ToString("dd.MM.yyyy") : "-")</td>
                     <td>@car.CarPlatesNumber</td>
                     <td>@car.CarInspection</td>
                     <td>@car.CarKm</td>

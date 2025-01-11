@@ -1,7 +1,4 @@
-﻿using KalendarzPracowniczyDomain.Entities.Users;
-using System.Text.Json.Serialization;
-
-namespace KalendarzPracowniczyApplication.Dto
+﻿namespace KalendarzPracowniczyApplication.Dto
 {
     public class DayOffDto
     {

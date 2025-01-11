@@ -23,9 +23,8 @@ namespace KalendarzPracowniczyApplication.Dto
         public DateTime? DeletedAt { get; set; }
         public string? LastModifiedBy { get; set; }
         public DateTime? LastModifiedTime { get; set; }
-        [Required(ErrorMessage = "Podanie samochodu jest wymagane")]
         public Guid? CarId { get; set; }
-     
+
         public CarDto? Car { get; set; }
         public string? UserId { get; set; }
         public UserDto? User { get; set; }
