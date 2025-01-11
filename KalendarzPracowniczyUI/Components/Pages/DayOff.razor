@@ -7,7 +7,8 @@
 @rendermode InteractiveServer
 <style>
 
-        p,h3 {
+        p,h3,span {
+
             font-weight: bold;
             color: #00aaff;
             margin-bottom: 3px;
@@ -16,7 +17,33 @@
 
     .btn-secondary {
         width: 60%;
-        padding: 12px;
+        padding: 8px;
+        background-color: rgba(0, 150, 255, 0.7);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
+        margin-top:10px;
+    }
+
+    .buttonChange {
+        width: 50%;
+        padding: 7px;
+        background-color: rgba(0, 150, 255, 0.7);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
+    }
+    button{
+        width: 20%;
+        padding: 5px;
         background-color: rgba(0, 150, 255, 0.7);
         color: white;
         border: none;
@@ -27,7 +54,7 @@
         box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
     }
 
-        .btn-secondary:hover {
+        .btn-secondary:hover,.buttonChange:hover,button:hover {
             background-color: #00aaff;
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 150, 255, 0.5), 0 0 15px rgba(0, 150, 255, 0.6);
@@ -41,7 +68,7 @@
 
     th, td {
         padding: 15px;
-        text-align: left;
+        text-align: center;
         border: 1px solid rgba(0, 150, 255, 0.5);
         color: #f1f1f1;
         white-space: nowrap;
@@ -52,23 +79,35 @@
         color: white;
     }
 
-    td input[type="text"], td input[type="date"], .blazor-input {
-        width: 100%;
-        padding: 12px;
-        border-radius: 8px;
-        background-color: rgba(255, 255, 255, 0.1);
+    input[type="date"] {
+        width: 50%;
+        padding: 10px;
+        margin-bottom: -5px;
         border: 1px solid rgba(0, 150, 255, 0.5);
+        border-radius: 8px;
+        box-sizing: border-box;
+        background-color: rgba(255, 255, 255, 0.1);
         color: #f1f1f1;
         transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
-        td input[type="text"]:focus, td input[type="date"]:focus, .blazor-input:focus {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: #00aaff;
-            box-shadow: 0 0 10px rgba(0, 150, 255, 0.5), inset 0 0 8px rgba(0, 150, 255, 0.4);
-            outline: none;
-        }
+    select {
+        width: 50%;
+        padding: 10px;
+        margin-bottom: -5px;
+        border: 1px solid rgba(0, 150, 255, 0.5);
+        border-radius: 8px;
+        box-sizing: border-box;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #f1f1f1;
+        transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
 
+        select option {
+            padding: 10px;
+            font-size: 16px;
+            color: #333;
+        }
 </style>
 @if (showModal)
 {
@@ -76,7 +115,7 @@
         <div class="my_modal_content">
             <h1 class="close">&times;</h1>
             <h1 class="close" @onclick="CloseModalAndRefresh">&times;</h1>
-                <i class="fa-solid fa-umbrella-beach fa-4x" style="color:white;"></i>
+                <i class="fa-solid fa-umbrella-beach fa-3x" style="color:white;"></i>
                 <p>Data absencji</p>
                 <EditForm Model="@dayOffDto" OnValidSubmit="CreateDayOffAsync">
                 <InputDate @bind-Value="dayOffDto.DateDayOff" />
@@ -98,18 +137,44 @@
             <thead>
                 <tr>
                     <th>Data urlopu</th>
+                    <th>Akcje</th>
                 </tr>
             </thead>
             <tbody>
-                    @foreach (var dayOff in listDayOff)
+                    @foreach (var dayOff in GetCurrentPageDays())
                     {
                         <tr>
                             <td>@dayOff.DateDayOff</td>
-
+                            <td>
+                                <button class="buttonChange" @onclick="() => EditDayOff(dayOff)">
+                                    <i class="fas fa-edit"></i>
+                                    <p style="font-size:12px; color:white;">Zmień</p>
+                                </button>
+                                <button class="buttonChange" @onclick="() => EditDayOff(dayOff)">
+                                    <i class="fa-solid fa-trash delete-icon" style="font-size:25px;"></i>
+                                    <p style="font-size:12px; color:white;">Usuń</p>
+                                </button>
+                            </td>
                         </tr>
                     }
             </tbody>
         </table>
+            @if(listDayOff.Count > pageSize)
+            {
+                <div class="pagination" style="margin-top:-7%;">
+                    <button @onclick="PreviousPage"
+                            disabled="@(currentPage == 0)">
+                        &#8592;
+                    </button>
+                    <span style="font-size:12px;">
+                        (Strona @(currentPage + 1) z @(Math.Ceiling((double)listDayOff.Count / pageSize)))
+                    </span>
+                    <button @onclick="NextPage"
+                            disabled="@(currentPage == (Math.Ceiling((double)listDayOff.Count / pageSize)) - 1)">
+                        &#8594;
+                    </button>
+                </div>
+            }
         </div>
     </div>
   
@@ -124,6 +189,9 @@
     private List<DayOffDto> listDayOff = new();
     private string userId;
     private string? errorMessage;
+    private int currentPage = 0;
+    private int pageSize = 3;
+
     protected override async Task OnInitializedAsync()
     {
         var loggedUser = await UserService.GetCurrentUserAsync();
@@ -132,8 +200,40 @@
             dayOffDto.UserId = loggedUser.Id;
             dayOffDto.Users = userDtos;
         }
+        for (int i = 1; i <= 10; i++)
+        {
+            listDayOff.Add(new DayOffDto 
+                {
+                    DateDayOff = DateOnly.FromDateTime(DateTime.Now.AddDays(i)) 
+                });
+        }
         await GetAllUsers();
         await GetAllDaysOff();
+        SetTodayDate();
+    }
+
+    private void SetTodayDate() 
+    {
+        dayOffDto.DateDayOff = DateOnly.FromDateTime(DateTime.Today); 
+    }
+    private IEnumerable<DayOffDto> GetCurrentPageDays()
+    {
+        return listDayOff.Skip(currentPage * pageSize).Take(pageSize);
+    }
+
+    private void NextPage()
+    {
+        if ((currentPage + 1) * pageSize < listDayOff.Count)
+        {
+            currentPage++;
+        }
+    }
+    private void PreviousPage()
+    {
+        if (currentPage > 0)
+        {
+            currentPage--;
+        }
     }
 
     private async Task GetAllDaysOff()
@@ -183,10 +283,34 @@
         }
         catch
         {
-           errorMessage = $"Błąd podczas pobierania użytkowników";
+            errorMessage = $"Błąd podczas pobierania użytkowników";
         }
     }
-   
+
+    private async Task DeleteDayOff(Guid id)
+    {
+        try
+        {
+            await DayOffService.Delete(dayOffDto.Id);
+        }
+        catch(Exception)
+        {
+            throw new Exception($"Błąd podczas usuwania dnia wolnego");
+        }
+    }
+
+    private async Task EditDayOff(DayOffDto dayOffDto)
+    {
+        try
+        {
+            await DayOffService.Update(dayOffDto);
+        }
+        catch (Exception)
+        {
+            throw new Exception($"Błąd podczas usuwania dnia wolnego");
+        }
+    }
+
 
 
 }

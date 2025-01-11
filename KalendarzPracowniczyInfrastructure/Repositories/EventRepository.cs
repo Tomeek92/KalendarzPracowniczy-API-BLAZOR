@@ -45,16 +45,19 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                var trackedCar = _context.ChangeTracker.Entries<Car>()
-                                 .FirstOrDefault(e => e.Entity.Id == createEvent.CarId);
+                if (createEvent.Car != null)
+                {
+                    var trackedCar = _context.ChangeTracker.Entries<Car>()
+                        .FirstOrDefault(e => e.Entity.Id == createEvent.Car.Id);
 
-                if (trackedCar != null)
-                {
-                    createEvent.Car = trackedCar.Entity;
-                }
-                else
-                {
-                    _context.Attach(createEvent.Car);
+                    if (trackedCar != null)
+                    {
+                        createEvent.Car = trackedCar.Entity;
+                    }
+                    else
+                    {
+                        _context.Attach(createEvent.Car);
+                    }
                 }
                 _context.Add(createEvent);
                 var result = await _context.SaveChangesAsync(cancellationToken);

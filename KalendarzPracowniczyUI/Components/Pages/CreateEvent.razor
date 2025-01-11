@@ -25,14 +25,16 @@
 }
 
 .event-form-container p {
+    font-size:17px;
     margin-bottom: 2px;
     font-weight: bold;
     color: #00aaff; 
 }
 
-.event-form-container input {
+
+    .event-form-container input,.InputTextArea {
     width: 100%;
-    padding: 10px;
+    padding: 5px;
     margin-bottom: -5px;
     border: 1px solid rgba(0, 150, 255, 0.5); 
     border-radius: 8px;
@@ -42,7 +44,7 @@
     transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.event-form-container input:focus {
+.event-form-container input:focus,.InputTextArea:focus {
     outline: none;
     background-color: rgba(255, 255, 255, 0.2); 
     border-color: #00aaff;
@@ -50,7 +52,7 @@
 }
 .event-form-container button {
     width: 100%;
-    padding: 12px;
+    padding: 8px;
     background-color: rgba(0, 150, 255, 0.5); 
     color: white;
     border: none;
@@ -78,10 +80,6 @@
     margin: 20px auto;
 }
 
-@@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
 
 /* Logo */
 .logo {
@@ -108,12 +106,12 @@
 
     select {
         width: 100%;
-        padding: 12px;
+        padding: 7px;
         border-radius: 8px;
         background-color: rgba(255, 255, 255, 0.1); 
         border: 1px solid rgba(0, 150, 255, 0.5); 
         color: #f1f1f1; 
-        font-size: 16px;
+        font-size: 15px;
         transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -161,10 +159,11 @@
     box-shadow: 0 0 15px rgba(0, 255, 0, 0.4); 
 }
 </style>
-<div class="logo">
-    <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" />
-</div>
+
 <div class="event-form-container">
+    <div class="logo">
+        <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" />
+    </div>
     <h2>Dodaj nowy wyjazd</h2>
 
     <EditForm Model="eventDto" OnValidSubmit="CreateEventAsync">
@@ -176,15 +175,16 @@
         </div>
         <div>
             <p>Miejsce pracy</p>
-            <select @onchange="(e) => eventDto.Name = e.Value.ToString()">
+            <select @onchange="WorkPlaceChange">
                 <option value="">Wybierz miejsce</option>
+                <option value="Wyjazd-słuzbowy">Wyjazd służbowy</option>
                 <option value="Zdalna-okazjonalna">Zdalna okazjonalna</option>
                 <option value="Zdalna">Zdalna</option>
             </select>
         </div>
         <div>
             <p>Opis</p>
-            <InputText @bind-Value="eventDto.Description" />
+            <InputTextArea @bind-Value="eventDto.Description" class="InputTextArea" />
         </div>
         <div>
             <p>Data dodania:</p>
@@ -202,12 +202,11 @@
         <div>
             <p>Dostępne Samochody:</p>
             <select @bind="eventDto.CarId">
-                <option value="">-- Wybierz samochód --</option>
                 @foreach (var car in carDtos)
                 {
                     <option value="@car.Id">@car.Name @car.Model @car.CarPlatesNumber</option>
-                   
                 }
+                <option value="">-- Wybierz samochód --</option>
             </select>
         </div>
         <div>
@@ -241,6 +240,7 @@
     private bool isSuccess;
     private bool isLoading = false;
     private DateTime? previousDate;
+    private string selectedWorkplace = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -255,12 +255,6 @@
             eventDto.UserId = loggedUser.Id;
         }
     }
-
-       private async Task LoadExistingEvents()
-    {
-        existingEvents = await EventServiceUI.GetAll(); 
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (eventDto.StartDate != previousDate)
@@ -268,6 +262,15 @@
             previousDate = eventDto.StartDate;
             await CheckAvailableCarsAsync(eventDto.StartDate.Value.Date);
         }
+    }
+    private void WorkPlaceChange(ChangeEventArgs e)
+    { 
+        selectedWorkplace = e.Value.ToString(); 
+        eventDto.Name = selectedWorkplace;  
+    }
+    private async Task LoadExistingEvents()
+    {
+        existingEvents = await EventServiceUI.GetAll(); 
     }
 
     private async Task HandleDateChange(ChangeEventArgs e)
@@ -289,17 +292,27 @@
 
         try
         {
-            if (existingEvents.Any(e => e.CarId == eventDto.CarId && e.StartDate.Value.Date == eventDto.StartDate.Value.Date))
+            bool hasError = false;
+
+            if (existingEvents.Any(e => e.CarId == eventDto.CarId && e.StartDate.Value.Date == eventDto.StartDate.Value.Date && e.CarId != null))
             {
                 message = "Samochód jest już zarezerwowany na ten dzień.";
                 isSuccess = false;
+                hasError = true;
             }
-            else
+            if (eventDto.CarId != null && (selectedWorkplace == "Zdalna-okazjonalna" || selectedWorkplace == "Zdalna"))
+            {
+
+                message = "Nie możesz przypisać samochodu do pracy zdalnej bądź zdalnej okazjonalnej"; 
+                isSuccess = false;
+                hasError = true;
+            }
+            if (!hasError)
             {
                 await EventServiceUI.Create(eventDto);
                 isSuccess = true;
                 message = "Zadanie zostało dodane!";
-            }
+            }  
         }
         catch (Exception ex)
         {

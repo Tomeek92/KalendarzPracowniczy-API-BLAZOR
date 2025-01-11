@@ -15,8 +15,20 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task Create(CarDto carCommand)
         {
-            var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Car", carCommand);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Car", carCommand);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Błąd: {response.StatusCode}, Szczegóły: {errorContent}");
+                }
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Błąd {ex.Message}");
+            }
         }
 
         public async Task Delete(Guid id)

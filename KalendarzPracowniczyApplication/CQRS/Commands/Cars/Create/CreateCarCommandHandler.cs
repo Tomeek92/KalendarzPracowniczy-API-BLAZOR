@@ -27,6 +27,10 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Workers.Create
             {
                 throw new AutoMapperMappingException($"Błąd przy mapowaniu", ex);
             }
+            catch(Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+            }
         }
     }
 }

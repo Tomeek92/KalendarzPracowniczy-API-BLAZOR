@@ -11,7 +11,7 @@ namespace KalendarzPracowniczyApplication.Dto
         public string? Model { get; set; }
         public string? CarPlatesNumber { get; set; }
         public string? CarKm { get; set; }
-        public DateTime? CarInspection { get; set; }
+        public DateOnly? CarInspection { get; set; }
 
     }
 }

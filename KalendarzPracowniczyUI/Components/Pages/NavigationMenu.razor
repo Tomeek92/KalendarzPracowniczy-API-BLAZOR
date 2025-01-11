@@ -24,23 +24,20 @@
                 </a>
             </div>
             <br />
-            <br />
         <div class="nav-item">
             <a class="nav-link" href="/dayOff">
                 <i class="fa-solid fa-umbrella-beach fa-lg"></i>
                 <span class="nav-text">Dodaj urlop</span>
             </a>
         </div>
-            <br />
-            <br />
+        <br />
             <div class="nav-item">
                 <a class="nav-link" href="/to-do">
                 <i class="fa-regular fa-calendar-check fa-lg"></i>
                     <span class="nav-text">Twoje zadania</span>
                 </a>
             </div>
-        <br />
-        <br />
+            <br />
             <div class="nav-item">
                 <a class="nav-link" href="/create-user">
                 <i class="fas fa-user-plus fa-lg"></i>
@@ -48,14 +45,12 @@
                 </a>
             </div>
             <br />
-            <br />
             <div class="nav-item">
                 <a class="nav-link" href="/car">
                 <i class="fa-solid fa-car fa-lg"></i>
                     <span class="nav-text">Nowy samochód</span>
                 </a>
             </div>
-            <br />
             <br />
             <div class="nav-item">
                 <a class="nav-link" @onclick="Logout">
@@ -66,23 +61,13 @@
         </nav>
  </div>
 
-<div class="menu-item">
-    <a class="menu-link @menuClicked" @onclick="ShowMenu">
-        <i class="fa-solid fa-arrow-@(isMenuVisible ? "left" : "right") fa-flip-vertical" style="font-size:37px;"></i>
-        <span class="menu-text" style="margin-left:10px;">MENU</span>
-    </a>
-</div>
-
-
     @if (errorMessage != null)
     {
         <div class="message">@errorMessage</div>
     }
 
-
-
 @code {
-    private bool isMenuVisible = false;
+    private bool isMenuVisible = true;
     private bool showModal = false;
     private string? errorMessage;
     private string menuClicked = "";
@@ -97,13 +82,7 @@
         {
             errorMessage = ($"Błąd podczas wylogowywania!: {ex.Message}");
         }
-    }
-    private void ShowMenu()
-    {
-        isMenuVisible = !isMenuVisible;
-        menuClicked = isMenuVisible ? "menu-clicked" : "";
-    }
-   
+    }  
 }
 
 

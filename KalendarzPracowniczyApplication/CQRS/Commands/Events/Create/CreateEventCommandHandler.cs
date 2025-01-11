@@ -26,18 +26,19 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
         {
             try
             {
-                var currentCar = await _mediator.Send(new GetCarByIdQuery(request.CarId), cancellationToken);
-                if (currentCar == null)
+                CarDto? currentCar = null;
+
+                if (request.CarId.HasValue)
                 {
-                    throw new Exception("Nie odnaleziono samochodu podczas tworzenia wyjazdu");
+                    currentCar = await _mediator.Send(new GetCarByIdQuery(request.CarId.Value), cancellationToken);
                 }
 
                 var newEvent = _mapper.Map<Event>(request);
-
                 newEvent.UserId = request.UserId;
                 newEvent.User = null;
 
-                newEvent.Car = _mapper.Map<Car>(currentCar);
+                var mappCar = _mapper.Map<Car>(currentCar);
+                newEvent.Car = mappCar;
 
                 await _eventRepository.Create(newEvent, cancellationToken);
 
@@ -48,6 +49,10 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
             catch (AutoMapperMappingException ex)
             {
                 throw new AutoMapperMappingException($"Błąd mapowania", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
             }
         }
     }

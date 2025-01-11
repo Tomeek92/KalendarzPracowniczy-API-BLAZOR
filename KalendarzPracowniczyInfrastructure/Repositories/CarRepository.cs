@@ -114,9 +114,9 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                     throw new ArgumentException($"Błąd podczas pobierania daty");
                 }
                 var cars = await _context.Cars
-                    .Where(car => !_context.Events
-                    .Any(e => e.CarId == car.Id && e.StartDate.HasValue && e.StartDate.Value.Date == selectedDate.Value.Date))
-                .ToListAsync();           
+                    .Where(car =>
+                    !_context.Events.Any(e => e.CarId == car.Id && e.StartDate.HasValue && e.StartDate.Value.Date == selectedDate.Value.Date && !e.IsDeleted))
+                .ToListAsync();
                 return cars;
             }
             catch (Exception ex)
