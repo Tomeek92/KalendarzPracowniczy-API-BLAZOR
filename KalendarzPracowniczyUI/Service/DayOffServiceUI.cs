@@ -16,7 +16,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/DayOff/Update", dayOffDto);
+                var response = await _httpClient.PostAsJsonAsync($"https://localhost:7164/api/DayOff/Create", dayOffDto);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();

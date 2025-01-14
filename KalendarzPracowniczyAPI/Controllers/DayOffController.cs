@@ -10,7 +10,7 @@ namespace KalendarzPracowniczyAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DayOffController : Controller
+    public class DayOffController : ControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -19,7 +19,7 @@ namespace KalendarzPracowniczyAPI.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] CreateDayOffCommand createDayOffCommand)
         {
             try

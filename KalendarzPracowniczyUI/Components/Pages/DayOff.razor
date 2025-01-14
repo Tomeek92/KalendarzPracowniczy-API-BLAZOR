@@ -4,6 +4,7 @@
 @inject NavigationManager Navigation
 @inject DayOffServiceUI DayOffService
 @inject UserServiceUI UserService
+@inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 <style>
 
@@ -131,6 +132,10 @@
                 <div>
                     <button class="btn btn-secondary" type="submit">Dodaj urlop!</button>
                 </div>
+                @if (isSuccess2)
+                {
+                    <p class="success-message">Dzień wolny został dodany!</p>
+                }
                 </EditForm>
                           <h3>Twoje urlopy</h3>
         <table>
@@ -146,11 +151,11 @@
                         <tr>
                             <td>@dayOff.DateDayOff</td>
                             <td>
-                                <button class="buttonChange" @onclick="() => EditDayOff(dayOff)">
+                                <button class="buttonChange" @onclick="() => AkceptEdit(dayOff)">
                                     <i class="fas fa-edit"></i>
                                     <p style="font-size:12px; color:white;">Zmień</p>
                                 </button>
-                                <button class="buttonChange" @onclick="() => EditDayOff(dayOff)">
+                                <button class="buttonChange" @onclick="() => AkceptDelete(dayOff.Id)">
                                     <i class="fa-solid fa-trash delete-icon" style="font-size:25px;"></i>
                                     <p style="font-size:12px; color:white;">Usuń</p>
                                 </button>
@@ -177,7 +182,36 @@
             }
         </div>
     </div>
-  
+    @if (showDeleteConfirmation)
+    {
+        <div class="my_modal">
+            <div class="my_modal_content">
+                <h1 class="close" @onclick="() => showDeleteConfirmation = false">&times;</h1>
+                <p style="color:white;">Czy na pewno chcesz usunąć dzień wolny?</p>
+                <button @onclick="async () => await ConfirmDelete(dayOffDto.Id)" class="btn btn-danger">Usuń</button>
+                <button @onclick="() => showDeleteConfirmation = false" class="btn btn-secondary">Anuluj</button>
+                @if (isSuccess)
+                {
+                    <p class="delete-success-message">Dzień wolny został usunięty!</p>
+                }
+            </div>
+        </div>
+    }
+    @if (showEditConfirmation)
+    {
+        <div class="my_modal">
+            <div class="my_modal_content">
+                <h1 class="close" @onclick="() => showEditConfirmation = false">&times;</h1>
+                <InputDate @bind-Value="selectedDate" class="form-control" />
+                <button @onclick="async () => await ConfirmEdit(dayOffDto)" class="btn btn-danger">Zmień</button>
+                <button @onclick="() => showEditConfirmation = false" class="btn btn-secondary">Anuluj</button>
+                @if (isSuccess3)
+                {
+                    <p class="edit-success-message">Dzień wolny został zmieniony!</p>
+                }
+            </div>
+        </div>
+    }
 }
 
 
@@ -191,6 +225,14 @@
     private string? errorMessage;
     private int currentPage = 0;
     private int pageSize = 3;
+    private bool showDeleteConfirmation = false;
+    private bool showEditConfirmation = false;
+    private DateOnly selectedDate;
+    private DayOffDto confirmEditDay;
+    private Guid confirmDeleteDayOff;
+    private bool isSuccess = false;
+    private bool isSuccess2 = false;
+    private bool isSuccess3 = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -212,6 +254,17 @@
         SetTodayDate();
     }
 
+    private void AkceptDelete(Guid dayOffId)
+    {
+        confirmDeleteDayOff = dayOffId;
+        showDeleteConfirmation = true;
+    }
+    private void AkceptEdit(DayOffDto editDayOff)
+    {
+        selectedDate = editDayOff.DateDayOff;
+        confirmEditDay = editDayOff;
+        showEditConfirmation = true;
+    }
     private void SetTodayDate() 
     {
         dayOffDto.DateDayOff = DateOnly.FromDateTime(DateTime.Today); 
@@ -268,10 +321,18 @@
         try
         {
             await DayOffService.Create(dayOffDto);
+            isSuccess2 = true;
+            await GetAllDaysOff();
+            await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message", 5000);
+
+            await InvokeAsync(StateHasChanged);
+
+            await Task.Delay(5000);
+            isSuccess2 = false;
         }
         catch(Exception ex)
         {
-            throw new Exception($"Nieoczekiwany bład {ex.Message}");
+            errorMessage = $"Nieoczekiwany błąd podczas tworzenia urlopu {ex.Message}";
         }
     }
 
@@ -287,30 +348,53 @@
         }
     }
 
-    private async Task DeleteDayOff(Guid id)
+    private async Task ConfirmDelete(Guid id)
     {
         try
         {
-            await DayOffService.Delete(dayOffDto.Id);
+            await DayOffService.Delete(confirmDeleteDayOff);
+
+            isSuccess = true;
+
+            await InvokeAsync(StateHasChanged);
+
+            await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".delete-success-message", 5000);
+
+            await GetAllDaysOff();
+
+            await Task.Delay(5000);
+
+            isSuccess = false;
+
+
         }
-        catch(Exception)
+        catch
         {
-            throw new Exception($"Błąd podczas usuwania dnia wolnego");
+            errorMessage = $"Nieoczekiwany błąd podczas usuwania dnia wolnego";
         }
     }
 
-    private async Task EditDayOff(DayOffDto dayOffDto)
+    private async Task ConfirmEdit(DayOffDto dayOffDto)
     {
         try
         {
-            await DayOffService.Update(dayOffDto);
+            confirmEditDay.DateDayOff = selectedDate;
+            await DayOffService.Update(confirmEditDay);
+            isSuccess3 = true;
+            await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".edit-success-message", 5000);
+
+            await InvokeAsync(StateHasChanged);
+             await GetAllDaysOff();
+
+            await Task.Delay(5000);
+
+            isSuccess3 = false;
         }
         catch (Exception)
         {
-            throw new Exception($"Błąd podczas usuwania dnia wolnego");
+            errorMessage = $"Nieoczekiwany błąd podczas zmiany dnia wolnego";
         }
     }
-
 
 
 }

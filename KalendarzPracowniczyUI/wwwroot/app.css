@@ -392,7 +392,7 @@ h1:focus {
     }
 }
 
-.message, .success-message {
+.message, .success-message, .delete-success-message, .edit-success-message {
     padding: 10px;
     border-radius: 5px;
     font-size: 14px;
@@ -411,14 +411,15 @@ h1:focus {
     box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
 }
 
-.success-message {
+.success-message, .delete-success-message, .edit-success-message, .edit-success-message {
     background-color: rgba(80, 255, 80, 0.1);
     color: #00ff00;
     border: 1px solid #00ff00;
     box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
 }
-/*menu bar*/
 
+
+/*menu bar*/
 .menu-item {
     display: flex;
     justify-content: center;
