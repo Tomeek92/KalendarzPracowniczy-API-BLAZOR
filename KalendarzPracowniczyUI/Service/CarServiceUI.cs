@@ -27,7 +27,7 @@ namespace KalendarzPracowniczyUI.Service
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Błąd {ex.Message}");
+                throw new Exception($"Samochód już istnieje {ex.Message}");
             }
         }
 
@@ -37,9 +37,9 @@ namespace KalendarzPracowniczyUI.Service
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task Update(UpdateCarCommand workerCommand)
+        public async Task Update(CarDto carDto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Car/", workerCommand);
+            var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Car/", carDto);
             response.EnsureSuccessStatusCode();
         }
 
