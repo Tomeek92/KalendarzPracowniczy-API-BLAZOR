@@ -7,17 +7,20 @@ namespace KalendarzPracowniczyUI.Service
     public class CarServiceUI
     {
         private readonly HttpClient _httpClient;
+        private readonly string _baseUrl;
 
-        public CarServiceUI(HttpClient httpClient)
+        public CarServiceUI(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _baseUrl = configuration["ApiSettings:BaseUrl"];
+
         }
 
         public async Task Create(CarDto carCommand)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Car", carCommand);
+                var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/api/Car", carCommand);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
@@ -33,19 +36,31 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task Delete(Guid id)
         {
-            var response = await _httpClient.DeleteAsync($"https://localhost:7164/api/Car/{id}");
+            var response = await _httpClient.DeleteAsync($"{_baseUrl}/api/Car/{id}");
             response.EnsureSuccessStatusCode();
         }
 
         public async Task Update(CarDto carDto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Car/", carDto);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/api/Car/", carDto);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Błąd API: {response.StatusCode}, Treść odpowiedzi: {responseContent}");
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                throw new Exception($"Problem z połączeniem HTTP: {httpEx.Message}");
+            }
+
         }
 
         public async Task<List<CarDto>> GetAll()
         {
-            var response = await _httpClient.GetAsync($"https://localhost:7164/api/Car/GetAll");
+            var response = await _httpClient.GetAsync($"{_baseUrl}/api/Car/GetAll");
 
             if (response.IsSuccessStatusCode)
             {
@@ -68,29 +83,37 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task<CarDto> GetById(Guid id)
         {
-            var response = await _httpClient.GetAsync($"https://localhost:7164/api/Worker/{id}");
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var workerDto = await response.Content.ReadFromJsonAsync<CarDto>();
-                if (workerDto != null)
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/Car/{id}");
+                if (response.IsSuccessStatusCode)
                 {
-                    return workerDto;
+                    var workerDto = await response.Content.ReadFromJsonAsync<CarDto>();
+                    if (workerDto != null)
+                    {
+                        return workerDto;
+                    }
+                    else
+                    {
+                        throw new Exception($"Nie naleziono samochodu z numerem {id}");
+                    }
                 }
                 else
                 {
-                    throw new Exception($"Nie naleziono zdarzenia z numerem {id}");
+                    throw new Exception($"Nie można znaleźć samochodu z numerem {id}");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                throw new Exception($"Nie można znaleźć pracownika z numerem {id}");
+                throw new Exception($"Nieoczekiwany błąd podczas pobierania samochodu {ex.Message}");
             }
+
         }
         public async Task<List<CarDto>> GetAvailableCarsAsync(DateTime selectedDate)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"https://localhost:7164/api/Car/available-cars?selectedDate={selectedDate:yyyy-MM-dd}");
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/Car/available-cars?selectedDate={selectedDate:yyyy-MM-dd}");
 
                 if (response.IsSuccessStatusCode)
                 {

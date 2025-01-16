@@ -5,17 +5,19 @@ namespace KalendarzPracowniczyUI.Service
     public class WorkServiceUI
     {
         private readonly HttpClient _httpClient;
+        private readonly string _baseUrl;
 
-        public WorkServiceUI(HttpClient httpClient)
+        public WorkServiceUI(HttpClient httpClient,IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _baseUrl = configuration["ApiSettings:BaseUrl"];
         }
 
         public async Task Create(WorkDto workDto)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Work/Create", workDto);
+                var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/api/Work/Create", workDto);
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
@@ -28,7 +30,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"https://localhost:7164/api/Work/{id}");
+                var response = await _httpClient.DeleteAsync($"{_baseUrl}/api/Work/{id}");
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
@@ -41,7 +43,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Work/", workDto);
+                var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/api/Work/", workDto);
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
@@ -54,7 +56,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync($"https://localhost:7164/api/Work/{userid}");
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/Work/{userid}");
                 var content = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"Odpowiedź serwera: {content}");
                 if (response.IsSuccessStatusCode)
@@ -84,7 +86,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.GetFromJsonAsync<List<WorkDto>>($"https://localhost:7164/api/Work/");
+                var response = await _httpClient.GetFromJsonAsync<List<WorkDto>>($"{_baseUrl}/api/Work/");
                 if (response != null)
                 {
                     return response;

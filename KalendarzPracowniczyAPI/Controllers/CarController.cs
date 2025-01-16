@@ -122,9 +122,9 @@ namespace KalendarzPracowniczyAPI.Controllers
             {
                 return NotFound($"Nie odnaleziono pracownika do aktualizacji");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                throw new Exception($"Błąd {ex.Message}");
             }
         }
     }

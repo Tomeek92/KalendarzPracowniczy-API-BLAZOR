@@ -6,17 +6,19 @@ namespace KalendarzPracowniczyUI.Service
     public class DayOffServiceUI
     {
         private readonly HttpClient _httpClient;
+        private readonly string _baseUrl;
 
-        public DayOffServiceUI(HttpClient httpClient)
+        public DayOffServiceUI(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _baseUrl = configuration["ApiSettings:BaseUrl"];
         }
 
         public async Task Create(DayOffDto dayOffDto)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync($"https://localhost:7164/api/DayOff/Create", dayOffDto);
+                var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/api/DayOff/Create", dayOffDto);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
@@ -36,9 +38,9 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync($"https://localhost:7164/api/DayOff/{userId}");
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/DayOff/{userId}");
                 var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Odpowiedź serwera: {content}");
+
                 if (response.IsSuccessStatusCode)
                 {
                     var dayOffDto = await response.Content.ReadFromJsonAsync<List<DayOffDto>>();
@@ -66,7 +68,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync("https://localhost:7164/api/DayOff/GetAllDaysOff");
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/DayOff/GetAllDaysOff");
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
@@ -92,7 +94,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"https://localhost:7164/api/DayOff/{id}");
+                var response = await _httpClient.DeleteAsync($"{_baseUrl}/api/DayOff/{id}");
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
@@ -112,7 +114,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/DayOff/", updateDayOff);
+                var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/api/DayOff/", updateDayOff);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();

@@ -9,15 +9,17 @@ namespace KalendarzPracowniczyUI.Service
     public class UserServiceUI
     {
         private readonly HttpClient _httpClient;
+        private readonly string _baseUrl;
 
-        public UserServiceUI(HttpClient httpClient)
+        public UserServiceUI(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _baseUrl = configuration["ApiSettings:BaseUrl"];
         }
 
         public async Task LogoutAsync()
         {
-            var response = await _httpClient.PostAsync("https://localhost:7164/api/User/logout", null);
+            var response = await _httpClient.PostAsync("{_baseUrl}/api/User/logout", null);
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Wylogowywanie nie powiodło się.");
@@ -28,7 +30,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync("https://localhost:7164/api/User/getAll");
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/User/getAll");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -55,7 +57,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync("https://localhost:7164/api/User/me");
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/User/me");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -76,7 +78,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7164/api/User/login")
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/api/User/login")
                 {
                     Content = JsonContent.Create(user)
                 };
@@ -114,7 +116,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7164/api/User/Create")
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/api/User/Create")
                 {
                     Content = JsonContent.Create(userCommand)
                 };
@@ -141,7 +143,7 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task Delete(string id)
         {
-            var response = await _httpClient.DeleteAsync($"https://localhost:7164/api/User/{id}");
+            var response = await _httpClient.DeleteAsync($"{_baseUrl}/api/User/{id}");
             response.EnsureSuccessStatusCode();
         }
 
@@ -153,7 +155,7 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task<UserDto> GetById(string id)
         {
-            var response = await _httpClient.GetAsync($"https://localhost:7164/api/Event/{id}");
+            var response = await _httpClient.GetAsync($"{_baseUrl}/api/Event/{id}");
             if (response.IsSuccessStatusCode)
             {
                 var userDto = await response.Content.ReadFromJsonAsync<UserDto>();

@@ -55,13 +55,9 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         public async Task Update(Car carUpdate)
         {
             try
-            {
-                var findCarToUpdate = await _context.Cars.FindAsync(carUpdate.Id);
-                if (findCarToUpdate == null)
-                {
-                    throw new KeyNotFoundException($"Nie znaleziono pracownika o podanym numerze Id: {carUpdate.Id}");
-                }
+            { 
                 _context.Cars.Update(carUpdate);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

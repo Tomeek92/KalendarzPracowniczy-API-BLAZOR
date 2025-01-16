@@ -144,7 +144,7 @@
                         </button>
                     </td>
                     <td>
-                        <button class="buttonChange" @onclick="() => showUpdateModal = true">
+                        <button class="buttonChange" @onclick="() => OpenUpdateModal(car.Id)">
                             <i class="fas fa-edit"></i>
                             <p style="font-size:12px; color:white;">Zmień</p>
                         </button>
@@ -231,7 +231,7 @@
     <div class="my_modal">
         <div class="my_modal_content">
             <h1 class="close">&times;</h1>
-            <i class="fa-solid fa-car-rear fa-5x" style="color:white; font-size:30px;"><span style="font-family: Inter, sans-serif">Dodaj samochód</span></i>
+            <i class="fa-solid fa-car-rear fa-5x" style="color:white; font-size:30px;"><span style="font-family: Inter, sans-serif">Zmień dane samochodu</span></i>
             <h1 class="close" @onclick="CloseModalAndRefresh">&times;</h1>
             <EditForm Model="@updateCar" OnValidSubmit="UpdateCar">
                 <DataAnnotationsValidator />
@@ -298,7 +298,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // To do nie przekazuje ID updateCar = await carService.GetById(newCar.Id);
         await GetAllCars();
 
     }
@@ -307,6 +306,28 @@
         showModal = false;
         showUpdateModal = false;
         await GetAllCars();
+    }
+    private async Task OpenUpdateModal(Guid carId)
+    {
+        showUpdateModal = true;
+        if (carId == Guid.Empty)
+        {
+            errorMessageInModal = "Nieprawidłowy identyfikator samochodu.";
+            return;
+        }
+        try
+        {
+            updateCar = await carService.GetById(carId);
+
+            if(updateCar == null)
+            {
+                errorMessageInModal = "Bład podczas pobierania numeru ID samochodu";
+            }
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Nieoczekiwany błąd podczas pobierania id {ex.Message}");
+        }
     }
     private async Task AddCar()
     {
@@ -331,7 +352,7 @@
     {
         try
         {
-            await carService.Update(newCar);
+            await carService.Update(updateCar);
             isLoading = true;
             successMessageInModal = "Zmiany zostały zapisane!";
             isLoading = false;
