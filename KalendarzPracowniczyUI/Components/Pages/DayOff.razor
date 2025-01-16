@@ -323,9 +323,7 @@
             await DayOffService.Create(dayOffDto);
             isSuccess2 = true;
             await GetAllDaysOff();
-            await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message", 5000);
-
-            await InvokeAsync(StateHasChanged);
+            await WaitFiveSec();
 
             await Task.Delay(5000);
             isSuccess2 = false;
@@ -334,6 +332,12 @@
         {
             errorMessage = $"Nieoczekiwany błąd podczas tworzenia urlopu {ex.Message}";
         }
+    }
+    private async Task WaitFiveSec()
+    {
+        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message", 5000);
+
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task GetAllUsers()
@@ -381,10 +385,8 @@
             confirmEditDay.DateDayOff = selectedDate;
             await DayOffService.Update(confirmEditDay);
             isSuccess3 = true;
-            await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".edit-success-message", 5000);
-
-            await InvokeAsync(StateHasChanged);
-             await GetAllDaysOff();
+            await WaitFiveSec();
+            await GetAllDaysOff();
 
             await Task.Delay(5000);
 

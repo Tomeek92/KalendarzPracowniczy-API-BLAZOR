@@ -1,5 +1,6 @@
 ﻿@page "/car"
 @inject CarServiceUI carService
+@inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 @using KalendarzPracowniczyApplication.Dto
 @using KalendarzPracowniczyDomain.Entities.Cars
@@ -7,14 +8,15 @@
 
 <style>
     .form-container {
-        max-width: 800px;
+        max-width: 80%;
         margin: 0 auto;
-        padding: 40px;
+        padding: 20px;
         background-color: rgba(0, 10, 30, 0.85);
         box-shadow: 0 0 20px rgba(0, 150, 255, 0.4);
         color: #f1f1f1;
         backdrop-filter: blur(10px);
-        overflow: hidden;
+        margin-right:1px;
+        
     }
 
     table {
@@ -53,15 +55,29 @@
             outline: none;
         }
 
+    .button-add-car {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50%; 
+        margin: 0 auto; 
+        height: 100px; 
+    }
+
+    .button-text{
+        font-family: "Inter", sans-serif;
+        font-size: 18px;
+        
+    }
     button {
-        width: 100%;
-        padding: 12px;
+        width: 80%;
+        padding: 3px;
         background-color: rgba(0, 150, 255, 0.5);
         color: white;
         border: none;
         border-radius: 8px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 18px;
         transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
         box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
     }
@@ -97,35 +113,7 @@
 
 
 <div class="form-container">
-    <h3>Dodaj Nowy Samochód</h3>
-
-    <EditForm Model="@newCar" OnValidSubmit="AddCar" FormName="Create">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div>
-            <label>Marka:</label>
-            <InputText @bind-Value="newCar.Name" class="blazor-input" />
-        </div>
-        <div>
-            <label>Model:</label>
-            <InputText @bind-Value="newCar.Model" class="blazor-input" />
-        </div>
-        <div>
-            <label>Numery rejestracyjne:</label>
-            <InputText @bind-Value="newCar.CarPlatesNumber" class="blazor-input" />
-        </div>
-        <div>
-            <label>Przegląd samochodu:</label>
-            <InputDate @bind-Value="newCar.CarInspection" class="blazor-input" />
-        </div>
-        <div>
-            <label>Przebieg samochodu:</label>
-            <InputText @bind-Value="newCar.CarKm" class="blazor-input" />
-        </div>
-        <button type="submit">Dodaj Samochód</button>
-    </EditForm>
-    <h3>Cars</h3>
+    <h3>Flota z samochodami</h3>
     <table>
         <thead>
             <tr>
@@ -135,7 +123,8 @@
                 <th>Tablice rejestracyjne</th>
                 <th>Data ostatniego przeglądu</th>
                 <th>Przebieg</th>
-                <th>Akcja</th>
+                <th>Usuń</th>
+                <th>Zmień</th>
             </tr>
         </thead>
         <tbody>
@@ -144,42 +133,201 @@
                 <tr>
                     <td>@car.Name</td>
                     <td>@car.Model</td>
+                    <td>@car.Production</td>
                     <td>@car.CarPlatesNumber</td>
                     <td>@car.CarInspection</td>
                     <td>@car.CarKm</td>
-                    <td><button class="delete-btn" @onclick="() => RemoveCar(car.Id)">Usuń</button></td>
+                    <td>
+                        <button @onclick="() => RemoveCar(car.Id)">
+                        <i class="fa-solid fa-trash delete-icon"></i>
+                        <p style="font-size:12px;">Usuń</p>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="buttonChange" @onclick="() => OpenUpdateModal(car.Id)">
+                            <i class="fas fa-edit"></i>
+                            <p style="font-size:12px; color:white;">Zmień</p>
+                        </button>
+                    </td>
+
                 </tr>
             }
         </tbody>
     </table>
+    <div class="button-add-car">
+        <button class="fa-solid fa-car-burst fa-3x add-car" @onclick="() => showModal = true"> 
+            <span class="button-text">Dodaj samochód</span> 
+        </button> 
+    </div>
+    @if (successMessage != null)
+    {
+        <div class="success-message">@successMessage</div>
+    }
+    @if (errorMessage != null)
+    {
+        <div class="message">@errorMessage</div>
+    }
+    @if (isLoading)
+    {
+        <div class="loader"></div>
+    }
 </div>
-@if (isLoading)
+
+@if (showModal)
 {
-    <div class="loader"></div>
+    <div class="my_modal">
+        <div class="my_modal_content">
+            <h1 class="close">&times;</h1>
+            <i class="fa-solid fa-car-rear fa-5x" style="color:white; font-size:30px;"><span style="font-family: Inter, sans-serif">Dodaj samochód</span></i>
+            <h1 class="close" @onclick="CloseModalAndRefresh">&times;</h1>
+            <EditForm Model="@newCar" OnValidSubmit="AddCar" FormName="Create">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <br />
+                <div>
+                    <label>Marka:</label>
+                    <InputText @bind-Value="newCar.Name" class="blazor-input" style="width:80%;" />
+                </div>
+                <div>
+                    <label>Model:</label>
+                    <InputText @bind-Value="newCar.Model" class="blazor-input" style="width:80%;" />
+                </div>
+                <div>
+                    <label>Rok produkcji:</label>
+                    <InputDate @bind-Value="newCar.Production" class="blazor-input" style="width:80%;" />
+                </div>
+                <div>
+                    <label>Numery rejestracyjne:</label>
+                    <InputText @bind-Value="newCar.CarPlatesNumber" class="blazor-input" style="width:80%;"/>
+                </div>
+                <div>
+                    <label>Przegląd samochodu:</label>
+                    <InputDate @bind-Value="newCar.CarInspection" class="blazor-input" style="width:80%;" />
+                </div>
+                <div>
+                    <label>Przebieg samochodu:</label>
+                    <InputText @bind-Value="newCar.CarKm" class="blazor-input" style="width:80%;" />
+                </div>
+                <br />
+                <button type="submit">Dodaj Samochód</button>
+                @if (successMessageInModal != null)
+                {
+                    <div class="success-message">@successMessageInModal</div>
+                }
+                @if(errorMessageInModal != null)
+                {
+                    <div class="message">@errorMessageInModal</div>
+                }
+                @if (isLoading)
+                {
+                    <div class="loader"></div>
+                }
+            </EditForm>
+        </div>
+    </div>
+}
+@if (showUpdateModal)
+{
+    <div class="my_modal">
+        <div class="my_modal_content">
+            <h1 class="close">&times;</h1>
+            <i class="fa-solid fa-car-rear fa-5x" style="color:white; font-size:30px;"><span style="font-family: Inter, sans-serif">Zmień dane samochodu</span></i>
+            <h1 class="close" @onclick="CloseModalAndRefresh">&times;</h1>
+            <EditForm Model="@updateCar" OnValidSubmit="UpdateCar">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <br />
+                <div>
+                    <label>Marka:</label>
+                    <InputText @bind-Value="updateCar.Name" class="blazor-input" style="width:80%;" />
+                </div>
+                <div>
+                    <label>Model:</label>
+                    <InputText @bind-Value="updateCar.Model" class="blazor-input" style="width:80%;" />
+                </div>
+                <div>
+                    <label>Rok produkcji:</label>
+                    <InputDate @bind-Value="updateCar.Production" class="blazor-input" style="width:80%;" />
+                </div>
+                <div>
+                    <label>Numery rejestracyjne:</label>
+                    <InputText @bind-Value="updateCar.CarPlatesNumber" class="blazor-input" style="width:80%;"/>
+                </div>
+                <div>
+                    <label>Przegląd samochodu:</label>
+                    <InputDate @bind-Value="updateCar.CarInspection" class="blazor-input" style="width:80%;" />
+                </div>
+                <div>
+                    <label>Przebieg samochodu:</label>
+                    <InputText @bind-Value="updateCar.CarKm" class="blazor-input" style="width:80%;" />
+                </div>
+                <br />
+                <button type="submit">Zmień</button>
+                @if (successMessageInModal != null)
+                {
+                    <div class="success-message">@successMessageInModal</div>
+                }
+                @if(errorMessageInModal != null)
+                {
+                    <div class="message">@errorMessageInModal</div>
+                }
+                @if (isLoading)
+                {
+                    <div class="loader"></div>
+                }
+            </EditForm>
+        </div>
+    </div>
 }
 
-@if (errorMessage != null)
-{
-    <div class="message">@errorMessage</div>
-}
 
-@if (successMessage != null)
-{
-    <div class="success-message">@successMessage</div>
-}
+
+
 
 @code {
     private CarDto newCar = new();
+    private CarDto updateCar = new();
     private List<CarDto> cars = new();
     private string? errorMessage;
     private string? successMessage;
+    private string? successMessageInModal;
+    private string? errorMessageInModal;
     private bool isLoading = false;
+    private bool showModal = false;
+    private bool showUpdateModal = false;
 
     protected override async Task OnInitializedAsync()
     {
-
         await GetAllCars();
 
+    }
+    public async Task CloseModalAndRefresh()
+    {
+        showModal = false;
+        showUpdateModal = false;
+        await GetAllCars();
+    }
+    private async Task OpenUpdateModal(Guid carId)
+    {
+        showUpdateModal = true;
+        if (carId == Guid.Empty)
+        {
+            errorMessageInModal = "Nieprawidłowy identyfikator samochodu.";
+            return;
+        }
+        try
+        {
+            updateCar = await carService.GetById(carId);
+
+            if(updateCar == null)
+            {
+                errorMessageInModal = "Bład podczas pobierania numeru ID samochodu";
+            }
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Nieoczekiwany błąd podczas pobierania id {ex.Message}");
+        }
     }
     private async Task AddCar()
     {
@@ -187,18 +335,41 @@
         {
             isLoading = true;
             await carService.Create(newCar);
-            successMessage = "Samochód został dodany!";
+            successMessageInModal = "Samochód został dodany!";
+            isLoading = false;
+            await WaitFiveSec();
+            successMessageInModal = null;
+            await Task.Delay(5000);
             await GetAllCars();
         }
         catch (Exception ex)
         {
-            errorMessage = $"Wystąpił błąd: {ex.Message}";
-        }
-        finally
-        {
-            isLoading = false;
+            errorMessageInModal = $"Wystąpił błąd: {ex.Message}";
         }
 
+    }
+    private async Task UpdateCar()
+    {
+        try
+        {
+            await carService.Update(updateCar);
+            isLoading = true;
+            successMessageInModal = "Zmiany zostały zapisane!";
+            isLoading = false;
+            await WaitFiveSec();
+            successMessageInModal = null;
+        }
+        catch(Exception ex)
+        {
+            errorMessageInModal = $"Wystąpił błąd: {ex.Message}";
+        }
+    }
+
+    private async Task WaitFiveSec()
+    {
+        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message", 5000);
+
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task RemoveCar(Guid id)
@@ -207,16 +378,16 @@
         {
             isLoading = true;
             await carService.Delete(id);
-            successMessage = $"Samochód został usunięty!";
+            successMessage = "Samochód został usunięty!";
+            isLoading = false;
+            await WaitFiveSec();
+            await Task.Delay(5000);
+            successMessage = null;
             await GetAllCars();
         }
         catch(Exception ex)
         {
             errorMessage = $"Błąd podczas usuwania samochodu. {ex.Message}";
-        }
-        finally
-        {
-            isLoading = false;
         }
     }
     private async Task GetAllCars()

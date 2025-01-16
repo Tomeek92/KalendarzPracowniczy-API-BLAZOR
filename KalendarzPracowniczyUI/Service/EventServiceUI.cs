@@ -6,17 +6,19 @@ namespace KalendarzPracowniczyUI.Service
     public class EventServiceUI
     {
         private readonly HttpClient _httpClient;
+        private readonly string _baseUrl;
 
-        public EventServiceUI(HttpClient httpClient)
+        public EventServiceUI(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _baseUrl = configuration["ApiSettings:BaseUrl"];
         }
 
         public async Task Create(EventDto eventDto)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("https://localhost:7164/api/Event/Create", eventDto);
+                var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/api/Event/Create", eventDto);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -34,7 +36,7 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task Delete(Guid id)
         {
-            var response = await _httpClient.DeleteAsync($"https://localhost:7164/api/Event/{id}");
+            var response = await _httpClient.DeleteAsync($"{_baseUrl}/api/Event/{id}");
             response.EnsureSuccessStatusCode();
         }
 
@@ -42,7 +44,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync($"https://localhost:7164/api/Event/{id}");
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/Event/{id}");
                 if (response.IsSuccessStatusCode)
                 {
                     var eventDto = await response.Content.ReadFromJsonAsync<EventDto>();
@@ -70,7 +72,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync($"https://localhost:7164/api/Event/GetAll");
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/Event/GetAll");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -108,7 +110,7 @@ namespace KalendarzPracowniczyUI.Service
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7164/api/Event/Update", eventDto);
+                var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/api/Event/Update", eventDto);
                 if (!response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();

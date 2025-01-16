@@ -230,6 +230,8 @@
 }
 
 @code {
+    [Parameter]
+    public DateTime? SelectedDate { get; set; }
     public EventDto eventDto = new();
     private List<EventDto> existingEvents = new List<EventDto>();
     private List<CarDto> carDtos = new List<CarDto>();
@@ -244,7 +246,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        eventDto.StartDate = DateTime.UtcNow;
+        eventDto.StartDate = SelectedDate;
         await GetAllCars();
         await GetAllUsers();
         await LoadExistingEvents();
