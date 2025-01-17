@@ -2,6 +2,7 @@
 @using KalendarzPracowniczyApplication.Dto
 @using KalendarzPracowniczyUI.Service
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
 @inject EventServiceUI EventServiceUI
 @inject UserServiceUI UserServiceUI
 @inject CarServiceUI CarServiceUI
@@ -286,6 +287,14 @@
         carDtos = await CarServiceUI.GetAvailableCarsAsync(selectedDate);
         StateHasChanged();
     }
+
+    private async Task WaitFiveSec()
+    {
+        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message,.message", 5000);
+
+        await InvokeAsync(StateHasChanged);
+    }
+
     public async Task CreateEventAsync()
     {
         isLoading = true;
@@ -299,6 +308,7 @@
             if (existingEvents.Any(e => e.CarId == eventDto.CarId && e.StartDate.Value.Date == eventDto.StartDate.Value.Date && e.CarId != null))
             {
                 message = "Samochód jest już zarezerwowany na ten dzień.";
+                await WaitFiveSec();
                 isSuccess = false;
                 hasError = true;
             }
@@ -306,6 +316,7 @@
             {
 
                 message = "Nie możesz przypisać samochodu do pracy zdalnej bądź zdalnej okazjonalnej"; 
+                await WaitFiveSec();
                 isSuccess = false;
                 hasError = true;
             }
@@ -314,11 +325,13 @@
                 await EventServiceUI.Create(eventDto);
                 isSuccess = true;
                 message = "Zadanie zostało dodane!";
+                await WaitFiveSec();
             }  
         }
         catch (Exception ex)
         {
             message = $"Wystąpił błąd: {ex.Message}";
+            await WaitFiveSec();
             isSuccess = false;
         }
         finally
@@ -335,6 +348,7 @@
         catch
         {
             message = $"Błąd podczas pobierania samochodów";
+            await WaitFiveSec();
         }
     }
     private async Task GetAllUsers()
@@ -346,6 +360,7 @@
         catch
         {
             message = $"Błąd podczas pobierania użytkowników";
+            await WaitFiveSec();
         }
     }
 }

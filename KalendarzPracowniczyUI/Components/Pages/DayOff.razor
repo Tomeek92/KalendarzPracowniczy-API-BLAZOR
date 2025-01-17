@@ -363,14 +363,17 @@
             await InvokeAsync(StateHasChanged);
 
             await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".delete-success-message", 5000);
-
+         
             await GetAllDaysOff();
-
-            await Task.Delay(5000);
-
+            StateHasChanged();
+            await Task.Delay(3000);
+            
+            if (currentPage * pageSize >= listDayOff.Count && currentPage > 0)
+            {
+                currentPage--;
+            }
             isSuccess = false;
-
-
+  
         }
         catch
         {

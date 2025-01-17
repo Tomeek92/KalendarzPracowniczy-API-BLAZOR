@@ -3,6 +3,7 @@
 @using KalendarzPracowniczyApplication.Dto
 @using KalendarzPracowniczyUI.Service
 @inject WorkServiceUI workService
+@inject IJSRuntime JSRuntime
 @inject UserServiceUI userService
 @using System.Collections.Generic
 @using Microsoft.AspNetCore.Components.Forms
@@ -132,6 +133,25 @@ input[type="checkbox"] {
         transform: rotate(360deg);
     }
 }
+
+    .pagination, .pagination-text {
+    justify-content:center;
+    display:flex;
+    margin-top:1%;
+}
+
+    .pagination-button {
+        width: 20%;
+        padding: 5px;
+        background-color: rgba(0, 150, 255, 0.7);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
+}
 </style>
 <NavigationMenu />
 <div class="task-manager-container">
@@ -187,7 +207,7 @@ input[type="checkbox"] {
                 </tr>
             </thead>
             <tbody>
-                @foreach (var work in works)
+                @foreach (var work in PaginatedWorks)
                 {
                     <tr>
                         
@@ -203,6 +223,14 @@ input[type="checkbox"] {
             </tbody>
         </table>
     }
+    @if(works.Count > PageSize)
+    {
+        <div class="pagination">
+            <button class="pagination-button" @onclick="PreviousPage" disabled="@IsFirstPage">&#8592;</button>
+            <span class="pagination-text">Strona @CurrentPage z @TotalPages</span>
+            <button class="pagination-button" @onclick="NextPage" disabled="@IsLastPage">&#8594;</button>
+        </div>
+    }
 </div>
 
 @code {
@@ -212,7 +240,13 @@ input[type="checkbox"] {
     private string? errorMessage;
     private string? successMessage;
     private string userId;
-
+    private int CurrentPage { get; set; } = 1; 
+    private IEnumerable<WorkDto> PaginatedWorks =>
+        works.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
+    private int TotalPages => (int)Math.Ceiling((double)works.Count / PageSize);
+    private bool IsFirstPage => CurrentPage == 1;
+    private bool IsLastPage => CurrentPage == TotalPages;
+    private int PageSize { get; set; } = 3;
     private async Task AddTaskAsync()
     {
         try
@@ -224,22 +258,22 @@ input[type="checkbox"] {
             {
                 errorMessage = "Data końca zadania nie powinna być wcześniejsza od daty startu zadania";
                 isLoading = false;
-                await HideMessage();
+                await WaitFiveSec();
             }
             else
             {
                 await workService.Create(newWork);
 
                 successMessage = "Zadanie zostało dodane!";
-
+                await WaitFiveSec();
                 await GetAllWork();
             }
-           
+
         }
         catch (Exception ex)
         {
             errorMessage = $"Wystąpił błąd: {ex.Message}";
-            await HideMessage();
+            await WaitFiveSec();
         }
         finally
         {
@@ -247,13 +281,28 @@ input[type="checkbox"] {
 
         }
     }
-    private async Task HideMessage()
+    private void NextPage()
     {
-        await Task.Delay(7000);
-        errorMessage = null;
-        successMessage = null;
-        StateHasChanged();
+        if (!IsLastPage)
+        {
+            CurrentPage++;
+        }
     }
+
+    private void PreviousPage()
+    {
+        if (!IsFirstPage)
+        {
+            CurrentPage--;
+        }
+    }
+    private async Task WaitFiveSec()
+    {
+        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message,.errorMessage", 5000);
+
+        await InvokeAsync(StateHasChanged);
+    }
+
     protected override async Task OnInitializedAsync()
     {
         newWork.StartDate = DateTime.UtcNow.Date;
@@ -295,8 +344,10 @@ input[type="checkbox"] {
             await workService.Delete(id);
             successMessage = "Zadanie zostało usunięte!";
             await GetAllWork();
-
-            _ = HideMessage();
+            if (CurrentPage > TotalPages)
+            {
+                CurrentPage = TotalPages;
+            }
         }
         catch(Exception ex)
         {

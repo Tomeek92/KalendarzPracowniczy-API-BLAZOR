@@ -1,6 +1,7 @@
 ﻿@page "/create-user"
 @using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create
 @using KalendarzPracowniczyUI.Service
+@inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 @inject UserServiceUI UserServiceUI
 <style>
@@ -195,6 +196,7 @@
             isLoading = true;
             await UserServiceUI.Create(userCommand);
             successMessage = "Użytkownik został pomyślnie stworzony!";
+            await WaitFiveSec();
             errorMessage = null;
         }
         catch (Exception ex)
@@ -208,18 +210,11 @@
         }
 
     }
-    private void ShowMenu()
+    private async Task WaitFiveSec()
     {
-        isMenuVisible = !isMenuVisible;
+        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message,.message", 5000);
 
-        if (isMenuVisible)
-        {
-            menuClickedClass = "menu-clicked";
-        }
-        else
-        {
-            menuClickedClass = "";
-        }
+        await InvokeAsync(StateHasChanged);
     }
 }
 
