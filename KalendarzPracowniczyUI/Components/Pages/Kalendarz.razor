@@ -115,7 +115,87 @@
         transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
         box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
     }
+    /* Responsywność dla ekranów poniżej 576px */
+@@media (max-width: 576px) {
 
+    .weekly-schedule-container {
+        margin-left: 22%; 
+        margin-right: 0;
+        margin-top:20%;
+        padding: 2px;
+    }
+
+
+    .schedule-grid {
+        display: grid;
+        grid-template-columns: 1.5fr repeat(5, 1fr); 
+        gap: 3px; 
+    }
+    .date{
+        font-size:10px;
+
+    }
+    .car-icon{
+        font-size:10px;
+    }
+
+    .schedule-column-date {
+        font-size: 10px; 
+        width:55px;
+    }
+
+        .schedule-column{
+            font-size:10px;
+        }
+
+
+    .employee-cell {
+        font-size: 10px; 
+        padding: 4px;
+        text-align: center;
+    }
+
+
+    .day-cell-wrapper {
+        padding: 1px; 
+    }
+
+    .day-cell {
+        font-size: 9px; 
+        padding: 3px; 
+        min-width: 40px;
+    }
+
+    .event-item {
+        font-size: 9px; 
+        padding: 3px; 
+    }
+
+    .edit-icon,
+    .fa-trash,
+    .fa-info-circle {
+        font-size: 10px; 
+    }
+
+
+    .car-info {
+        font-size: 9px; 
+        gap: 2px; 
+    }
+
+    .available-cars {
+        font-size: 9px; 
+    }
+
+    .holiday-info {
+        font-size: 9px; 
+    }
+
+    nav {
+        font-size: 10px; 
+        padding: 5px;
+    }
+}
 </style>
 
 @if (!isAuthenticated && isLoading)
@@ -141,7 +221,7 @@ else
                 {
                     <div class="schedule-column-date">
                     <div class="car-info">
-                        <span class="date" style="font-size:22px; color:white;">
+                        <span class="date">
                             @day.ToString("ddd", new System.Globalization.CultureInfo("pl-PL")) @day.Day @day.ToString("MMMM", new System.Globalization.CultureInfo("pl-PL"))
                         </span>
                         <span class="available-cars">
@@ -181,7 +261,7 @@ else
                                                     <span class="fas fa-info-circle"
                                                           @onmouseover="() => ShowModificationDetails(eventItem.Id, eventItem.LastModifiedBy, eventItem.LastModifiedTime)"
                                                           @onmouseout="HideModificationDetails"></span>
-                                                    <span @onclick="() => AkceptDelete(eventItem.Id)" class="fa-solid fa-trash delete-icon" style="font-size:large"></span>
+                                                    <span @onclick="() => AkceptDelete(eventItem.Id)" class="fa-solid fa-trash delete-icon"></span>
                                                 </div>
                                                 @if (selectedEvent.Id == eventItem.Id && showModificationDetails)
                                                 {
@@ -194,7 +274,7 @@ else
                                                     </div>
                                                 }
                                             </div>
-                                            <a @onclick="async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen edit-icon" style="font-size:large"></a>
+                                            <a @onclick="async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen edit-icon"></a>
                                         }
                                         else
                                         {

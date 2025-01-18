@@ -1,3 +1,6 @@
+
+
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-image: url("2023_UNISOFT_background_1920x1080.png");
@@ -55,9 +58,9 @@ h1:focus {
 }
 /*Navigation Menu*/
 .sidebar {
-    width: 120px;
+    width: 140px;
     height: 100vh;
-    background-color: rgba(0, 10, 30, 0.85);
+    background-color: rgba(0, 10, 30, 0.95);
     padding: 20px 0;
     position: fixed;
     top: 0;
@@ -66,107 +69,148 @@ h1:focus {
     flex-direction: column;
     align-items: center;
     color: #ffffff;
-    transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
     overflow: hidden;
-    transform-origin: top;
-    transform: scaleX(0);
-    opacity: 1;
     transform-origin: left;
+    transform: translateX(-100%);
+    opacity: 0;
     box-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
 }
 
     .sidebar.visible {
-        transform: scaleX(1);
+        transform: translateX(0);
         opacity: 1;
+    }
+
+.sidebar-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+    .sidebar-header img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-bottom: 5px;
+    }
+
+    .sidebar-header span {
+        font-size: 16px;
+        font-weight: bold;
+        color: #00aaff;
     }
 
 .nav {
     display: flex;
     flex-direction: column;
-    gap: 13px;
+    gap: 10px;
+    width: 100%;
+    padding: 0 10px;
 }
 
 .nav-item {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+    gap: 10px;
     position: relative;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
 }
+
+    .nav-item:hover {
+        background-color: rgba(0, 150, 255, 0.3);
+    }
 
 .nav-link {
     text-decoration: none;
     color: #00aaff;
-    font-size: 20px;
+    font-size: 16px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    transition: color 0.2s, transform 0.3s, box-shadow 0.3s;
-    background-color: transparent;
-    padding: 0;
-    box-shadow: none;
+    gap: 8px;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
-.nav-text:hover {
-    color: white;
-}
-
-.nav-link:hover {
-    color: white;
-}
-
-.nav-text {
-    font-size: 13px;
-    margin-top: 20px;
-    text-align: center;
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-    font-family: "Inter", sans-serif;
-    font-weight: 400;
-}
-
-.nav-link:hover .nav-text {
-    display: block;
-    opacity: 1;
-    transform: translateY(-5px);
-}
-
-.sidebar-toggle {
-    display: none;
-}
-
-/* Stylizacja ikon */
-.fas {
-    font-size: 24px;
-    transition: color 0.3s;
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: static;
-        display: block;
-        padding: 20px;
+    .nav-link:hover {
+        color: white;
+        transform: scale(1.05);
     }
 
-    .nav {
-        flex-direction: row;
-        justify-content: space-around;
+.nav-text {
+    font-size: 14px;
+    text-align: left;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.logout {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px 10px;
+    text-align: center;
+    color: #ffffff;
+    background-color: rgba(255, 50, 50, 0.8);
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+    .logout:hover {
+        background-color: rgba(255, 50, 50, 1);
+        transform: scale(1.05);
+    }
+
+.sidebar-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: rgba(0, 10, 30, 0.85);
+    color: #00aaff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 150, 255, 0.5);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+    .sidebar-toggle:hover {
+        background-color: rgba(0, 10, 50, 0.85);
+        transform: scale(1.1);
+        color: white;
+    }
+
+/* Responsywność navigation menu */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 110px;
     }
 
     .nav-link {
-        flex-direction: row;
-        font-size: 18px;
+        font-size: 14px;
     }
 
     .nav-text {
-        display: block;
-        margin-left: 10px;
+        font-size: 12px;
     }
 
-    .day-cell {
-        padding: 25px;
+    .logout {
+        font-size: 14px;
     }
 }
+
 
 /*Kalendarz*/
 
@@ -316,6 +360,8 @@ h1:focus {
     .fa-pen:hover {
         color: #ffcc00;
     }
+   
+
 /*Modal*/
 .my_modal {
     position: fixed;
