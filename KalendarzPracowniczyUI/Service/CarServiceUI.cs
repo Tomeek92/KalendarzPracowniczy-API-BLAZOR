@@ -128,5 +128,33 @@ namespace KalendarzPracowniczyUI.Service
                 throw new Exception($"{ex.Message}");
             }
         }
+        public async Task<List<CarDto>> GetByIdGetUpcomingInspection()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/Car/GetUpcomingInspection");
+                if (response.IsSuccessStatusCode)
+                {
+                    var carsDto = await response.Content.ReadFromJsonAsync<List<CarDto>>();
+                    if (carsDto != null)
+                    {
+                        return carsDto;
+                    }
+                    else
+                    {
+                        throw new Exception($"Nie naleziono samochodów ");
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Nie można znaleźć samochodów");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd podczas pobierania samochodu {ex.Message}");
+            }
+
+        }
     }
 }

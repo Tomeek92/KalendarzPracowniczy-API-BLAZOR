@@ -115,6 +115,39 @@
         transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
         box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
     }
+    .notification {
+    background-color: #fff3cd; 
+    color: #856404; 
+    border: 1px solid #ffeeba; 
+    border-radius: 5px; 
+    padding: 10px; 
+    margin-bottom: 10px; 
+    font-family: Arial, sans-serif; 
+    font-size: 14px;
+    display: flex; 
+    align-items: center; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    animation: fadeIn 0.5s ease-in-out; 
+}
+
+
+.notification-icon {
+    margin-right: 10px; 
+    font-size: 18px; 
+    color: #856404; 
+}
+
+
+@@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
     /* Responsywność dla ekranów poniżej 576px */
 @@media (max-width: 576px) {
 
@@ -206,8 +239,21 @@
 else
 {
     <NavigationMenu />
+
     <div class="weekly-schedule-container">
-      
+        <div class="notification-banner">
+            @if (notifications != null && notifications.Any())
+            {
+                @foreach (var car in notifications)
+                {
+                    <div class="notification">
+                        <span class="notification-icon">⚠️</span>
+                        Zbliża się termin przeglądu @car.Model @car.CarPlatesNumber (do @car.CarInspection)
+                        <button class="close-btn" @onclick="() => DismissNotification(car)">X</button>
+                    </div>
+                }
+            }
+        </div>
         <div class="calendar-controls">
             <button @onclick="PreviousWeek">❮</button>
             <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width:8%; margin-left:-20%;" />
@@ -360,6 +406,7 @@ else
 }
 
 @code {
+    private List<CarDto> notifications;
     private List<CarDto> carDtos = new List<CarDto>();
     private int carCount;
     private string? errorMessage;
@@ -389,6 +436,10 @@ else
     private bool HasPreviousPage => currentPage > 1;
     private bool HasNextPage => currentPage < TotalPages;
 
+    private void DismissNotification(CarDto car)
+    {
+        notifications.Remove(car); 
+    }
     private void NextPage()
     {
         if (currentPage < TotalPages)
@@ -523,7 +574,7 @@ else
         try
         {
             var response = await UserService.GetCurrentUserAsync();
-
+            notifications = await CarServiceUI.GetByIdGetUpcomingInspection();
             if (response != null)
             {
                 isAuthenticated = true;
