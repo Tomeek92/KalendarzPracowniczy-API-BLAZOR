@@ -1,4 +1,5 @@
-﻿using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Create;
+﻿using KalendarzPracowniczyApplication.CQRS.Commands.Cars.UpdateDeActivateCar;
+using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Cars.GetAvailableCar;
@@ -114,6 +115,23 @@ namespace KalendarzPracowniczyAPI.Controllers
         }
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateCarCommand carCommand)
+        {
+            try
+            {
+                await _mediator.Send(carCommand);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Nie odnaleziono samochodu do aktualizacji");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Błąd {ex.Message}");
+            }
+        }
+        [HttpPut("UpdateDeActivateCar")]
+        public async Task<IActionResult> UpdateDeActivateCar([FromBody] UpdateDeActivateCarCommand carCommand)
         {
             try
             {

@@ -1,4 +1,5 @@
-﻿using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Create;
+﻿using KalendarzPracowniczyApplication.CQRS.Commands.Cars.UpdateDeActivateCar;
+using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Update;
 using KalendarzPracowniczyApplication.CQRS.Commands.Events.Create;
@@ -62,7 +63,8 @@ namespace KalendarzPracowniczyApplication.Extensions
         typeof(CreateDayOffCommand).Assembly,
         typeof(UpdateDayOffCommand).Assembly,
         typeof(DeleteDayOffCommand).Assembly,
-        typeof(GetDayOffByIdQuery).Assembly
+        typeof(GetDayOffByIdQuery).Assembly,
+        typeof(UpdateDeActivateCarCommand).Assembly
            ));
 
             services.AddAutoMapper(typeof(MapperProfile));

@@ -178,6 +178,7 @@
             <p>Miejsce pracy</p>
             <select @onchange="WorkPlaceChange">
                 <option value="">Wybierz miejsce</option>
+                <option value="Biuro">Biuro</option>
                 <option value="Wyjazd-słuzbowy">Wyjazd służbowy</option>
                 <option value="Zdalna-okazjonalna">Zdalna okazjonalna</option>
                 <option value="Zdalna">Zdalna</option>
@@ -312,10 +313,10 @@
                 isSuccess = false;
                 hasError = true;
             }
-            if (eventDto.CarId != null && (selectedWorkplace == "Zdalna-okazjonalna" || selectedWorkplace == "Zdalna"))
+            if (eventDto.CarId != null && (selectedWorkplace == "Zdalna-okazjonalna" || selectedWorkplace == "Zdalna" || selectedWorkplace =="Biuro"))
             {
 
-                message = "Nie możesz przypisać samochodu do pracy zdalnej bądź zdalnej okazjonalnej"; 
+                message = "Nie możesz przypisać samochodu do pracy zdalnej, zdalnej okazjonalnej oraz biura"; 
                 await WaitFiveSec();
                 isSuccess = false;
                 hasError = true;

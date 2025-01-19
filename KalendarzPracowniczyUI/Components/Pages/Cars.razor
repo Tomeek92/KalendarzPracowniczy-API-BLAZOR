@@ -123,7 +123,7 @@
                 <th>Tablice rejestracyjne</th>
                 <th>Data ostatniego przeglądu</th>
                 <th>Przebieg</th>
-                <th>Usuń</th>
+                <th>Dezaktywuj</th>
                 <th>Zmień</th>
             </tr>
         </thead>
@@ -138,9 +138,9 @@
                     <td>@car.CarInspection</td>
                     <td>@car.CarKm</td>
                     <td>
-                        <button @onclick="() => RemoveCar(car.Id)">
+                        <button @onclick="() => OpenDeActiveCar(car)">
                         <i class="fa-solid fa-trash delete-icon"></i>
-                        <p style="font-size:12px;">Usuń</p>
+                        <p style="font-size:12px;">Dezaktywuj</p>
                         </button>
                     </td>
                     <td>
@@ -279,12 +279,37 @@
         </div>
     </div>
 }
+@if (deActiveModal)
+{
+    <div class="my_modal">
+        <div class="my_modal_content">
+            <h1 class="close" @onclick="() => deActiveModal = false">&times;</h1>
+            <p style="color:white;">Czy na pewno chcesz dezaktywować ten samochód?</p>
+            <button @onclick="async () => await DeactiveCar(deActiveCar)" class="btn btn-danger">Dezaktywuj</button>
+            
+                @if (successMessageInModal != null)
+                {
+                    <div class="success-message">@successMessageInModal</div>
+                }
+                @if (errorMessageInModal != null)
+                {
+                    <div class="message">@errorMessageInModal</div>
+                }
+                @if (isLoading)
+                {
+                    <div class="loader"></div>
+                }
+            
+        </div>
+    </div>
+}
 
 
 
 
 
 @code {
+    private CarDto deActiveCar;
     private CarDto newCar = new();
     private CarDto updateCar = new();
     private List<CarDto> cars = new();
@@ -294,6 +319,7 @@
     private string? errorMessageInModal;
     private bool isLoading = false;
     private bool showModal = false;
+    private bool deActiveModal = false;
     private bool showUpdateModal = false;
 
     protected override async Task OnInitializedAsync()
@@ -313,6 +339,7 @@
         if (carId == Guid.Empty)
         {
             errorMessageInModal = "Nieprawidłowy identyfikator samochodu.";
+            await WaitFiveSec();
             return;
         }
         try
@@ -322,12 +349,21 @@
             if(updateCar == null)
             {
                 errorMessageInModal = "Bład podczas pobierania numeru ID samochodu";
+                await WaitFiveSec();
             }
         }
         catch(Exception ex)
         {
-            throw new Exception($"Nieoczekiwany błąd podczas pobierania id {ex.Message}");
+            errorMessageInModal = $"Nieoczekiwany błąd podczas pobierania id {ex.Message}";
+
         }
+    }
+    private void OpenDeActiveCar(CarDto car)
+    {
+
+        deActiveModal = true;
+        deActiveCar = car;
+
     }
     private async Task AddCar()
     {
@@ -345,6 +381,12 @@
         catch (Exception ex)
         {
             errorMessageInModal = $"Wystąpił błąd: {ex.Message}";
+            await WaitFiveSec();
+
+        }
+        finally
+        {
+            isLoading = false;
         }
 
     }
@@ -362,16 +404,35 @@
         catch(Exception ex)
         {
             errorMessageInModal = $"Wystąpił błąd: {ex.Message}";
+            await WaitFiveSec();
         }
     }
 
     private async Task WaitFiveSec()
     {
-        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message", 5000);
+        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message,.message", 5000);
 
         await InvokeAsync(StateHasChanged);
     }
-
+    private async Task DeactiveCar(CarDto car)
+    {
+        try
+        {
+            await carService.UpdateDeActivateCar(car);
+            successMessageInModal = $"Samochód został dezaktywowany!";
+            await WaitFiveSec();
+            await GetAllCars();
+        }
+        catch(Exception ex)
+        {
+            errorMessageInModal = $"Wystąpił błąd: {ex.Message}";
+            await WaitFiveSec();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
     private async Task RemoveCar(Guid id)
     {
         try
@@ -388,6 +449,7 @@
         catch(Exception ex)
         {
             errorMessage = $"Błąd podczas usuwania samochodu. {ex.Message}";
+            await WaitFiveSec();
         }
     }
     private async Task GetAllCars()
@@ -400,6 +462,7 @@
         catch (Exception ex)
         {
             errorMessage = $"Nie udało się pobrać zalogowanego użytkownika.{ex.Message}";
+            await WaitFiveSec();
         }
         finally
         {

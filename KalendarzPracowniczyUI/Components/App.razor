@@ -19,17 +19,19 @@
 
 <body>
     <Routes />
-    <script src="_framework/blazor.web.js"></script>
-    <script>
-        function hideMessageAfterTimeout(selector, timeout) {
-            setTimeout(() => {
-                const element = document.querySelector(selector);
-                if (element) {
-                    element.style.display = 'none';
-                }
-            }, timeout);
-        }
+    <script src="_framework/blazor.web.js">
     </script>
+        <script>
+            function hideMessageAfterTimeout(selector, timeout) {
+                setTimeout(() => {
+                    const elements = document.querySelectorAll(selector);
+                    elements.forEach(element => {
+                        element.style.display = 'none';
+                    });
+                }, timeout);
+            }
+            
+        </script>
 </body>
 
 </html>

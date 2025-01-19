@@ -335,7 +335,7 @@
     }
     private async Task WaitFiveSec()
     {
-        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message", 5000);
+        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message,.errorMessage", 5000);
 
         await InvokeAsync(StateHasChanged);
     }

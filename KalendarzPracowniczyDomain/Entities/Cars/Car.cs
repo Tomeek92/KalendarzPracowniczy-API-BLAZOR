@@ -9,6 +9,7 @@ namespace KalendarzPracowniczyDomain.Entities.Cars
         [Key]
         public Guid Id { get; set; }
 
+        public bool? IsActive { get; set; } = true;
         public string? Name { get; set; }
         public DateTime? Production { get; set; }
         public string? Model { get; set; }
