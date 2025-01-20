@@ -19,10 +19,21 @@ namespace KalendarzPracowniczyUI.Service
 
         public async Task LogoutAsync()
         {
-            var response = await _httpClient.PostAsync("{_baseUrl}/api/User/logout", null);
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                throw new Exception("Wylogowywanie nie powiodło się.");
+                var response = await _httpClient.PostAsync($"{_baseUrl}/api/User/logout", null);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Wylogowywanie nie powiodło się.");
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                throw new Exception("Problem z połączeniem HTTP: " + httpEx.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Nie udało się pobrać informacji o użytkownikach: " + ex.Message);
             }
         }
 
