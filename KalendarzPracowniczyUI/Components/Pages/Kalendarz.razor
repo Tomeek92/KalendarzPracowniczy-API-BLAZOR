@@ -97,6 +97,138 @@
         font-size: 18px;
     }
 
+    .pagination, .pagination-text,.pagination-button {
+        justify-content: center;
+        display: flex;
+        margin-top: 1%;
+    }
+
+    .pagination-button {
+        width: 20%;
+        padding: 5px;
+        background-color: rgba(0, 150, 255, 0.7);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
+    }
+    .notification {
+    background-color: #fff3cd; 
+    color: #856404; 
+    border: 1px solid #ffeeba; 
+    border-radius: 5px; 
+    padding: 10px; 
+    margin-bottom: 10px; 
+    font-family: Arial, sans-serif; 
+    font-size: 14px;
+    display: flex; 
+    align-items: center; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    animation: fadeIn 0.5s ease-in-out; 
+}
+
+
+.notification-icon {
+    margin-right: 10px; 
+    font-size: 18px; 
+    color: #856404; 
+}
+
+
+@@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    /* Responsywność dla ekranów poniżej 576px */
+@@media (max-width: 576px) {
+
+    .weekly-schedule-container {
+        margin-left: 22%; 
+        margin-right: 0;
+        margin-top:20%;
+        padding: 2px;
+    }
+
+
+    .schedule-grid {
+        display: grid;
+        grid-template-columns: 1.5fr repeat(5, 1fr); 
+        gap: 3px; 
+    }
+    .date{
+        font-size:10px;
+
+    }
+    .car-icon{
+        font-size:10px;
+    }
+
+    .schedule-column-date {
+        font-size: 10px; 
+        width:55px;
+    }
+
+        .schedule-column{
+            font-size:10px;
+        }
+
+
+    .employee-cell {
+        font-size: 10px; 
+        padding: 4px;
+        text-align: center;
+    }
+
+
+    .day-cell-wrapper {
+        padding: 1px; 
+    }
+
+    .day-cell {
+        font-size: 9px; 
+        padding: 3px; 
+        min-width: 40px;
+    }
+
+    .event-item {
+        font-size: 9px; 
+        padding: 3px; 
+    }
+
+    .edit-icon,
+    .fa-trash,
+    .fa-info-circle {
+        font-size: 10px; 
+    }
+
+
+    .car-info {
+        font-size: 9px; 
+        gap: 2px; 
+    }
+
+    .available-cars {
+        font-size: 9px; 
+    }
+
+    .holiday-info {
+        font-size: 9px; 
+    }
+
+    nav {
+        font-size: 10px; 
+        padding: 5px;
+    }
+}
 </style>
 
 @if (!isAuthenticated && isLoading)
@@ -107,8 +239,21 @@
 else
 {
     <NavigationMenu />
+
     <div class="weekly-schedule-container">
-      
+        <div class="notification-banner">
+            @if (notifications != null && notifications.Any())
+            {
+                @foreach (var car in notifications)
+                {
+                    <div class="notification">
+                        <span class="notification-icon">⚠️</span>
+                        Zbliża się termin przeglądu @car.Model @car.CarPlatesNumber (do @car.CarInspection)
+                        <button class="close-btn" @onclick="() => DismissNotification(car)">X</button>
+                    </div>
+                }
+            }
+        </div>
         <div class="calendar-controls">
             <button @onclick="PreviousWeek">❮</button>
             <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width:8%; margin-left:-20%;" />
@@ -122,7 +267,7 @@ else
                 {
                     <div class="schedule-column-date">
                     <div class="car-info">
-                        <span class="date" style="font-size:22px; color:white;">
+                        <span class="date">
                             @day.ToString("ddd", new System.Globalization.CultureInfo("pl-PL")) @day.Day @day.ToString("MMMM", new System.Globalization.CultureInfo("pl-PL"))
                         </span>
                         <span class="available-cars">
@@ -132,7 +277,7 @@ else
                     </div>
                 }
             </div>
-                @foreach (var user in users)
+            @foreach (var user in PaginatedUsers)
                 {
                     <div class="schedule-row">
                         <div class="employee-cell">
@@ -162,7 +307,7 @@ else
                                                     <span class="fas fa-info-circle"
                                                           @onmouseover="() => ShowModificationDetails(eventItem.Id, eventItem.LastModifiedBy, eventItem.LastModifiedTime)"
                                                           @onmouseout="HideModificationDetails"></span>
-                                                    <span @onclick="() => AkceptDelete(eventItem.Id)" class="fa-solid fa-trash delete-icon" style="font-size:large"></span>
+                                                    <span @onclick="() => AkceptDelete(eventItem.Id)" class="fa-solid fa-trash delete-icon"></span>
                                                 </div>
                                                 @if (selectedEvent.Id == eventItem.Id && showModificationDetails)
                                                 {
@@ -175,7 +320,7 @@ else
                                                     </div>
                                                 }
                                             </div>
-                                            <a @onclick="async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen edit-icon" style="font-size:large"></a>
+                                            <a @onclick="async () => await ShowSecondModal(eventItem.Id)" class="fa-solid fa-pen edit-icon"></a>
                                         }
                                         else
                                         {
@@ -205,6 +350,14 @@ else
                     </div>
                 }
         </div>
+        @if (users.Count > usersPerPage)
+        {
+            <div class="pagination">
+                <button class="pagination-button" @onclick="PreviousPage" disabled="@(!HasPreviousPage)">&#8592;</button>
+                <span class="pagination-text">Strona @currentPage z @TotalPages</span>
+                <button class="pagination-button" @onclick="NextPage" disabled="@(!HasNextPage)">&#8594;</button>
+            </div>
+        }
     </div>
 
     @if (selectedDay.HasValue && !isVisible)
@@ -253,6 +406,7 @@ else
 }
 
 @code {
+    private List<CarDto> notifications;
     private List<CarDto> carDtos = new List<CarDto>();
     private int carCount;
     private string? errorMessage;
@@ -273,8 +427,34 @@ else
     private bool showDeleteConfirmation = false;
     private Guid confirmedDeleteEventId;
     private DateTime currentWeekStart = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+    private int currentPage = 1;
+    private int usersPerPage = 8;
+    private IEnumerable<UserDto> PaginatedUsers => users
+        .Skip((currentPage - 1) * usersPerPage)
+        .Take(usersPerPage);
+    private int TotalPages => (int)Math.Ceiling((double)users.Count() / usersPerPage);
+    private bool HasPreviousPage => currentPage > 1;
+    private bool HasNextPage => currentPage < TotalPages;
 
+    private void DismissNotification(CarDto car)
+    {
+        notifications.Remove(car); 
+    }
+    private void NextPage()
+    {
+        if (currentPage < TotalPages)
+        {
+            currentPage++;
+        }
+    }
 
+    private void PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+        }
+    }
 
     private void ShowModificationDetails(Guid eventId, string? modifiedBy, DateTime? modifiedOn)
     {
@@ -394,7 +574,7 @@ else
         try
         {
             var response = await UserService.GetCurrentUserAsync();
-
+            notifications = await CarServiceUI.GetByIdGetUpcomingInspection();
             if (response != null)
             {
                 isAuthenticated = true;

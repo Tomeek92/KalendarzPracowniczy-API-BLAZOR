@@ -1,12 +1,15 @@
-﻿using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Create;
+﻿using KalendarzPracowniczyApplication.CQRS.Commands.Cars.UpdateDeActivateCar;
+using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.Workers.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Cars.GetAvailableCar;
+using KalendarzPracowniczyApplication.CQRS.Queries.Cars.GetUpcomingInspection;
 using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetAllWorkers;
 using KalendarzPracowniczyApplication.CQRS.Queries.Workers.GetWorkerById;
 using KalendarzPracowniczyApplication.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 
 namespace KalendarzPracowniczyAPI.Controllers
 {
@@ -120,7 +123,41 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
             catch (KeyNotFoundException)
             {
-                return NotFound($"Nie odnaleziono pracownika do aktualizacji");
+                return NotFound($"Nie odnaleziono samochodu do aktualizacji");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Błąd {ex.Message}");
+            }
+        }
+        [HttpPut("UpdateDeActivateCar")]
+        public async Task<IActionResult> UpdateDeActivateCar([FromBody] UpdateDeActivateCarCommand carCommand)
+        {
+            try
+            {
+                await _mediator.Send(carCommand);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Nie odnaleziono samochodu do aktualizacji");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Błąd {ex.Message}");
+            }
+        }
+        [HttpGet("GetUpcomingInspection")]
+        public async Task<IActionResult> GetUpcomingInspection()
+        {
+            try
+            {
+                var notifications = await _mediator.Send(new GetUpcomingInspectionQuery());
+                return Ok(notifications);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Nie odnaleziono rekordu");
             }
             catch (Exception ex)
             {

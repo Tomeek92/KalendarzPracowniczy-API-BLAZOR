@@ -55,7 +55,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         public async Task Update(Car carUpdate)
         {
             try
-            { 
+            {
                 _context.Cars.Update(carUpdate);
                 await _context.SaveChangesAsync();
             }
@@ -69,12 +69,11 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                bool existingWorker = await _context.Cars.AnyAsync(car => car.CarPlatesNumber == newCar.CarPlatesNumber);
+                bool existingWorker = await _context.Cars.AnyAsync(car => car.CarPlatesNumber == newCar.CarPlatesNumber && car.IsActive == true);
                 if (existingWorker)
                 {
                     throw new Exception($"Samochód o podanych numerach rejestracyjnych już istnieje! {newCar.CarPlatesNumber}");
                 }
-
                 _context.Cars.Add(newCar);
                 await _context.SaveChangesAsync();
             }
@@ -88,7 +87,9 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                var allCars = await _context.Cars.ToListAsync();
+                var allCars = await _context.Cars
+                    .Where(car => car.IsActive == true)
+                    .ToListAsync();
                 if (allCars == null)
                 {
                     throw new KeyNotFoundException($"Nie znaleziono pracowników");

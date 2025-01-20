@@ -55,6 +55,22 @@ namespace KalendarzPracowniczyUI.Service
             {
                 throw new Exception($"Problem z połączeniem HTTP: {httpEx.Message}");
             }
+        }
+        public async Task UpdateDeActivateCar(CarDto carDto)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/api/Car/UpdateDeActivateCar", carDto);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Błąd API: {response.StatusCode}, Treść odpowiedzi: {responseContent}");
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                throw new Exception($"Problem z połączeniem HTTP: {httpEx.Message}");
+            }
 
         }
 
@@ -127,6 +143,34 @@ namespace KalendarzPracowniczyUI.Service
             {
                 throw new Exception($"{ex.Message}");
             }
+        }
+        public async Task<List<CarDto>> GetByIdGetUpcomingInspection()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/Car/GetUpcomingInspection");
+                if (response.IsSuccessStatusCode)
+                {
+                    var carsDto = await response.Content.ReadFromJsonAsync<List<CarDto>>();
+                    if (carsDto != null)
+                    {
+                        return carsDto;
+                    }
+                    else
+                    {
+                        throw new Exception($"Nie naleziono samochodów ");
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Nie można znaleźć samochodów");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd podczas pobierania samochodu {ex.Message}");
+            }
+
         }
     }
 }
