@@ -27,17 +27,21 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Users.Create
                     throw new Exception(request.Email);
                 }
                 var mapp = _mapper.Map<User>(request);
-                
+
                 if (string.IsNullOrEmpty(mapp.Id))
                 {
-                    mapp.Id = Guid.NewGuid().ToString();  
+                    mapp.Id = Guid.NewGuid().ToString();
                 }
-                
+
                 await _userRepository.CreateUser(mapp, request.Password);
             }
             catch (AutoMapperMappingException ex)
             {
                 throw new AutoMapperMappingException($"Błąd mapowania", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
             }
         }
     }
