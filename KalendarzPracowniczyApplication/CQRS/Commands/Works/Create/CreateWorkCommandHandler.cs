@@ -10,20 +10,22 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Works.Create
     {
         private readonly IMapper _mapper;
         private readonly IWorkRepository _workRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMediator _mediator;
 
-        public CreateWorkCommandHandler(IMapper mapper, IWorkRepository workRepository, IMediator mediator)
+        public CreateWorkCommandHandler(IMapper mapper, IWorkRepository workRepository, IMediator mediator, IUserRepository userRepository)
         {
             _mapper = mapper;
             _mediator = mediator;
             _workRepository = workRepository;
+            _userRepository = userRepository;
         }
 
         public async Task Handle(CreateWorkCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var loggedUser = await _mediator.Send(new LoggedUserQuery(), cancellationToken);
+                var loggedUser = await _userRepository.GetUserById(request.UserId);
                 if (loggedUser == null)
                 {
                     throw new Exception("Nie można utworzyć wydarzenia bez zalogowanego użytkownika.");

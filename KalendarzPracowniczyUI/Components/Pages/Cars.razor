@@ -155,7 +155,7 @@
         </tbody>
     </table>
     <div class="button-add-car">
-        <button class="fa-solid fa-car-burst fa-3x add-car" @onclick="() => showModal = true"> 
+        <button class="fa-solid fa-car-burst fa-3x add-car" @onclick="() => OpenModalAddCar()">
             <span class="button-text">Dodaj samochód</span> 
         </button> 
     </div>
@@ -335,6 +335,7 @@
     }
     private async Task OpenUpdateModal(Guid carId)
     {
+        successMessageInModal = null;
         showUpdateModal = true;
         if (carId == Guid.Empty)
         {
@@ -358,11 +359,17 @@
 
         }
     }
+    private void OpenModalAddCar()
+    {
+        successMessageInModal = null;
+        showModal = true;
+    }
     private void OpenDeActiveCar(CarDto car)
     {
 
         deActiveModal = true;
         deActiveCar = car;
+        successMessageInModal = null;
 
     }
     private async Task AddCar()
@@ -397,9 +404,8 @@
             await carService.Update(updateCar);
             isLoading = true;
             successMessageInModal = "Zmiany zostały zapisane!";
-            isLoading = false;
             await WaitFiveSec();
-            successMessageInModal = null;
+            isLoading = false;
         }
         catch(Exception ex)
         {
@@ -418,6 +424,7 @@
     {
         try
         {
+            
             await carService.UpdateDeActivateCar(car);
             successMessageInModal = $"Samochód został dezaktywowany!";
             await WaitFiveSec();
