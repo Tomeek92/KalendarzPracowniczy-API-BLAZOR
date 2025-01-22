@@ -1,9 +1,50 @@
-﻿@using KalendarzPracowniczyUI.Service
+﻿@using KalendarzPracowniczyApplication.Dto
+@using KalendarzPracowniczyUI.Service
 @using Microsoft.AspNetCore.Components.Authorization
 @inject UserServiceUI UserServiceUI
 @inject NavigationManager NavigationManager
 
+<style>
+    .input-group__input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(0, 150, 255, 0.5);
+        border-radius: 8px;
+        box-sizing: border-box;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #f1f1f1;
+        transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
 
+        .input-group__input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: #00aaff;
+            box-shadow: 0 0 10px rgba(0, 150, 255, 0.5), inset 0 0 8px rgba(0, 150, 255, 0.4);
+        }
+
+            .input-group__input:focus + .input-group__label,
+            .input-group__input:not(:placeholder-shown) + .input-group__label {
+                top: -18px;
+                font-size: 12px;
+                color: #00aaff;
+            }
+
+    .input-group__label {
+        position: absolute;
+        left: 12px;
+        top: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 16px;
+        transition: 0.2s ease all;
+        pointer-events: none;
+    }
+label{
+    color:white;
+}
+
+</style>
 
 <div class="sidebar @(isMenuVisible ? "visible" : "")" id="sidebar">
      
@@ -11,11 +52,15 @@
             <div class="logo">
                 <img src="UNISOFT_logo_CMYK_z_polem_ochronnym_alfa_white.png" style="width: 90%; height: 90%; margin-left:5px;" />
             </div>
-            <i class="fa-solid fa-user fa-2x" style="margin-left:35%;"></i>
-            <div class="ikon">
-                <span><UserInfo /></span>
+        <div class="user-settings">
+            <div class="user-nav">
+                <i class="fa-solid fa-user fa-2x" style="margin-left:35%;" @onclick="@(() => SettingsModalOpen(updateUser.Id))"></i>
+                <i class="fa-solid fa-gears fa-2x" @onclick="@(() => SettingsModalOpen(updateUser.Id))"></i>
+                <div class="ikon">
+                    <span><UserInfo /></span>
+                </div>
             </div>
-            <br />
+        </div>
             <br />
             <div class="nav-item">
                 <a class="nav-link" href="/kalendarz">
@@ -65,12 +110,60 @@
     {
         <div class="message">@errorMessage</div>
     }
+@if (settingsModal)
+{
+    <div class="my_modal">
+        <div class="my_modal_content">
+            <i class="fa-solid fa-user-gear" style="color:white; font-size:60px;"></i>
+            <h1 class="close" @onclick="() => settingsModal = false">&times;</h1>
+            <EditForm Model="@updateUser" OnValidSubmit="UpdateUser">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <h1 style="color:white;">Zmiana danych logowania</h1>
+            <br />
+                <div class="blazor-input">
+                    <label for="username">Nazwa użytkownika</label>
+                    <InputText @bind-Value="updateUser.UserName" class="input-group__input" placeholder=" " />
+            </div>
+                <div class="blazor-input">
+                    <label for="password">Hasło</label>
+                    <InputText @bind-Value="updateUser.Password" class="input-group__input" type="password" placeholder=" " />
+            </div>
+                <div class="blazor-input">
+                    <label for="email">Email</label>
+                    <InputText @bind-Value="updateUser.Email" class="input-group__input" placeholder=" " />
+            </div>
+                <button type="submit" class="btn btn-secondary"><span style="color:white;">Zmień</span></button>
+            <button @onclick="() => settingsModal = false" class="btn btn-secondary"><span style="color:white;">Anuluj</span></button>
+         </EditForm>
+            @if (isSuccess)
+            {
+                <p class="success-message">@successMessage</p>
+            }
+        </div>
+    </div>
+}
 
 @code {
+    private UserDto updateUser = new();
     private bool isMenuVisible = true;
     private bool showModal = false;
+    private bool settingsModal = false;
+    private bool isSuccess = false;
     private string? errorMessage;
-    private string menuClicked = "";
+    private string? successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            updateUser = await UserServiceUI.GetCurrentUserAsync(); 
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Błąd inicjalizacji użytkownika: {ex.Message}";
+        }
+    }
     public async Task Logout()
     {
         try
@@ -83,6 +176,32 @@
             errorMessage = ($"Błąd podczas wylogowywania!: {ex.Message}");
         }
     }  
+    private async Task SettingsModalOpen(string userId)
+    {
+        settingsModal = true;
+        try
+        {
+            updateUser = await UserServiceUI.GetById(userId);
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Błąd {ex.Message}");
+        }
+    }
+    public async Task UpdateUser()
+    {
+        try
+        {
+            await UserServiceUI.Update(updateUser);
+            isSuccess = true;
+            successMessage = ($"Dane zostały zmienione!");
+        }
+        catch(Exception ex)
+        {
+            isSuccess = false;
+            errorMessage = ($"Błąd podczas zmian danych użytkownika!: {ex.Message}");
+        }
+    }
 }
 
 

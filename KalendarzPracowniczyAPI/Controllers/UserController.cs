@@ -114,7 +114,7 @@ namespace KalendarzPracowniczyAPI.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdateUser")]
         public async Task<IActionResult> Update([FromBody] UpdateUserCommand userUpdateCommand)
         {
             try

@@ -5,18 +5,6 @@
 
 
 <style>
-    .initials-circle {
-        display: inline-block;
-        width: 40px;
-        height: 40px;
-        background-color: green;
-        color: white;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 40px;
-        font-size: 20px;
-        font-weight: bold;
-    }
 
     .user-info {
         display: flex;
@@ -28,7 +16,7 @@
         font-size: 16px;
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-weight: 400;
-        
+        margin-top:5px;
     }
 </style>
 
@@ -51,28 +39,12 @@
                 {
                     username = user.Name;
                 }
-                else if (!string.IsNullOrEmpty(user.UserName))
+                if (!string.IsNullOrEmpty(user.UserName))
                 {
                     username = user.UserName;
                 }
-                else
-                {
-                    username = "Użytkowniku";
-                }
-                if (!string.IsNullOrEmpty(user.Name) && !string.IsNullOrEmpty(user.Surname))
-                {
-                    initials = $"{user.Name[0]}{user.Surname[0]}".ToUpper();
-                }
-                else if (!string.IsNullOrEmpty(user.UserName))
-                {
-                    initials = user.UserName.Substring(0, 2).ToUpper();
-                }
-                else
-                {
-                    initials = "NN";
-                }
             }
-            else
+            if(user == null)
             {
                 isAuthenticated = false;
             }

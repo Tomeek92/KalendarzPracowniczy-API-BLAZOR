@@ -11,15 +11,12 @@ namespace KalendarzPracowniczyApplication.Dto
         [StringLength(50, ErrorMessage = "Nazwa użytkownika nie może przekraczać 50 znaków")]
         public string UserName { get; set; } = null!;
 
-      
         [StringLength(50, ErrorMessage = "Imię nie może przekraczać 50 znaków")]
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; }
 
-        
         [StringLength(50, ErrorMessage = "Nazwisko nie może przekraczać 50 znaków")]
-        public string Surname { get; set; } = null!;
+        public string? Surname { get; set; }
 
-      
         [EmailAddress(ErrorMessage = "Niepoprawny format adresu email")]
         public string? Email { get; set; }
 

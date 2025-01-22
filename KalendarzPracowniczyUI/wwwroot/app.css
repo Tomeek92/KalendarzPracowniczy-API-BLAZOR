@@ -194,6 +194,21 @@ h1:focus {
 .delete-icon, .edit-icon, .fa-info-circle, .fa-sun {
     font-size: 25px;
 }
+.user-nav i {
+    transition: color 0.3s ease;
+}
+
+.user-nav .ikon span {
+    transition: color 0.3s ease;
+}
+
+.user-nav:hover i {
+    color: gold; 
+}
+
+.user-nav:hover .ikon span {
+    color: gold; 
+}
 /* Responsywność navigation menu */
 @media (max-width: 768px) {
     .sidebar {

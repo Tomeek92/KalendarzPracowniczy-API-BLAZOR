@@ -158,15 +158,30 @@ namespace KalendarzPracowniczyUI.Service
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task Update(UpdateUserCommand userCommand)
+        public async Task Update(UserDto userDto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/User", userCommand);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/api/User/UpdateUser", userDto);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Błąd API: {response.StatusCode}, Treść odpowiedzi: {responseContent}");
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                throw new Exception($"Problem z połączeniem HTTP: {httpEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Błąd podczas update user {ex.Message}");
+            }
         }
 
         public async Task<UserDto> GetById(string id)
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/api/Event/{id}");
+            var response = await _httpClient.GetAsync($"{_baseUrl}/api/User/{id}");
             if (response.IsSuccessStatusCode)
             {
                 var userDto = await response.Content.ReadFromJsonAsync<UserDto>();
