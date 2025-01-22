@@ -5,7 +5,7 @@
 namespace KalendarzPracowniczyInfrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class NewProp : Migration
+    public partial class MySql2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -13,7 +13,7 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
             migrationBuilder.AddColumn<bool>(
                 name: "IsActive",
                 table: "Cars",
-                type: "bit",
+                type: "tinyint(1)",
                 nullable: true);
         }
 

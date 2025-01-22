@@ -5,7 +5,7 @@
 namespace KalendarzPracowniczyInfrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init7 : Migration
+    public partial class MySql3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -13,11 +13,11 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
             migrationBuilder.AlterColumn<bool>(
                 name: "IsActive",
                 table: "Cars",
-                type: "bit",
+                type: "tinyint(1)",
                 nullable: true,
                 defaultValue: true,
                 oldClrType: typeof(bool),
-                oldType: "bit",
+                oldType: "tinyint(1)",
                 oldNullable: true);
         }
 
@@ -27,10 +27,10 @@ namespace KalendarzPracowniczyInfrastructure.Migrations
             migrationBuilder.AlterColumn<bool>(
                 name: "IsActive",
                 table: "Cars",
-                type: "bit",
+                type: "tinyint(1)",
                 nullable: true,
                 oldClrType: typeof(bool),
-                oldType: "bit",
+                oldType: "tinyint(1)",
                 oldNullable: true,
                 oldDefaultValue: true);
         }

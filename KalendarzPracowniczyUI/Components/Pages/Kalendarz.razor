@@ -239,7 +239,6 @@
 else
 {
     <NavigationMenu />
-
     <div class="weekly-schedule-container">
         <div class="notification-banner">
             @if (notifications != null && notifications.Any())
@@ -292,7 +291,7 @@ else
                                 @if (daysOff.Any(h => h.DateDayOff == DateOnly.FromDateTime(day.Date) && h.UserId == user.Id))
                                 {
                                     <div class="holiday-info">
-                                        <p><i class="fa-solid fa-sun"></i> Urlop</p>
+                                        <p style="font-size:20px;"><i class="fa-solid fa-sun"></i> Urlop</p>
                                     </div>
                                 }
                                
@@ -303,7 +302,7 @@ else
                                         {
                                             <div class="event-item" @onclick:stopPropagation>
                                                 <div class="event-details">
-                                                    <span style="width: 100%; padding-left: 0;"> @eventItem.Title</span>
+                                                    <span style="width: 100%; padding-left: 0; font-size:20px;"> @eventItem.Title</span>
                                                     <span class="fas fa-info-circle"
                                                           @onmouseover="() => ShowModificationDetails(eventItem.Id, eventItem.LastModifiedBy, eventItem.LastModifiedTime)"
                                                           @onmouseout="HideModificationDetails"></span>
@@ -349,7 +348,9 @@ else
                         }
                     </div>
                 }
+
         </div>
+
         @if (users.Count > usersPerPage)
         {
             <div class="pagination">
@@ -359,6 +360,7 @@ else
             </div>
         }
     </div>
+
 
     @if (selectedDay.HasValue && !isVisible)
     {
@@ -402,8 +404,10 @@ else
             </div>
         </div>
     }  
+
    
 }
+
 
 @code {
     private List<CarDto> notifications;

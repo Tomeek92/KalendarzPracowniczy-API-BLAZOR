@@ -27,6 +27,7 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Users.LoggedUser
                 var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var userName = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
                 var surName = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Surname);
+                Console.WriteLine($"{userId}");
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -44,6 +45,10 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Users.LoggedUser
             catch (AutoMapperMappingException ex)
             {
                 throw new AutoMapperMappingException($"Błąd podczas mapowania {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
             }
         }
     }

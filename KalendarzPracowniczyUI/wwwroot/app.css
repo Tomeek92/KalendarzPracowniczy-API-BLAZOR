@@ -191,7 +191,9 @@ h1:focus {
         transform: scale(1.1);
         color: white;
     }
-
+.delete-icon, .edit-icon, .fa-info-circle, .fa-sun {
+    font-size: 25px;
+}
 /* Responsywność navigation menu */
 @media (max-width: 768px) {
     .sidebar {
