@@ -22,6 +22,23 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             _httpContextAccessor = httpContextAccessor;
         }
 
+        private async Task<Event> GetEventById(Guid id)
+        {
+            try
+            {
+                var result = await _context.Events.FindAsync(id);
+                if (result == null)
+                {
+                    throw new KeyNotFoundException($"Wydarzenie o ID {id} nie zostało znalezione.");
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd podczas pobierania id {ex.Message}");
+            }
+        }
+
         public async Task<Event> GetElementById(Guid id)
         {
             try
@@ -41,7 +58,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
         }
 
-        public async Task Create(Event createEvent, CancellationToken cancellationToken)
+        public async Task Create(Event createEvent)
         {
             try
             {
@@ -60,7 +77,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                     }
                 }
                 _context.Add(createEvent);
-                var result = await _context.SaveChangesAsync(cancellationToken);
+                await SaveAsync();
             }
             catch (Exception ex)
             {
@@ -84,7 +101,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                var existingEvent = await _context.Events.FindAsync(updateEvent.Id);
+                var existingEvent = await GetEventById(updateEvent.Id);
                 if (existingEvent == null)
                 {
                     throw new KeyNotFoundException($"Nie znaleziono takiego zadania w bazie danych! {updateEvent.Id}");
@@ -100,7 +117,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                     updateEvent.LastModifiedTime = DateTime.Now;
                 }
                 _context.Events.Update(updateEvent);
-                await _context.SaveChangesAsync();
+                await SaveAsync();
             }
             catch (Exception ex)
             {

@@ -19,9 +19,24 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             _context = context;
         }
 
-        public async Task<User?> FindByUserEmailAsync(string email)
+        public async Task<User?> FindByUserNameAsync(string userName)
         {
-            return await _userManager.FindByEmailAsync(email);
+            try
+            {
+                return await _userManager.FindByNameAsync(userName);
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException($"UserName nie może być nullem {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"Nieprawidłowa operacja {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+            }
         }
 
         public async Task<SignInResult> Login(string userName, string password)
@@ -48,11 +63,38 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                await _userManager.CreateAsync(user, password);
+                var result = await _userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    await SaveAsync();
+                }
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        throw new Exception($"Nie może być Polskich liter w nazwie użytkownika! {error.Description} ");
+                    }
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Nieoczekiwany bląd podczas tworzenia użytkownika {ex}");
+                throw new Exception($"Nieoczekiwany bląd podczas tworzenia użytkownika {ex.Message}");
+            }
+        }
+
+        private async Task SaveAsync()
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Błąd podczas zapisu do bazy danyc {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
             }
         }
 
@@ -94,31 +136,20 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                var findUser = await _userManager.FindByIdAsync(user.Id);
+                var findUser = await GetUserById(user.Id);
                 if (findUser == null)
                 {
                     throw new Exception("Użytkownik nie istnieje lub został usunięty.");
                 }
 
-                findUser.Email = user.Email;
-                findUser.Name = user.Name;
-                findUser.UserName = user.UserName;
+                UpdateUserData(findUser, user);
 
                 if (!string.IsNullOrEmpty(user.Password))
                 {
-                    var resetToken = await _userManager.GeneratePasswordResetTokenAsync(findUser);
+                    await ResetPasswordAsync(findUser, user.Password);
+                }
 
-                    var resetPasswordResult = await _userManager.ResetPasswordAsync(findUser, resetToken, user.Password);
-                    if (!resetPasswordResult.Succeeded)
-                    {
-                        throw new Exception($"Błąd podczas resetowania hasła: {string.Join(", ", resetPasswordResult.Errors.Select(e => e.Description))}");
-                    }
-                }
-                var updateResult = await _userManager.UpdateAsync(findUser);
-                if (!updateResult.Succeeded)
-                {
-                    throw new Exception($"Aktualizacja danych użytkownika nie powiodła się: {string.Join(", ", updateResult.Errors.Select(e => e.Description))}");
-                }
+                await SaveUserChangesAsync(findUser);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -127,6 +158,35 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             catch (Exception ex)
             {
                 throw new Exception($"Nieoczekiwany błąd: {ex.Message}");
+            }
+        }
+
+        private void UpdateUserData(User existingUser, User newUserData)
+        {
+            existingUser.Email = newUserData.Email;
+            existingUser.Name = newUserData.Name;
+            existingUser.UserName = newUserData.UserName;
+        }
+
+        private async Task ResetPasswordAsync(User user, string newPassword)
+        {
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var resetPasswordResult = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+            if (!resetPasswordResult.Succeeded)
+            {
+                var errors = string.Join(", ", resetPasswordResult.Errors.Select(e => e.Description));
+                throw new Exception($"Błąd podczas resetowania hasła: {errors}");
+            }
+        }
+
+        private async Task SaveUserChangesAsync(User user)
+        {
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                var errors = string.Join(", ", updateResult.Errors.Select(e => e.Description));
+                throw new Exception($"Aktualizacja danych użytkownika nie powiodła się: {errors}");
             }
         }
 

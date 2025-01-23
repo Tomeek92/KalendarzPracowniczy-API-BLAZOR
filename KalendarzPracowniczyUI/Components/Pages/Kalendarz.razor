@@ -149,7 +149,7 @@
     }
 }
     /* Responsywność dla ekranów poniżej 576px */
-@@media (max-width: 576px) {
+@@media (max-width: 1400px) {
 
     .weekly-schedule-container {
         margin-left: 22%; 
@@ -507,6 +507,7 @@ else
             throw new Exception("Błąd");
         }
     }
+
     private int GetAvailableCars(DateTime date)
     {
         int reservedCars = userEvents.Count(e =>

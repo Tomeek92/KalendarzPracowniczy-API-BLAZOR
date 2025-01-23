@@ -6,7 +6,7 @@ namespace KalendarzPracowniczyDomain.Interfaces
     {
         Task<Event> GetElementById(Guid id);
 
-        Task Create(Event createEvent, CancellationToken cancellationToken);
+        Task Create(Event createEvent);
 
         Task SaveAsync();
 

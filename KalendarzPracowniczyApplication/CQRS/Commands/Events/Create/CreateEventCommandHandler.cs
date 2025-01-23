@@ -40,7 +40,7 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Events.Create
                 var mappCar = _mapper.Map<Car>(currentCar);
                 newEvent.Car = mappCar;
 
-                await _eventRepository.Create(newEvent, cancellationToken);
+                await _eventRepository.Create(newEvent);
 
                 var eventDto = _mapper.Map<EventDto>(newEvent);
 

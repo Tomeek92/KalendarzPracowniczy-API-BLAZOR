@@ -152,6 +152,37 @@ input[type="checkbox"] {
         transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
         box-shadow: 0 4px 8px rgba(0, 150, 255, 0.3), 0 0 10px rgba(0, 150, 255, 0.4);
 }
+/* Responsywność */
+
+
+@@media screen and (max-width: 1480px) {
+    .task-manager-container {
+        margin: 50px 250px;
+        padding: 10px;
+    }
+
+    h3 {
+        font-size: 18px;
+    }
+
+    th, td {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    button, .pagination-button {
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    .pagination-button {
+        width: 40%;
+    }
+
+    input[type="text"], .input-group {
+        font-size: 14px;
+    }
+}
 </style>
 <NavigationMenu />
 <div class="task-manager-container">

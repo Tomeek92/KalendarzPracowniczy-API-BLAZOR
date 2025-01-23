@@ -13,7 +13,7 @@ namespace KalendarzPracowniczyDomain.Interfaces
 
         Task Delete(string id);
 
-        Task<User?> FindByUserEmailAsync(string? email);
+        Task<User?> FindByUserNameAsync(string userName);
 
         Task<SignInResult> Login(string userName, string password);
 

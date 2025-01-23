@@ -35,7 +35,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                var findCar = await _context.Cars.FindAsync(id);
+                var findCar = await GetElementById(id);
                 if (findCar == null)
                 {
                     throw new KeyNotFoundException($"Nie znaleziono pracownika o podanym {id}");
@@ -43,7 +43,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                 else
                 {
                     _context.Cars.Remove(findCar);
-                    await _context.SaveChangesAsync();
+                    await SaveAsync();
                 }
             }
             catch (Exception ex)
@@ -57,11 +57,27 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             try
             {
                 _context.Cars.Update(carUpdate);
-                await _context.SaveChangesAsync();
+                await SaveAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception($"Nieoczekiwany błąd podczas aktulizowania pracownika", ex);
+            }
+        }
+
+        private async Task SaveAsync()
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Błąd podczas zapisu do bazy danyc {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
             }
         }
 
@@ -75,7 +91,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                     throw new Exception($"Samochód o podanych numerach rejestracyjnych już istnieje! {newCar.CarPlatesNumber}");
                 }
                 _context.Cars.Add(newCar);
-                await _context.SaveChangesAsync();
+                await SaveAsync();
             }
             catch (Exception ex)
             {
@@ -111,8 +127,9 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                     throw new ArgumentException($"Błąd podczas pobierania daty");
                 }
                 var cars = await _context.Cars
+                    .Where(car => car.IsActive == true)
                     .Where(car =>
-                    !_context.Events.Any(e => e.CarId == car.Id && e.StartDate.HasValue && e.StartDate.Value.Date == selectedDate.Value.Date && !e.IsDeleted))
+                    !_context.Events.Any(e => e.CarId == car.Id  && e.StartDate.HasValue && e.StartDate.Value.Date == selectedDate.Value.Date && !e.IsDeleted))
                 .ToListAsync();
                 return cars;
             }
