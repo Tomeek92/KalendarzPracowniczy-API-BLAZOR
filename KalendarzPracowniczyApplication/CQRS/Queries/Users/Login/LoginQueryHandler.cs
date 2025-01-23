@@ -25,11 +25,11 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Users.Login
             try
             {
                 var userMap = _mapper.Map<User>(request);
-                if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                if (request == null || string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.Password))
                 {
                     throw new Exception("Niepoprawne dane logowania.");
                 }
-                var user = await _userRepository.FindByUserEmailAsync(request.Email);
+                var user = await _userRepository.FindByUserNameAsync(request.UserName);
 
                 if (user == null)
                 {

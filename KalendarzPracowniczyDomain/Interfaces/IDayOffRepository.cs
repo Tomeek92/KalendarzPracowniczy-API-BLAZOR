@@ -8,7 +8,7 @@ namespace KalendarzPracowniczyDomain.Interfaces
 
         Task Delete(Guid id);
 
-        Task Create(DayOff createDayOff, CancellationToken cancellationToken);
+        Task Create(DayOff createDayOff);
 
         Task Update(DayOff updateDayOff);
 

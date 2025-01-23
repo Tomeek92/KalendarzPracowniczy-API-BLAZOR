@@ -22,7 +22,7 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Create
             try
             {
                 var mapp = _mapper.Map<KalendarzPracowniczyDomain.Entities.UserDayOff.DayOff>(request);
-                await _dayOffRepository.Create(mapp, cancellationToken);
+                await _dayOffRepository.Create(mapp);
             }
             catch (AutoMapperMappingException mapp)
             {

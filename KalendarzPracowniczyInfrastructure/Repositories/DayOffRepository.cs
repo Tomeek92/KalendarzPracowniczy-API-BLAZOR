@@ -33,6 +33,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                 throw new Exception($"Nieoczekiwany błąd zgłoś się do administratora", ex);
             }
         }
+
         public async Task<List<DayOff>> GetAllDaysOff()
         {
             try
@@ -51,6 +52,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                 throw new Exception($"Błąd podczas pobierania dni wolnych {ex.Message}");
             }
         }
+
         public async Task Delete(Guid id)
         {
             try
@@ -63,7 +65,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                 else
                 {
                     _context.DaysOff.Remove(findDayOff);
-                    await _context.SaveChangesAsync();
+                    await SaveAsync();
                 }
             }
             catch (Exception ex)
@@ -72,17 +74,32 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
         }
 
-        public async Task Create(DayOff createDayOff, CancellationToken cancellationToken)
+        public async Task Create(DayOff createDayOff)
         {
             try
             {
                 _context.Add(createDayOff);
-                var result = await _context.SaveChangesAsync(cancellationToken);
+                await SaveAsync();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.InnerException?.Message);
                 throw new Exception($"Błąd podczas dodawania zadania {ex.Message}");
+            }
+        }
+
+        private async Task SaveAsync()
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException($"Błąd podczas zapisu do bazy danyc {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Nieoczekiwany błąd {ex.Message}");
             }
         }
 
@@ -91,7 +108,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             try
             {
                 _context.Update(updateDayOff);
-                await _context.SaveChangesAsync();
+                await SaveAsync();
             }
             catch (Exception ex)
             {

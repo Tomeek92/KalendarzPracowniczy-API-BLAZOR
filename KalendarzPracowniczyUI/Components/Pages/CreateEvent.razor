@@ -135,15 +135,15 @@
 
 /* Wiadomości */
 .message, .success-message {
-    padding: 5px;
+    padding: 1px;
     border-radius: 5px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
     position: relative;
-    margin: 20px auto;
     width: 80%;
     max-width: 400px;
     text-align: center;
+    margin-top:10px;
 }
 
 .message {
@@ -197,7 +197,7 @@
             <select @bind ="eventDto.UserId">
                 @foreach (var user in userDtos)
                 {
-                    <option value="@user.Id">@user.Name @user.Surname</option>
+                    <option value="@user.Id">@user.UserName @user.Surname</option>
                 }
             </select>
         </div>
@@ -249,7 +249,7 @@
     protected override async Task OnInitializedAsync()
     {
         eventDto.StartDate = SelectedDate;
-        await GetAllCars();
+       // await GetAllCars();
         await GetAllUsers();
         await LoadExistingEvents();
         var loggedUser = await UserServiceUI.GetCurrentUserAsync();
@@ -344,7 +344,7 @@
     {
         try
         {
-            carDtos = await CarServiceUI.GetAvailableCarsAsync(eventDto.StartDate.Value.Date);
+            carDtos = await CarServiceUI.GetAll();
         }
         catch
         {

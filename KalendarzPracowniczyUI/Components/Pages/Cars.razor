@@ -108,6 +108,103 @@
         .delete-btn:hover {
             background-color: #ff0000;
         }
+
+          @@media screen and (max-width: 1278px) {
+        .form-container {
+            max-width: 85%;
+            padding: 15px;
+        }
+
+        th, td {
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        td input[type="text"], td input[type="date"], .blazor-input {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        button {
+            font-size: 15px;
+            padding: 8px;
+            width:100%;
+        }
+
+        .button-add-car {
+            width: 100%;
+            height: auto;
+        }
+
+        .button-text {
+            font-size: 14px;
+        }
+    }
+
+    @@media screen and (max-width: 1048px) {
+        .form-container {
+            max-width: 800px;
+            padding: 15px;
+
+        }
+     
+
+        th, td {
+            font-size: 14px;
+            padding: 2px;
+        }
+
+            td input[type="text"], td input[type="date"], .blazor-input {
+                padding: 4px;
+                font-size: 14px;
+            }
+
+        button {
+            font-size: 14px;
+            padding: 4px;
+        }
+
+        .button-add-car {
+            width: 100%;
+            height: auto;
+        }
+
+        .button-text {
+            font-size: 16px;
+        }
+    }
+
+    @@media screen and (max-width: 980px) {
+        .form-container {
+            max-width: 85%;
+            padding: 5px;
+        }
+
+
+        th, td {
+            font-size: 10px;
+            padding: 2px;
+        }
+
+            td input[type="text"], td input[type="date"], .blazor-input {
+                padding: 1px;
+                font-size: 10px;
+            }
+
+        button {
+            font-size: 10px;
+            padding: 4px;
+        }
+
+        .button-add-car {
+            width: 100%;
+            height: auto;
+        }
+
+        .button-text {
+            font-size: 10px;
+        }
+    }
 </style>
 <NavigationMenu />
 
@@ -332,6 +429,7 @@
         showModal = false;
         showUpdateModal = false;
         await GetAllCars();
+
     }
     private async Task OpenUpdateModal(Guid carId)
     {
@@ -389,13 +487,13 @@
         {
             errorMessageInModal = $"Wystąpił błąd: {ex.Message}";
             await WaitFiveSec();
-
+            errorMessageInModal = null;
+            await Task.Delay(5000);
         }
         finally
         {
             isLoading = false;
         }
-
     }
     private async Task UpdateCar()
     {
@@ -411,6 +509,12 @@
         {
             errorMessageInModal = $"Wystąpił błąd: {ex.Message}";
             await WaitFiveSec();
+            errorMessageInModal = null;
+            await Task.Delay(5000);
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 
@@ -424,7 +528,7 @@
     {
         try
         {
-            
+            isLoading = true;
             await carService.UpdateDeActivateCar(car);
             successMessageInModal = $"Samochód został dezaktywowany!";
             await WaitFiveSec();
@@ -434,6 +538,8 @@
         {
             errorMessageInModal = $"Wystąpił błąd: {ex.Message}";
             await WaitFiveSec();
+            errorMessageInModal = null;
+            await Task.Delay(5000);
         }
         finally
         {
@@ -457,6 +563,12 @@
         {
             errorMessage = $"Błąd podczas usuwania samochodu. {ex.Message}";
             await WaitFiveSec();
+            errorMessage = null;
+            await Task.Delay(5000);
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
     private async Task GetAllCars()
@@ -470,11 +582,12 @@
         {
             errorMessage = $"Nie udało się pobrać zalogowanego użytkownika.{ex.Message}";
             await WaitFiveSec();
+            errorMessage = null;
+            await Task.Delay(5000);
         }
         finally
         {
             isLoading = false;
         }
-
     }
 }

@@ -126,6 +126,96 @@
         margin-top: 10px;
         font-size: 16px;
         box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+    }
+    /*Responsywność*/
+     @@media screen and (max-width: 1278px) {
+        .form-container {
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            margin-top: 50px;
+            margin-right:20px;
+            max-width: 500px;
+        }
+
+        .form-left, .form-right {
+            width: 80%;
+            padding: 0;
+        }
+
+        .form-left {
+            margin-bottom: 10px;
+        }
+
+        .form-left h1 {
+            font-size: 24px;
+        }
+
+        button {
+            font-size: 14px;
+            padding: 10px;
+        }
+    }
+
+    @@media screen and (max-width: 670px) {
+        .form-container {
+            padding: 15px;
+            margin-top: 50px;
+            max-width: 400px;
+        }
+
+        .form-left h1 {
+            font-size: 20px;
+        }
+
+        .company-logo {
+            max-width: 70%;
+        }
+
+        button {
+            font-size: 12px;
+            padding: 8px;
+        }
+
+        .input-group input {
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+        }
+    }
+
+    @@media screen and (max-width: 575px) {
+        .form-container {
+            padding: 15px;
+            margin-top: 50px;
+            max-width: 300px;
+        }
+
+        .form-left h1 {
+            font-size: 20px;
+        }
+
+        .company-logo {
+            max-width: 70%;
+        }
+
+        button {
+            font-size: 12px;
+            padding: 8px;
+        }
+
+        .input-group input {
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+        }
+    }
 </style>
 
 <NavigationMenu />
