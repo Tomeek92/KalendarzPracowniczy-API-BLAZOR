@@ -81,7 +81,7 @@ namespace KalendarzPracowniczyUI.Service
             }
             catch (Exception ex)
             {
-                throw new Exception("Nie udało się pobrać informacji o zalogowanym użytkowniku.");
+                throw new Exception($"Nie udało się pobrać informacji o zalogowanym użytkowniku {ex.Message}");
             }
         }
 

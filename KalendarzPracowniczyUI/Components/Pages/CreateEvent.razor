@@ -246,10 +246,10 @@
     private DateTime? previousDate;
     private string selectedWorkplace = string.Empty;
 
+
     protected override async Task OnInitializedAsync()
     {
         eventDto.StartDate = SelectedDate;
-       // await GetAllCars();
         await GetAllUsers();
         await LoadExistingEvents();
         var loggedUser = await UserServiceUI.GetCurrentUserAsync();
@@ -288,14 +288,30 @@
         carDtos = await CarServiceUI.GetAvailableCarsAsync(selectedDate);
         StateHasChanged();
     }
-
+    private async Task ShowErrorMessage()
+    {
+        await JSRuntime.InvokeVoidAsync("resetMessageVisibility", ".success-message,.message");
+        await InvokeAsync(StateHasChanged);
+    }
     private async Task WaitFiveSec()
     {
         await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message,.message", 5000);
 
         await InvokeAsync(StateHasChanged);
     }
+    private bool IsCarReservedOn()
+    {
+        var isCarReservedOn = existingEvents.Any(e => e.CarId == eventDto.CarId 
+            && e.StartDate.Value.Date == eventDto.StartDate.Value.Date 
+            && e.CarId != null);
 
+        return isCarReservedOn;
+    }
+    private bool IsCarAssignedToInvalidWorkplace()
+    {
+        var isCarAssignedToInvalidWorkPlace = eventDto.CarId != null && (selectedWorkplace == "Zdalna-okazjonalna" || selectedWorkplace == "Zdalna" || selectedWorkplace == "Biuro");
+        return isCarAssignedToInvalidWorkPlace;
+    }
     public async Task CreateEventAsync()
     {
         isLoading = true;
@@ -306,16 +322,17 @@
         {
             bool hasError = false;
 
-            if (existingEvents.Any(e => e.CarId == eventDto.CarId && e.StartDate.Value.Date == eventDto.StartDate.Value.Date && e.CarId != null))
+            if (IsCarReservedOn())
             {
+                await ShowErrorMessage();
                 message = "Samochód jest już zarezerwowany na ten dzień.";
                 await WaitFiveSec();
                 isSuccess = false;
                 hasError = true;
             }
-            if (eventDto.CarId != null && (selectedWorkplace == "Zdalna-okazjonalna" || selectedWorkplace == "Zdalna" || selectedWorkplace =="Biuro"))
+            if (IsCarAssignedToInvalidWorkplace())
             {
-
+                await ShowErrorMessage();
                 message = "Nie możesz przypisać samochodu do pracy zdalnej, zdalnej okazjonalnej oraz biura"; 
                 await WaitFiveSec();
                 isSuccess = false;
@@ -349,7 +366,7 @@
         catch
         {
             message = $"Błąd podczas pobierania samochodów";
-            await WaitFiveSec();
+            await ShowErrorMessage();
         }
     }
     private async Task GetAllUsers()
@@ -361,7 +378,7 @@
         catch
         {
             message = $"Błąd podczas pobierania użytkowników";
-            await WaitFiveSec();
+            await ShowErrorMessage();
         }
     }
 }

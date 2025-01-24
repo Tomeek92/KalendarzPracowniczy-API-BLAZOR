@@ -43,7 +43,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
 
                 if (allDaysOff == null)
                 {
-                    throw new Exception($"Błąd podczas pobierania dni wolnych");
+                    throw new ArgumentNullException(nameof(allDaysOff), $"Błąd podczas pobierania dni wolnych, nie mogą być nullem");
                 }
                 return allDaysOff;
             }
