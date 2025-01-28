@@ -27,7 +27,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             }
             catch (ArgumentNullException ex)
             {
-                throw new ArgumentNullException($"UserName nie może być nullem {ex.Message}");
+                throw new ArgumentNullException(nameof(userName), $"User nie może być nullem {ex.Message}");
             }
             catch (InvalidOperationException ex)
             {
@@ -63,17 +63,11 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
+                await UserExist(user);
                 var result = await _userManager.CreateAsync(user, password);
                 if (result.Succeeded)
                 {
                     await SaveAsync();
-                }
-                if (!result.Succeeded)
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        throw new Exception($"Nie może być Polskich liter w nazwie użytkownika! {error.Description} ");
-                    }
                 }
             }
             catch (Exception ex)
@@ -129,6 +123,15 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
             catch (Exception ex)
             {
                 throw new Exception($"Nieoczekiwany błąd {ex.Message}");
+            }
+        }
+
+        private async Task UserExist(User user)
+        {
+            bool exist = await _context.Users.AnyAsync(u => u.Email == user.Email || u.UserName == user.UserName);
+            if (exist)
+            {
+                throw new ArgumentException($"Użytkownik o takim {user.Email} albo nazwie użytkownika {user.UserName} już istnieje");
             }
         }
 

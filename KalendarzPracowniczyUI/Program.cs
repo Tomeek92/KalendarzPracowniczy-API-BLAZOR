@@ -2,6 +2,7 @@ using KalendarzPracowniczyApplication.Extensions;
 using KalendarzPracowniczyInfrastructure.Extensions;
 using KalendarzPracowniczyUI.Components;
 using KalendarzPracowniczyUI.Service;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using System.Net;
@@ -39,6 +40,19 @@ builder.Services.AddHttpClient("API", client =>
         AllowAutoRedirect = false
     };
 });
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = ".AspNetCore.Cookies";
+        options.Cookie.Domain = "localhost";
+        options.LoginPath = "/";
+        options.AccessDeniedPath = "/accessdenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(6);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    });
 
 var app = builder.Build();
 

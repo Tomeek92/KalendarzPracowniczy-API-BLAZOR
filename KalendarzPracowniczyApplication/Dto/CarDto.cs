@@ -1,6 +1,4 @@
-﻿using KalendarzPracowniczyDomain.Entities.Events;
-
-namespace KalendarzPracowniczyApplication.Dto
+﻿namespace KalendarzPracowniczyApplication.Dto
 {
     public class CarDto
     {
@@ -12,6 +10,5 @@ namespace KalendarzPracowniczyApplication.Dto
         public string? CarPlatesNumber { get; set; }
         public string? CarKm { get; set; }
         public DateOnly? CarInspection { get; set; }
-
     }
 }

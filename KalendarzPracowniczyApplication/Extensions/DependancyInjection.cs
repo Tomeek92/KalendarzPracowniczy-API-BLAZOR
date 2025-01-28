@@ -1,4 +1,5 @@
-﻿using KalendarzPracowniczyApplication.CQRS.Commands.Cars.UpdateDeActivateCar;
+﻿using KalendarzPracowniczyApplication.AssemblyMarker;
+using KalendarzPracowniczyApplication.CQRS.Commands.Cars.UpdateDeActivateCar;
 using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Create;
 using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Delete;
 using KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Update;
@@ -34,38 +35,8 @@ namespace KalendarzPracowniczyApplication.Extensions
     {
         public static void AddApplication(this IServiceCollection services)
         {
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
-        typeof(CreateEventCommand).Assembly,
-        typeof(UpdateEventCommand).Assembly,
-        typeof(DeleteEventCommand).Assembly,
-        typeof(GetAllEventQuery).Assembly,
-        typeof(GetElementByIdEventQuery).Assembly,
-        typeof(CreateUserCommand).Assembly,
-        typeof(DeleteUserCommand).Assembly,
-        typeof(UpdateUserCommand).Assembly,
-        typeof(GetUserByIdQuery).Assembly,
-        typeof(GetCarByIdQuery).Assembly,
-        typeof(GetAllCarsQuery).Assembly,
-        typeof(CreateCarCommand).Assembly,
-        typeof(UpdateCarCommand).Assembly,
-        typeof(DeleteCarCommand).Assembly,
-        typeof(CreateWorkCommand).Assembly,
-        typeof(DeleteWorkCommand).Assembly,
-        typeof(UpdateWorkCommand).Assembly,
-         typeof(LogOutCommand).Assembly,
-         typeof(GetAllUsersQuery).Assembly,
-        typeof(GetUserTasksQuery).Assembly,
-        typeof(CreateDayOffCommand).Assembly,
-        typeof(UpdateDayOffCommand).Assembly,
-        typeof(DeleteDayOffCommand).Assembly,
-          typeof(LoginQuery).Assembly,
-        typeof(GetUserTaskByIdQuery).Assembly,
-        typeof(CreateDayOffCommand).Assembly,
-        typeof(UpdateDayOffCommand).Assembly,
-        typeof(DeleteDayOffCommand).Assembly,
-        typeof(GetDayOffByIdQuery).Assembly,
-        typeof(UpdateDeActivateCarCommand).Assembly
-           ));
+            services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssemblyContaining<KalendarzPracowniczyAssemblyMarker>());
 
             services.AddAutoMapper(typeof(MapperProfile));
         }

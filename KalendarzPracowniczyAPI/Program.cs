@@ -16,26 +16,25 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/kalendarz";
-        options.AccessDeniedPath = "/kalendarz";
+        options.Cookie.Name = ".AspNetCore.Cookies";
+        options.Cookie.Domain = "localhost";
+        options.LoginPath = "/";
+        options.AccessDeniedPath = "/accessdenied";
         options.ExpireTimeSpan = TimeSpan.FromHours(6);
         options.SlidingExpiration = true;
-        options.Cookie.HttpOnly = true;
+        options.Cookie.HttpOnly = false;
         options.Cookie.SameSite = SameSiteMode.None;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     });
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("https://localhost:7136")//tylko ta domena mo¿e komunikowaæ siê z API!
+        builder => builder.WithOrigins("https://localhost:7136", "https://localhost:7164")//tylko ta domena mo¿e komunikowaæ siê z API!
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials());
 });
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-    options.MinimumSameSitePolicy = SameSiteMode.None;
-});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

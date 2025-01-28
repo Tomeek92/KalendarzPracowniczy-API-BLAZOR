@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace KalendarzPracowniczyApplication.CQRS.Queries.Users.Login
 {
-    public class LoginQueryHandler : IRequestHandler<LoginQuery, UserDto>
+    public class LoginQueryHandler : IRequestHandler<LoginQuery, LoginDto>
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Users.Login
             _signInManager = signInManager;
         }
 
-        public async Task<UserDto> Handle(LoginQuery request, CancellationToken cancellationToken)
+        public async Task<LoginDto> Handle(LoginQuery request, CancellationToken cancellationToken)
         {
             try
             {
@@ -36,12 +36,13 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Users.Login
                     throw new Exception("nie znaleziono użytkownika");
                 }
 
-                var result = await _signInManager.PasswordSignInAsync(request.UserName, request.Password, isPersistent: false, lockoutOnFailure: false);
+                var result = await _userRepository.Login(request.UserName, request.Password);
                 if (!result.Succeeded)
                 {
                     throw new Exception("Nieprawidłowe dane logowania");
                 }
-                var userDto = _mapper.Map<UserDto>(user);
+
+                var userDto = _mapper.Map<LoginDto>(user);
                 return userDto;
             }
             catch (AutoMapperMappingException ex)

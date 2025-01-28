@@ -5,11 +5,13 @@ using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetAll;
 using KalendarzPracowniczyApplication.CQRS.Queries.Events.GetElementById;
 using KalendarzPracowniczyDomain.Entities.Users;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KalendarzPracowniczyAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class EventController : ControllerBase
