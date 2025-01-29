@@ -5,7 +5,7 @@ using KalendarzPracowniczyDomain.Interfaces;
 using Moq;
 using Xunit;
 
-namespace TestKalendarzPracowniczy
+namespace TestKalendarzPracowniczy.Create
 {
     public class CreateUserCommandHandlerTest
     {

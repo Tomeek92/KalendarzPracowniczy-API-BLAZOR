@@ -70,6 +70,7 @@ namespace KalendarzPracowniczyAPI.Controllers
                 };
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
+
                 return Ok(userDto);
             }
             catch (Exception ex)
