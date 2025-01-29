@@ -1,8 +1,6 @@
 ﻿using KalendarzPracowniczyApplication.CQRS.Commands.Users.Create;
-using KalendarzPracowniczyApplication.CQRS.Commands.Users.Update;
 using KalendarzPracowniczyApplication.Dto;
 using Newtonsoft.Json;
-using System.Text.Json;
 
 namespace KalendarzPracowniczyUI.Service
 {
@@ -81,17 +79,17 @@ namespace KalendarzPracowniczyUI.Service
             }
             catch (Exception ex)
             {
-                throw new Exception("Nie udało się pobrać informacji o zalogowanym użytkowniku.");
+                throw new Exception($"Nie udało się pobrać informacji o zalogowanym użytkowniku {ex.Message}");
             }
         }
 
-        public async Task<UserDto> Login(UserDto user)
+        public async Task<LoginDto> Login(LoginDto loginUser)
         {
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/api/User/login")
                 {
-                    Content = JsonContent.Create(user)
+                    Content = JsonContent.Create(loginUser)
                 };
 
                 var response = await _httpClient.SendAsync(request);
@@ -99,12 +97,11 @@ namespace KalendarzPracowniczyUI.Service
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var userDto = System.Text.Json.JsonSerializer.Deserialize<UserDto>(responseContent);
+                    var userDto = System.Text.Json.JsonSerializer.Deserialize<LoginDto>(responseContent);
                     if (userDto == null)
                     {
                         throw new Exception("Odpowiedź nie zawiera poprawnych danych JSON.");
                     }
-
                     return userDto;
                 }
                 else

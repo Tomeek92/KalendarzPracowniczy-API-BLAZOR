@@ -61,17 +61,15 @@ namespace KalendarzPracowniczyAPI.Controllers
                 var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, command.UserName),
-            new Claim(ClaimTypes.NameIdentifier, userDto.Id.ToString()),
-            new Claim("UserName", command.UserName),
-            new Claim("Surname", userDto.Surname)
         };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = true,
+                    IsPersistent = false,
                 };
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
 
                 return Ok(userDto);
             }

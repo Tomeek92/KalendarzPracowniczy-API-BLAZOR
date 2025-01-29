@@ -30,6 +30,12 @@
                     });
                 }, timeout);
             }
+        function resetMessageVisibility(selector) {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(element => {
+                element.style.display = 'block';
+            });
+        }
             
         </script>
 </body>

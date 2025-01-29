@@ -4,11 +4,12 @@ using KalendarzPracowniczyApplication.CQRS.Commands.Works.Update;
 using KalendarzPracowniczyApplication.CQRS.Queries.Works.GetUserTaskById;
 using KalendarzPracowniczyApplication.CQRS.Queries.Works.GetUserTasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace KalendarzPracowniczyAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class WorkController : ControllerBase

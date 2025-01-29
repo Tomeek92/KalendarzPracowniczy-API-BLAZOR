@@ -85,17 +85,26 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
         {
             try
             {
-                bool existingWorker = await _context.Cars.AnyAsync(car => car.CarPlatesNumber == newCar.CarPlatesNumber && car.IsActive == true);
-                if (existingWorker)
-                {
-                    throw new Exception($"Samochód o podanych numerach rejestracyjnych już istnieje! {newCar.CarPlatesNumber}");
-                }
+                await EnsureCarDoesNotExistAsync(newCar);
                 _context.Cars.Add(newCar);
                 await SaveAsync();
             }
             catch (Exception ex)
             {
-                throw new Exception($"Nieoczekiwany błąd zgłoś się do administratora", ex);
+                throw new Exception($"Nieoczekiwany błąd zgłoś się do administratora {ex.Message}");
+            }
+        }
+
+        private async Task EnsureCarDoesNotExistAsync(Car existingCar)
+        {
+            if (existingCar is null)
+            {
+                throw new ArgumentNullException(nameof(existingCar), "Car nie może być nullem");
+            }
+            bool carExist = await _context.Cars.AnyAsync(car => car.CarPlatesNumber == existingCar.CarPlatesNumber && car.IsActive == true);
+            if (carExist)
+            {
+                throw new Exception($"Samochód o podanych numerach rejestracyjnych już istnieje! {existingCar.CarPlatesNumber}");
             }
         }
 
@@ -129,7 +138,7 @@ namespace KalendarzPracowniczyInfrastructure.Repositories
                 var cars = await _context.Cars
                     .Where(car => car.IsActive == true)
                     .Where(car =>
-                    !_context.Events.Any(e => e.CarId == car.Id  && e.StartDate.HasValue && e.StartDate.Value.Date == selectedDate.Value.Date && !e.IsDeleted))
+                    !_context.Events.Any(e => e.CarId == car.Id && e.StartDate.HasValue && e.StartDate.Value.Date == selectedDate.Value.Date && !e.IsDeleted))
                 .ToListAsync();
                 return cars;
             }

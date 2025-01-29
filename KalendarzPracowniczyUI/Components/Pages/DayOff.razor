@@ -152,9 +152,17 @@
                 <div>
                     <button class="btn btn-secondary" type="submit">Dodaj urlop!</button>
                 </div>
+                @if (isLoading)
+                {
+                    <div class="loader"></div>
+                }
                 @if (isSuccess2)
                 {
                     <p class="success-message">Dzień wolny został dodany!</p>
+                }
+                @if (hasError)
+                {
+                    <p class="message">@errorMessage</p>
                 }
                 </EditForm>
                           <h3>Twoje urlopy</h3>
@@ -210,9 +218,17 @@
                 <p style="color:white;">Czy na pewno chcesz usunąć dzień wolny?</p>
                 <button @onclick="async () => await ConfirmDelete(dayOffDto.Id)" class="btn btn-danger">Usuń</button>
                 <button @onclick="() => showDeleteConfirmation = false" class="btn btn-secondary">Anuluj</button>
+                @if (isLoading)
+                {
+                    <div class="loader"></div>
+                }
                 @if (isSuccess)
                 {
                     <p class="delete-success-message">Dzień wolny został usunięty!</p>
+                }
+                @if (hasError)
+                {
+                    <p class="message">@errorMessage</p>
                 }
             </div>
         </div>
@@ -225,9 +241,17 @@
                 <InputDate @bind-Value="selectedDate" class="form-control" />
                 <button @onclick="async () => await ConfirmEdit(dayOffDto)" class="btn btn-danger">Zmień</button>
                 <button @onclick="() => showEditConfirmation = false" class="btn btn-secondary">Anuluj</button>
+                @if (isLoading)
+                {
+                    <div class="loader"></div>
+                }
                 @if (isSuccess3)
                 {
                     <p class="edit-success-message">Dzień wolny został zmieniony!</p>
+                }
+                @if (hasError)
+                {
+                    <p class="message">@errorMessage</p>
                 }
             </div>
         </div>
@@ -250,6 +274,8 @@
     private DateOnly selectedDate;
     private DayOffDto confirmEditDay;
     private Guid confirmDeleteDayOff;
+    private bool isLoading = false;
+    private bool hasError = false;
     private bool isSuccess = false;
     private bool isSuccess2 = false;
     private bool isSuccess3 = false;
@@ -272,15 +298,18 @@
         await GetAllUsers();
         await GetAllDaysOff();
         SetTodayDate();
+
     }
 
     private void AkceptDelete(Guid dayOffId)
     {
+        hasError = false;
         confirmDeleteDayOff = dayOffId;
         showDeleteConfirmation = true;
     }
     private void AkceptEdit(DayOffDto editDayOff)
     {
+        hasError = false;
         selectedDate = editDayOff.DateDayOff;
         confirmEditDay = editDayOff;
         showEditConfirmation = true;
@@ -311,6 +340,7 @@
 
     private async Task GetAllDaysOff()
     {
+        hasError = false;
         try
         {
             var currentUser = await UserService.GetCurrentUserAsync();
@@ -323,25 +353,38 @@
             else
             {
                 errorMessage = "Błąd podczas pobierania użytkownika";
+                hasError = true;
+                await WaitFiveSec();
+                await ShowErrorMessage();
             }
         }
         catch(Exception ex)
         {
-            throw new Exception($"Błąd podczas pobierania dni wolnych {ex.Message}");
+            errorMessage = ($"Błąd podczas pobierania dni wolnych {ex.Message}");
+            hasError = true;
+            await WaitFiveSec();
+            await ShowErrorMessage();
+        }
+        finally
+        {
+            StateHasChanged();
         }
     }
 
-    public async Task CloseModalAndRefresh()
+    public void CloseModalAndRefresh()
     {
         Navigation.NavigateTo("/kalendarz");
     }
 
     public async Task CreateDayOffAsync()
     {
+        hasError = false;
         try
         {
+            isLoading = true;
             await DayOffService.Create(dayOffDto);
             isSuccess2 = true;
+            isLoading = false;
             await GetAllDaysOff();
             await WaitFiveSec();
 
@@ -351,17 +394,31 @@
         catch(Exception ex)
         {
             errorMessage = $"Nieoczekiwany błąd podczas tworzenia urlopu {ex.Message}";
+            hasError = true;
+            await WaitFiveSec();
+            await ShowErrorMessage();
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
         }
     }
     private async Task WaitFiveSec()
     {
-        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message,.errorMessage", 5000);
+        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".edit-success-message,.delete-success-message,.message", 5000);
 
+        await InvokeAsync(StateHasChanged);
+    }
+    private async Task ShowErrorMessage()
+    {
+        await JSRuntime.InvokeVoidAsync("resetMessageVisibility", ".edit-success-message,.delete-success-message,.message");
         await InvokeAsync(StateHasChanged);
     }
 
     private async Task GetAllUsers()
     {
+        hasError = false;
         try
         {
             userDtos = await UserService.GetAll();
@@ -369,45 +426,60 @@
         catch
         {
             errorMessage = $"Błąd podczas pobierania użytkowników";
+            hasError = true;
+            await WaitFiveSec();
+            await ShowErrorMessage();
+        }
+        finally
+        {
+            StateHasChanged();
         }
     }
 
     private async Task ConfirmDelete(Guid id)
     {
+        hasError = false;
         try
         {
+            isLoading = true;
             await DayOffService.Delete(confirmDeleteDayOff);
-
             isSuccess = true;
-
-            await InvokeAsync(StateHasChanged);
-
-            await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".delete-success-message", 5000);
-         
+            isLoading = false;
+            await WaitFiveSec();
             await GetAllDaysOff();
-            StateHasChanged();
             await Task.Delay(3000);
-            
+
             if (currentPage * pageSize >= listDayOff.Count && currentPage > 0)
             {
                 currentPage--;
             }
             isSuccess = false;
-  
+
         }
         catch
         {
             errorMessage = $"Nieoczekiwany błąd podczas usuwania dnia wolnego";
+            hasError = true;
+            await WaitFiveSec();
+            await ShowErrorMessage();
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
         }
     }
 
     private async Task ConfirmEdit(DayOffDto dayOffDto)
     {
+        hasError = false;
         try
         {
+            isLoading = true;
             confirmEditDay.DateDayOff = selectedDate;
             await DayOffService.Update(confirmEditDay);
             isSuccess3 = true;
+            isLoading = false;
             await WaitFiveSec();
             await GetAllDaysOff();
 
@@ -418,6 +490,13 @@
         catch (Exception)
         {
             errorMessage = $"Nieoczekiwany błąd podczas zmiany dnia wolnego";
+            hasError = true;
+            await WaitFiveSec();
+            await ShowErrorMessage();
+        }
+        finally
+        {
+            StateHasChanged();
         }
     }
 

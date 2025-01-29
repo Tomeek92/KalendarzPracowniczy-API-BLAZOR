@@ -20,7 +20,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url('background.jpg') no-repeat center center/cover;
+    background: url('background.jpg') no-repeat center center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     position: relative;
     overflow: hidden;
@@ -183,16 +183,16 @@ button[type="submit"]:hover {
         </div>
         <h2>Logowanie do BIDON!</h2>
         <br />
-        <EditForm Model="@userDto" OnValidSubmit="Login" FormName="LoginAsync">
+        <EditForm Model="@loginDto" OnValidSubmit="Login" FormName="LoginAsync">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
             <div class="input-group">
-                <InputText id="username" @bind-Value="userDto.UserName" placeholder=" " />
+                <InputText id="username" @bind-Value="loginDto.UserName" placeholder=" " />
                 <label for="username">Nazwa użytkownika</label>
             </div>
             <div class="input-group">
-                <InputText id="password" type="password" @bind-Value="userDto.Password"  placeholder=" " />
+                <InputText id="password" type="password" @bind-Value="loginDto.Password" placeholder=" " />
                 <label for="password">Hasło</label>
             </div>
             <button type="submit">Zaloguj się</button>
@@ -217,7 +217,7 @@ button[type="submit"]:hover {
 
 @code {
     private bool isLoading = false;
-    private UserDto userDto = new UserDto();
+    private LoginDto loginDto = new LoginDto();
     private string? errorMessage;
     private string? successMessage;
 
@@ -226,7 +226,7 @@ button[type="submit"]:hover {
         try
         {
             isLoading = true;
-            await UserServiceUI.Login(userDto);
+            await UserServiceUI.Login(loginDto);
             errorMessage = null;
             Navigation.NavigateTo("/kalendarz");
         }

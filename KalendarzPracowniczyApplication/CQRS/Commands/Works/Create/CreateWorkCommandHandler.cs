@@ -11,12 +11,10 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Works.Create
         private readonly IMapper _mapper;
         private readonly IWorkRepository _workRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IMediator _mediator;
 
-        public CreateWorkCommandHandler(IMapper mapper, IWorkRepository workRepository, IMediator mediator, IUserRepository userRepository)
+        public CreateWorkCommandHandler(IMapper mapper, IWorkRepository workRepository, IUserRepository userRepository)
         {
             _mapper = mapper;
-            _mediator = mediator;
             _workRepository = workRepository;
             _userRepository = userRepository;
         }
@@ -40,7 +38,7 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.Works.Create
             {
                 throw new AutoMapperMappingException($"Błąd podczas mapowania{ex.Message}");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception($"Nieoczekiwany błąd {ex.Message}");
             }

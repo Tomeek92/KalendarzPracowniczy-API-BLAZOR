@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject UserServiceUI UserServiceUI
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 <style>
     .input-group__input {
@@ -140,6 +141,14 @@ label{
             {
                 <p class="success-message">@successMessage</p>
             }
+            @if (isError)
+            {
+                <p class="message">@errorMessage</p>
+            }
+            @if (isLoading)
+            {
+                <div class="loader"></div>
+            }
         </div>
     </div>
 }
@@ -147,9 +156,10 @@ label{
 @code {
     private UserDto updateUser = new();
     private bool isMenuVisible = true;
-    private bool showModal = false;
     private bool settingsModal = false;
     private bool isSuccess = false;
+    private bool isLoading = false;
+    private bool isError = false;
     private string? errorMessage;
     private string? successMessage;
 
@@ -174,6 +184,7 @@ label{
         catch (Exception ex)
         {
             errorMessage = ($"Błąd podczas wylogowywania!: {ex.Message}");
+            await WaitFiveSec();
         }
     }  
     private async Task SettingsModalOpen(string userId)
@@ -192,14 +203,30 @@ label{
     {
         try
         {
+            isLoading = true;
+            isError = false;
             await UserServiceUI.Update(updateUser);
             isSuccess = true;
             successMessage = ($"Dane zostały zmienione!");
+            await WaitFiveSec();
         }
         catch(Exception ex)
         {
-            isSuccess = false;
+            isError = true;
+            isLoading = true;
             errorMessage = ($"Błąd podczas zmian danych użytkownika!: {ex.Message}");
+            await WaitFiveSec();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+        private async Task WaitFiveSec()
+        {
+        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message,.message", 5000);
+
+            await InvokeAsync(StateHasChanged);
         }
     }
 }
