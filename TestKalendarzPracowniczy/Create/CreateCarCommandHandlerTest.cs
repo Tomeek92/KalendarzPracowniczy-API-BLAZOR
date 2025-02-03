@@ -26,7 +26,7 @@ namespace TestKalendarzPracowniczy.Create
             var command = new CreateCarCommand();
 
             _mapper.Setup(mapp => mapp.Map<Car>(command))
-                .Throws(new AutoMapperMappingException("Błąd podczas mapowania"));
+                .Throws(new AutoMapperMappingException("Błąd podczas mapowaniu"));
 
             var cancellationToken = CancellationToken.None;
 

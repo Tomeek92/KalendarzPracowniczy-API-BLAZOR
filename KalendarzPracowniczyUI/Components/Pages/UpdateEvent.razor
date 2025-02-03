@@ -4,7 +4,7 @@
 @inject CarServiceUI CarServiceUI
 @inject UserServiceUI UserServiceUI
 @inject EventServiceUI EventServiceUI
-
+@inject IJSRuntime JSRuntime
 
 <style>
  .event-form-container {
@@ -175,12 +175,12 @@
         </div>
            <div>
             <p>Praca - Urlop</p>
-            <select @onchange="(e) => eventDto.Name = e.Value.ToString()">
+            <select @onchange="WorkPlaceChange">
                 <option value="">Wybierz miejsce</option>
                 <option value="Biuro">Biuro</option>
+                <option value="Wyjazd-słuzbowy">Wyjazd służbowy</option>
                 <option value="Zdalna-okazjonalna">Zdalna okazjonalna</option>
                 <option value="Zdalna">Zdalna</option>
-                <option value="Urlop">Urlop</option>
             </select>
         </div>
         <div>
@@ -189,7 +189,7 @@
         </div>
         <div>
             <p>Data dodania:</p>
-            <InputDate @bind-Value="eventDto.StartDate" />
+            <InputDate @bind-Value="eventDto.StartDate" @onchange="HandleDateChange" />
         </div>
         <div>
             <p>Dla kogo?</p>
@@ -204,7 +204,7 @@
         <div>
             <p>Samochód:</p>
             <select @bind="eventDto.CarId">
-                <option value="">-- Wybierz samochód --</option>
+                <option value="">-- Bez samochodu --</option>
                 @foreach (var car in carDtos)
                 {
                     <option value="@car.Id">@car.Name @car.Model @car.CarPlatesNumber</option>
@@ -237,6 +237,8 @@
     public Guid EventIdParam { get; set; } 
     [Parameter] 
     public EventCallback OnClose { get; set; }
+    [Parameter]
+    public DateTime? SelectedDate { get; set; }
     private EventDto eventDto = new EventDto();
     private List<UserDto> userDtos = new List<UserDto>();
     private string? message;
@@ -244,9 +246,14 @@
     private bool isLoading = false;
     private List<CarDto> carDtos = new();
     private CarDto carDto = new();
+    private string selectedWorkplace = string.Empty;
+    private List<EventDto> existingEvents = new List<EventDto>();
+    private bool hasError = false;
+    private DateTime? previousDate;
 
     protected override async Task OnInitializedAsync()
     {
+        eventDto.StartDate = SelectedDate;
         if (EventIdParam != Guid.Empty)
         {
             eventDto = await EventServiceUI.GetById(EventIdParam);
@@ -257,6 +264,37 @@
         }
         await GetAllCars();
         await GetAllUsers();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (eventDto.StartDate != previousDate)
+        {
+            previousDate = eventDto.StartDate;
+            await CheckAvailableCarsAsync(eventDto.StartDate.Value.Date);
+        }
+    }
+    private void WorkPlaceChange(ChangeEventArgs e)
+    {
+        selectedWorkplace = e.Value.ToString();
+        eventDto.Name = selectedWorkplace;
+    }
+    private bool IsCarAssignedToInvalidWorkplace()
+    {
+        var isCarAssignedToInvalidWorkPlace = eventDto.CarId != null && (selectedWorkplace == "Zdalna-okazjonalna" || selectedWorkplace == "Zdalna" || selectedWorkplace == "Biuro" || selectedWorkplace == "Urlop");
+        return isCarAssignedToInvalidWorkPlace;
+    }
+    private async Task HandleDateChange(ChangeEventArgs e)
+    {
+        var selectedDate = (DateTime)e.Value;
+        await CheckAvailableCarsAsync(selectedDate);
+    }
+    private bool IsCarReservedOn()
+    {
+        var isCarReservedOn = existingEvents.Any(e => e.CarId == eventDto.CarId
+            && e.StartDate.Value.Date == eventDto.StartDate.Value.Date
+            && e.CarId != null);
+
+        return isCarReservedOn;
     }
     private async Task GetAllCars()
     {
@@ -269,15 +307,45 @@
             message = ("Błąd podczas pobierania listy samochodów");
         }
     }
+    private async Task CheckAvailableCarsAsync(DateTime selectedDate)
+    {
+        carDtos = await CarServiceUI.GetAvailableCarsAsync(selectedDate);
+        StateHasChanged();
+    }
+    private async Task WaitFiveSec()
+    {
+        await JSRuntime.InvokeVoidAsync("hideMessageAfterTimeout", ".success-message,.message", 5000);
+
+        await InvokeAsync(StateHasChanged);
+    }
 
     public async Task UpdateEvents()
     {
         try
         {
-            isLoading = true;
-            await EventServiceUI.Update(eventDto);
-            isSuccess = true;
-            message = null;
+            hasError = false;
+
+            if (IsCarReservedOn())
+            {
+                message = "Samochód jest już zarezerwowany na ten dzień.";
+                await WaitFiveSec();
+                isSuccess = false;
+                hasError = true;
+            }
+            if (IsCarAssignedToInvalidWorkplace())
+            {
+                message = "Nie możesz przypisać samochodu do pracy zdalnej, zdalnej okazjonalnej oraz biura";
+                await WaitFiveSec();
+                isSuccess = false;
+                hasError = true;
+            }
+            if (!hasError)
+            {
+                isLoading = true;
+                await EventServiceUI.Update(eventDto);
+                isSuccess = true;
+                message = null;
+            }
         }
         catch (Exception ex)
         {
