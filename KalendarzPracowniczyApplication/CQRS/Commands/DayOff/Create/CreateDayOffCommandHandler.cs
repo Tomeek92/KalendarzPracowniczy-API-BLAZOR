@@ -6,13 +6,11 @@ namespace KalendarzPracowniczyApplication.CQRS.Commands.DayOff.Create
 {
     public class CreateDayOffCommandHandler : IRequestHandler<CreateDayOffCommand>
     {
-        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
         private readonly IDayOffRepository _dayOffRepository;
 
-        public CreateDayOffCommandHandler(IMapper mapper, IDayOffRepository dayOffRepository, IMediator mediator)
+        public CreateDayOffCommandHandler(IMapper mapper, IDayOffRepository dayOffRepository)
         {
-            _mediator = mediator;
             _mapper = mapper;
             _dayOffRepository = dayOffRepository;
         }

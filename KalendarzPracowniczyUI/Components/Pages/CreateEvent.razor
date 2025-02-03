@@ -208,7 +208,7 @@
                 {
                     <option value="@car.Id">@car.Name @car.Model @car.CarPlatesNumber</option>
                 }
-                <option value="">-- Wybierz samochód --</option>
+                <option value="">-- Bez samochodu --</option>
             </select>
         </div>
         <div>
@@ -309,7 +309,7 @@
     }
     private bool IsCarAssignedToInvalidWorkplace()
     {
-        var isCarAssignedToInvalidWorkPlace = eventDto.CarId != null && (selectedWorkplace == "Zdalna-okazjonalna" || selectedWorkplace == "Zdalna" || selectedWorkplace == "Biuro");
+        var isCarAssignedToInvalidWorkPlace = eventDto.CarId != null && (selectedWorkplace == "Zdalna-okazjonalna" || selectedWorkplace == "Zdalna" || selectedWorkplace == "Biuro" || selectedWorkplace == "Urlop");
         return isCarAssignedToInvalidWorkPlace;
     }
     public async Task CreateEventAsync()

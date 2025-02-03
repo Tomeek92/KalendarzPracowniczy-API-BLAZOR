@@ -23,8 +23,8 @@ namespace KalendarzPracowniczyApplication.CQRS.Queries.Cars.GetUpcomingInspectio
                 var today = DateOnly.FromDateTime(DateTime.Now);
                 return mapp
                   .Where(car => car.CarInspection.HasValue
-                  && (car.CarInspection.Value.DayNumber - today.DayNumber) <= 7
-                  && (car.CarInspection.Value.DayNumber - today.DayNumber) >= 0)
+                  && car.CarInspection.Value >= today
+                  && car.CarInspection.Value <= today.AddDays(7))
                  .Select(car => new CarDto
                  {
                      Id = car.Id,
